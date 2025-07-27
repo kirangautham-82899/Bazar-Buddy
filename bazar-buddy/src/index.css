@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f0f0; /* Light gray background */
+  color: #333; /* Dark text for readability */
+}
+/* index.css */
+@import 'leaflet/dist/leaflet.css';

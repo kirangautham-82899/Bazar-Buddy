@@ -1,0 +1,77 @@
+.help-section {
+  background-color: #AED6F1;
+  padding: 40px 20px;
+  border-radius: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 20px;
+}
+
+.help-section h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #1A5276;
+}
+
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.help-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.help-card:hover {
+  transform: translateY(-4px);
+}
+
+.help-card h3 {
+  color: #2874A6;
+  margin-bottom: 10px;
+}
+
+.help-btn {
+  display: inline-block;
+  margin-top: 10px;
+  background-color: #3498DB;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.toll-number {
+  font-size: 20px;
+  font-weight: bold;
+  color: #154360;
+  margin-top: 8px;
+}
+
+.faq-card .faq-list {
+  margin-top: 10px;
+}
+
+.faq-item {
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 6px;
+}
+
+.faq-question {
+  cursor: pointer;
+  font-weight: 600;
+  color: #1B4F72;
+}
+
+.faq-answer {
+  padding-top: 6px;
+  color: #34495E;
+  font-size: 15px;
+}

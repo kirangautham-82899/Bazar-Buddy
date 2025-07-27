@@ -1,0 +1,70 @@
+.profile-container {
+  display: flex;
+  align-items: center;            /* vertical center */
+  justify-content: flex-end;      /* align to right */
+  padding-right: 5vw;             /* gap from right edge */
+  min-height: 100vh;
+  background: #f7aec3;            /* pastel background */
+  font-family: 'Poppins', sans-serif;
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.85);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 400px;
+  text-align: left;
+  backdrop-filter: blur(5px);
+}
+
+.profile-card p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.profile-card strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 0.4rem;
+  font-size: 1rem;
+  margin-top: 0.3rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.edit-actions,
+.logout-btn,
+.edit-btn {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.save-btn,
+.cancel-btn,
+.logout-btn,
+.edit-btn {
+  padding: 0.5rem 1rem;
+  background-color: #f48fb1;
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.save-btn:hover,
+.cancel-btn:hover,
+.logout-btn:hover,
+.edit-btn:hover {
+  background-color: #ec407a;
+}

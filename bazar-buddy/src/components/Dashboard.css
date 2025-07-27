@@ -1,0 +1,112 @@
+/* 🌸 Base Container */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #fffafc; /* soft pastel background */
+  font-family: 'Poppins', sans-serif;
+}
+
+/* 🌸 Top Navbar */
+.dashboard-header {
+  height: 60px;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #ffe3ed, #f5d0ff, #c7f0ff);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 0 0 14px 14px;
+}
+
+/* 🌸 Main Content */
+.dashboard-main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 70px; /* space for header */
+  padding-bottom: 60px; /* space for bottom nav */
+}
+
+/* 🌸 Bottom Navbar */
+.bottom-nav {
+  height: 48px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+  background: linear-gradient(90deg, #ffe4ec, #f9d8ff, #d3f4ff);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #ddd;
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.nav-item svg {
+  font-size: 18px;
+}
+
+.nav-item:hover {
+  transform: scale(1.1);
+  color: #e94e77;
+}
+
+.nav-item.active {
+  color: #e94e77;
+  font-weight: bold;
+}
+
+/* 🌸 Logo styling (optional) */
+.bazar-logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.stylish-heading {
+  font-family: 'Pacifico', cursive;
+  font-size: 2rem;
+  color: #ec6fbc;
+  text-shadow: 1px 1px 3px rgba(236, 111, 188, 0.2);
+  user-select: none;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stylish-heading::before {
+  content: "🛍️";
+  font-size: 1.6rem;
+}
+
+/* 🌸 Mobile responsive navbar */
+@media (max-width: 600px) {
+  .bottom-nav {
+    height: 65px;
+    font-size: 12px;
+  }
+
+  .nav-item span {
+    font-size: 11px;
+  }
+
+  .stylish-heading {
+    font-size: 1.6rem;
+  }
+}

@@ -1,0 +1,29 @@
+.language-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.lang-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.english {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.hindi {
+  background-color: #f5a623;
+  color: white;
+}
+
+.lang-btn:hover {
+  transform: scale(1.05);
+}

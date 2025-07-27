@@ -1,0 +1,54 @@
+.login-container {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+/* Centered floating language box */
+.language-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 26px 32px;
+
+  animation: fadeInUp 1s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.language-center h2 {
+  font-family: 'Pacifico', cursive;
+  font-size: 2rem;
+  background: linear-gradient(90deg, #ff69b4, #ffa5d8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  transition: all 0.3s ease-in-out;
+}
+
+.language-buttons button {
+  margin: 0.3rem;
+  padding: 0.7rem 1.1rem;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.language-buttons button:hover {
+  transform: scale(1.05);
+}
+
+/* Fade animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

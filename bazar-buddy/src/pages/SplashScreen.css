@@ -1,0 +1,50 @@
+import React, { useEffect, useState } from "react";
+import logo from "../assets/logo.jpg";
+import bg from "../assets/splash-bg.png";
+
+export default function SplashScreen({ onLanguageSelect }) {
+  const [showText, setShowText] = useState(false);
+  const [showLanguage, setShowLanguage] = useState(false);
+
+  useEffect(() => {
+    const timeout1 = setTimeout(() => setShowText(true), 1000);
+    const timeout2 = setTimeout(() => setShowLanguage(true), 2500);
+    return () => {
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
+    };
+  }, []);
+
+  return (
+    <div
+      className="w-full h-screen bg-cover bg-center flex flex-col items-center justify-center transition-all"
+      style={{ backgroundImage: `url(${bg})` }}
+    >
+      <img src={logo} alt="Bazar Buddy Logo" className="w-32 h-32 mb-6 animate-bounce" />
+      
+      {showText && (
+        <h1 className="text-white text-3xl font-bold fade-in mb-4">Welcome to Bazar Buddy</h1>
+      )}
+
+      {showLanguage && (
+        <div className="flex flex-col items-center space-y-3 fade-in-slow">
+          <p className="text-white text-lg">Which language do you want?</p>
+          <div className="flex gap-4">
+            <button
+              onClick={() => onLanguageSelect("en")}
+              className="px-5 py-2 bg-white text-pink-600 font-semibold rounded-xl shadow-md hover:bg-pink-100"
+            >
+              English
+            </button>
+            <button
+              onClick={() => onLanguageSelect("hi")}
+              className="px-5 py-2 bg-white text-green-600 font-semibold rounded-xl shadow-md hover:bg-green-100"
+            >
+              हिन्दी
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

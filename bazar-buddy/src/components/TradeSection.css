@@ -1,0 +1,249 @@
+/* src/components/TradeSection.css */
+.trade-section {
+  padding: 20px;
+}
+
+.trade-section h2 {
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.vendor-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vendor-card {
+  background: #fff1f7;
+  border: 1px solid #e5b9d8;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(255, 192, 203, 0.2);
+}
+
+.vendor-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+.vendor-card p {
+  margin: 4px 0;
+}
+
+.vendor-card button {
+  margin-top: 8px;
+  background: #ff69b4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+/* src/components/TradeSection.css */
+.trade-section {
+  padding: 20px;
+}
+
+.trade-section h2 {
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.map-container {
+  border: 2px solid #ffd5e4;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(255, 192, 203, 0.2);
+  margin-top: 12px;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+.join-button {
+  background: #ff69b4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+.whatsapp-btn {
+  background-color: #25D366;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  text-decoration: none;
+}
+
+.ai-section {
+  margin-top: 30px;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.price-warning {
+  margin-left: 10px;
+  color: red;
+  font-weight: bold;
+}
+.chat-box {
+  background: #f2f2f2;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.chat-messages {
+  max-height: 180px;
+  overflow-y: auto;
+  background: white;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+.chat-input {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.chat-input input {
+  flex: 1;
+  padding: 6px;
+}
+.chat-input button {
+  background-color: #86a858;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.whatsapp-btn {
+  margin: 5px 0;
+  background: #25D366;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.feedback-box, .chat-box {
+  background: #fff;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.badge {
+  background: #f0f0f0;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  margin-right: 6px;
+}
+.badge.verified {
+  background: #86a858;
+  color: white;
+}
+.ai-warning {
+  color: red;
+  font-weight: bold;
+}
+.trade-section {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.join-button, .whatsapp-button {
+  margin-top: 6px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #86a858;
+  color: white;
+  margin-right: 6px;
+}
+
+.chat-box {
+  margin-top: 20px;
+  background: #ffffffdd;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 400px;
+}
+
+.chat-window {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.barter-section {
+  background: #fffef3;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+  box-shadow: 0 2px 10px rgba(200, 200, 100, 0.15);
+}
+
+.barter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.barter-form input {
+  padding: 10px;
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.barter-form button {
+  background-color: #86a858;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.barter-list {
+  margin-top: 10px;
+}
+
+.barter-entry {
+  background: #f0fcd6;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  font-size: 15px;
+}

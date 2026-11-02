@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FaBoxOpen, FaClock, FaRedoAlt } from 'react-icons/fa';
 import { t } from '../../content/strings';
-import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useCatalog } from '../../context/CatalogContext';
 import { useToast } from '../../context/ToastContext';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
-import { cancelMyOrder, subscribeMyOrders } from '../../services/orderService';
+import { cancelMyOrder } from '../../services/orderService';
+import { useMyOrders } from '../../hooks/useMyOrders';
 import { STATUS_LABEL_KEYS, canCustomerCancel, estimatedDelivery, isActiveStatus, toDate } from '../../utils/orderStatus';
 import { formatDateTime, formatRupees, itemName, shortId } from '../../utils/format';
 import { Skeleton } from '../../components/motion';
@@ -84,14 +84,8 @@ const OrderCard = ({ order }) => {
 };
 
 const OrdersPage = () => {
-  const { user } = useAuth();
-  const [orders, setOrders] = useState(null);
+  const orders = useMyOrders();
   useDocumentMeta({ title: `${t('myOrders')} – ${t('appName')}`, noindex: true });
-
-  useEffect(() => subscribeMyOrders(user.uid, setOrders, (err) => {
-    console.error(err);
-    setOrders([]);
-  }), [user.uid]);
 
   return (
     <div className="page orders-page">

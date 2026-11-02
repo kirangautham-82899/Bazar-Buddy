@@ -705,3 +705,255 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Card opens product details: reset the button so it looks like the card body. */
+.product-open {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.product-open .product-media {
+  width: 100%;
+}
+
+/* Product details sheet */
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.product-details-media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+.product-details-media .product-off {
+  top: 0;
+  left: 14px;
+}
+
+.product-details-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.product-details-unit {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.product-details-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0;
+}
+
+.product-details-price strong {
+  font-size: 1.5rem;
+}
+
+.product-details-price s {
+  color: var(--color-muted);
+}
+
+.product-details-save {
+  color: var(--color-brand-dark);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.product-details-desc {
+  margin: 4px 0 0;
+  color: var(--color-ink);
+}
+
+.product-details-action .stepper {
+  width: 100%;
+}
+
+.stepper-lg {
+  height: 52px;
+  border-radius: 14px;
+  font-size: 1rem;
+}
+
+.stepper-lg .stepper-btn {
+  width: 56px;
+  font-size: 0.9rem;
+}
+
+/* ---------- Desktop layout (≥ 1024px) ---------- */
+.desk-header {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.desk-header-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 24px;
+}
+
+.desk-brand {
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.desk-delivery {
+  flex: 0 0 auto;
+  max-width: 220px;
+}
+
+.desk-search {
+  flex: 1;
+  min-width: 0;
+}
+
+.desk-search .search-bar {
+  box-shadow: none;
+  background: var(--color-bg);
+}
+
+.desk-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.desk-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.desk-links a:hover,
+.desk-links a.active {
+  color: var(--color-brand);
+}
+
+.desk-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+  min-height: 52px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  background: var(--color-brand-soft);
+  color: var(--color-brand-dark);
+  text-decoration: none;
+  overflow: hidden;
+  transition: background 0.2s ease;
+}
+
+.desk-cart.has-items {
+  background: var(--gradient-brand);
+  color: #fff;
+  box-shadow: var(--shadow-brand);
+}
+
+.desk-cart > svg {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+.desk-cart-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  font-size: 0.85rem;
+}
+
+.desk-categories {
+  display: flex;
+  gap: 4px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.desk-categories a {
+  padding: 6px 14px;
+  border-radius: 999px;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.desk-categories a:hover {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.shop-desktop .shop-main {
+  padding-bottom: 48px;
+}
+
+.shop-desktop .page,
+.shop-desktop .category-page {
+  max-width: 1280px;
+  padding-inline: 24px;
+}
+
+.shop-desktop .page {
+  padding-top: 24px;
+}
+
+.shop-desktop .product-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.shop-desktop .category-content .product-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.shop-desktop .shop-section-title {
+  font-size: 1.35rem;
+}
+
+.shop-desktop .shop-row {
+  margin-bottom: 36px;
+}
+
+.shop-desktop .category-rail {
+  top: 112px;
+  max-height: calc(100vh - 112px);
+}
+
+.shop-desktop .search-page .product-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}

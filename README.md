@@ -21,9 +21,10 @@ Bazar Buddy is an Instamart-style quick-commerce store for street vendors across
 
 | For | What it does |
 |---|---|
-| **Anyone** | `/shop`: delivery time and address header, search (typed or spoken, English and Hinglish like *pyaz*, *aloo*), category tiles, product rows, a category browser with a side rail, and a floating "View cart" bar. No account needed to browse; the cart is saved on the device. |
-| **Shoppers** | Checkout with delivery speed (express 45 min / early morning / saver), delivery address, UPI (QR with the exact amount) or cash on delivery, free-delivery threshold. Orders page with live status (placed → confirmed → packed → out for delivery → delivered), cancel before packing, order again. Account page with profile, address, help and FAQ. A guest cart merges into the account on login. |
-| **Team (admins)** | `/admin`: live order queue with status filters and one-tap next step; confirming re-checks prices and deducts stock, cancelling a confirmed order restocks. Products: add/edit name, category, unit, price, MRP, stock, search keywords, icon, sort order; show/hide; one-click starter catalog for a new project. |
+| **Anyone** | `/shop`: search (typed or spoken, English and Hinglish like *pyaz*, *aloo*), Today's deals, a row per category, a category browser with a side rail, and a product detail view (tap any product). No account needed to browse; the cart is saved on the device. |
+| **Phones vs desktop** | Phones (< 1024 px): compact header, bottom tab bar, floating "View cart" bar, swipeable product rows. Desktop: one wide top bar with address, live search, links and a cart button showing items and total, a category link row, 6-column product grids, and a two-column cart with the bill pinned on the right. |
+| **Shoppers** | Checkout with delivery speed (express 45 min / early morning / saver), delivery address, UPI (QR with the exact amount) or cash on delivery, free-delivery threshold. Orders page with live status (placed → confirmed → packed → out for delivery → delivered), cancel before packing, order again, and a "Buy again" row on the shop home. Account page with profile, address, help and FAQ. A guest cart merges into the account on login. |
+| **Team (admins)** | `/admin`: live order queue with status filters and one-tap next step; confirming re-checks prices and deducts stock, cancelling a confirmed order restocks. Products: add/edit name, category, unit, price, MRP, stock, description, search keywords, icon, sort order; show/hide; one-click starter catalog (24 products, 50 in stock each) for a new project. |
 | **Everyone** | Landing page pre-rendered for search engines, JSON-LD, sitemap, fast loading (Firebase never loads on the landing page), mandi colour palette, motion that respects reduce-motion, no image files. |
 
 ## Tech stack
@@ -72,7 +73,7 @@ Bazar-Buddy/
 
 | Collection | Contents | Access |
 |---|---|---|
-| `products/{id}` | name, category, unit, price, mrp, stock, active, icon, keywords, sortOrder | Read: anyone · Write: admins |
+| `products/{id}` | name, category, unit, price, mrp, stock, active, icon, keywords, description, sortOrder | Read: anyone · Write: admins |
 | `users/{uid}` | name, phone, email, address | Owner, admins can read |
 | `carts/{uid}` | items `[{id, quantity}]`, speed, payment | Owner |
 | `orders/{id}` | customer, address, items (price snapshot), totals, speed, payment, status, statusHistory | Owner reads and can cancel before packing · Admins read and update status |
@@ -95,7 +96,7 @@ Or pull the config straight from Vercel: `npx vercel env pull .env.development.l
 1. Enable **Authentication → Email/Password** and create a **Firestore** database.
 2. Deploy the rules and indexes: `npx firebase-tools deploy --only firestore --project <your-project-id>`.
 3. **Make yourself an admin:** register in the app, copy your user UID from Authentication → Users, then in Firestore create a document `admins/<that UID>` (any field, e.g. `role: "owner"`).
-4. Open `/admin/products`, click **Import starter catalog** (or add products by hand), then set real prices and stock. Products with stock 0 show as out of stock.
+4. Open `/admin/products`, click **Import starter catalog** (or add products by hand), then adjust prices and stock. Imported products start with 50 in stock; products at 0 show as out of stock.
 
 Optional variables: `REACT_APP_UPI_ID`, `REACT_APP_SUPPORT_PHONE`, `REACT_APP_TOLL_FREE`, `REACT_APP_SITE_URL`.
 

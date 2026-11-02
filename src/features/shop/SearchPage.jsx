@@ -6,6 +6,7 @@ import { useCatalog } from '../../context/CatalogContext';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import CATEGORIES from '../../data/categories';
 import { searchProducts } from '../../utils/search';
+import { useIsDesktop } from '../../hooks/useMediaQuery';
 import SearchBox from './SearchBox';
 import CatalogState from './CatalogState';
 import ProductList from './ProductList';
@@ -15,6 +16,7 @@ const SearchPage = () => {
   const [params, setParams] = useSearchParams();
   const query = params.get('q') || '';
   const { products } = useCatalog();
+  const isDesktop = useIsDesktop();
   useDocumentMeta({ title: `${t('searchLabel')} – ${t('appName')}` });
 
   const categoryLabels = useMemo(() => Object.fromEntries(CATEGORIES.map((c) => [c.id, t(c.labelKey)])), []);
@@ -24,7 +26,8 @@ const SearchPage = () => {
 
   return (
     <div className="page search-page">
-      <SearchBox query={query} onQueryChange={setQuery} autoFocus />
+      {/* On desktop the search box lives in the top bar. */}
+      {!isDesktop && <SearchBox query={query} onQueryChange={setQuery} autoFocus />}
       <CatalogState />
       {query.trim() ? (
         <>

@@ -77,6 +77,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
+  window.__desktop = false;
   window.localStorage.clear();
   Object.assign(state, { user: null, isAdmin: false, orders: [], products });
 });
@@ -102,6 +103,36 @@ describe('shop (guest)', () => {
     expect(JSON.parse(window.localStorage.getItem('bazarBuddy.cart')).items).toEqual([{ id: 'tomato', quantity: 1 }]);
   });
 
+  it('opens product details from a card', async () => {
+    renderAt('/shop');
+    fireEvent.click(await screen.findByRole('button', { name: 'View details of Paneer' }, WAIT));
+    expect(await screen.findByRole('dialog', { name: 'Paneer' })).toBeInTheDocument();
+    expect(screen.getByText('Soft fresh paneer, made daily.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add to cart' })).toBeInTheDocument();
+  });
+
+  it("lists today's deals by biggest discount", async () => {
+    renderAt('/shop');
+    const deals = (await screen.findByRole('heading', { name: 'Today’s deals' }, WAIT)).closest('section');
+    // Tomatoes: ₹30 vs ₹36 MRP = 17% off, the biggest discount in the starter catalog.
+    expect(within(deals).getAllByRole('article')[0]).toHaveTextContent('Tomatoes');
+  });
+
+  it('uses the phone layout on small screens', async () => {
+    renderAt('/shop');
+    expect(await screen.findByRole('navigation', { name: 'Main navigation' }, WAIT)).toHaveTextContent('Categories');
+    expect(screen.getByRole('heading', { name: 'Shop by category' })).toBeInTheDocument();
+  });
+
+  it('uses the desktop layout on wide screens', async () => {
+    window.__desktop = true;
+    renderAt('/shop');
+    expect(await screen.findByRole('link', { name: /^Cart:/ }, WAIT)).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Categories' })).toHaveTextContent('Vegetables');
+    expect(screen.queryByRole('heading', { name: 'Shop by category' })).not.toBeInTheDocument();
+    expect(document.querySelector('.bottom-nav')).toBeNull();
+  });
+
   it('shows a friendly message while the catalog is empty', async () => {
     state.products = [];
     renderAt('/shop');
@@ -125,6 +156,13 @@ describe('shop (guest)', () => {
 describe('signed in', () => {
   beforeEach(() => {
     state.user = { uid: 'vendor-1', email: 'ravi@example.com', displayName: 'Ravi Kumar' };
+  });
+
+  it('offers products from past orders under Buy again', async () => {
+    state.orders = [{ id: 'o1', uid: 'vendor-1', items: [{ id: 'garlic', name: 'Garlic', unit: 'kg', price: 120, quantity: 2 }], total: 240, speed: 'saver', payment: 'cod', status: 'delivered', createdAt: new Date() }];
+    renderAt('/shop');
+    const row = (await screen.findByRole('heading', { name: 'Buy again' }, WAIT)).closest('section');
+    expect(within(row).getByText('Garlic')).toBeInTheDocument();
   });
 
   it('lists orders with their live status', async () => {

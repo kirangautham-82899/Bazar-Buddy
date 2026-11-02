@@ -1,5 +1,5 @@
 // products/{productId}: the live catalog. Anyone can read it; only admins write.
-//   name, category, unit, price, mrp?, stock, active, icon, keywords[], sortOrder
+//   name, category, unit, price, mrp?, stock, active, icon, keywords[], description, sortOrder
 import {
   collection,
   deleteDoc,
@@ -35,7 +35,7 @@ export const slugify = (text) =>
     .replace(/^-+|-+$/g, '')
     .slice(0, 60);
 
-const cleanProduct = ({ name, category, unit, price, mrp, stock, active, icon, keywords, sortOrder }) => ({
+const cleanProduct = ({ name, category, unit, price, mrp, stock, active, icon, keywords, description, sortOrder }) => ({
   name: name.trim(),
   category,
   unit,
@@ -45,6 +45,7 @@ const cleanProduct = ({ name, category, unit, price, mrp, stock, active, icon, k
   active: Boolean(active),
   icon: icon || '',
   keywords: (keywords || []).map((k) => k.trim().toLowerCase()).filter(Boolean),
+  description: (description || '').trim().slice(0, 300),
   sortOrder: Number(sortOrder) || 0,
 });
 
@@ -55,7 +56,7 @@ export const saveProduct = (product) => {
 
 export const deleteProduct = (id) => deleteDoc(doc(db, 'products', id));
 
-// One-time helper for a fresh project. Stock starts at 0 so nothing sells until reviewed.
+// One-time helper for a fresh project: fills the shop with stocked products to edit later.
 export const importStarterCatalog = async () => {
   const batch = writeBatch(db);
   starterCatalog.forEach(({ id, ...product }) => {

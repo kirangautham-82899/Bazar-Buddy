@@ -254,3 +254,38 @@
 .money {
   display: inline-block;
 }
+
+/* Desktop: details on the left, bill pinned on the right */
+.cart-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cart-main,
+.cart-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.shop-desktop .cart-page {
+  max-width: 1100px;
+}
+
+.shop-desktop .cart-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  align-items: start;
+  gap: 24px;
+}
+
+.shop-desktop .cart-summary {
+  position: sticky;
+  top: 132px;
+}
+
+.shop-desktop .checkout-bar {
+  position: static;
+  padding-top: 0;
+}

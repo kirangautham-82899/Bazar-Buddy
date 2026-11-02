@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaPhoneAlt } from 'react-icons/fa';
-import { useLanguage } from '../../../context/LanguageContext';
+import { t } from '../../../content/strings';
 import { SUPPORT_PHONE, TOLL_FREE } from '../../../config/app';
 import BrandMark from '../../../components/common/BrandMark';
 import { FOOTER_COLUMNS } from '../content';
@@ -9,7 +9,6 @@ import { warmAuthProps } from '../warmAuth';
 import './Footer.css';
 
 const Footer = () => {
-  const { t } = useLanguage();
   return (
     <footer className="landing-footer">
       <div className="footer-brand">

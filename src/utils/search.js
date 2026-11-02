@@ -1,14 +1,11 @@
-// Product search tuned for vendors typing (or speaking) in English, Hindi or
-// Hinglish: matches names, keywords and categories, tolerates small typos,
-// and ranks exact word matches above prefixes, substrings and fuzzy hits.
-
-const NUKTA = /़/g; // "प्याज़" and "प्याज" should match each other
+// Product search tuned for vendors typing (or speaking) in English or Hinglish:
+// matches names, keywords and categories, tolerates small typos, and ranks exact
+// word matches above prefixes, substrings and fuzzy hits.
 
 export const normalize = (text = '') =>
   text
     .toLowerCase()
     .normalize('NFC')
-    .replace(NUKTA, '')
     .replace(/[^\p{L}\p{M}\p{N}\s]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -34,7 +31,8 @@ const allowedTypos = (token) => (token.length >= 7 ? 2 : token.length >= 4 ? 1 :
 const scoreToken = (token, words) => {
   let best = 0;
   for (const word of words) {
-    if (word === token) return 3;
+    // "tomato" is an exact hit for "tomatoes" (and the other way round).
+    if (word === token || word === `${token}s` || word === `${token}es` || token === `${word}s`) return 3;
     if (word.startsWith(token)) best = Math.max(best, 2);
     else if (token.length >= 3 && word.includes(token)) best = Math.max(best, 1.5);
     else if (allowedTypos(token) && levenshtein(token, word) <= allowedTypos(token)) {
@@ -46,8 +44,7 @@ const scoreToken = (token, words) => {
 
 const searchableWords = (product, categoryLabels = {}) => {
   const phrases = [
-    product.name.en,
-    product.name.hi,
+    product.name,
     ...(product.keywords || []),
     product.category,
     categoryLabels[product.category] || '',

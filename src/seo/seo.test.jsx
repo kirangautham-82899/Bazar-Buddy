@@ -4,9 +4,7 @@ import { readFileSync } from 'node:fs';
 import { render } from '../entry-server';
 import { buildStructuredData } from './structuredData';
 import { LANDING_FAQ } from '../pages/landing/content';
-import { translate } from '../i18n/translations';
-
-const t = (key) => translate('en', key);
+import { t } from '../content/strings';
 
 describe('pre-rendered landing page', () => {
   const html = render('/');
@@ -28,13 +26,17 @@ describe('pre-rendered landing page', () => {
     LANDING_FAQ.forEach((n) => expect(html).toContain(t(`faq${n}a`)));
   });
 
+  it('has no Hindi text', () => {
+    expect(html).not.toMatch(/[ऀ-ॿ]/);
+  });
+
   it('has exactly one h1', () => {
     expect(html.match(/<h1\b/g)).toHaveLength(1);
   });
 });
 
 describe('structured data', () => {
-  const data = buildStructuredData('en');
+  const data = buildStructuredData();
   const types = data['@graph'].map((node) => node['@type']);
 
   it('describes the organisation, website, app and FAQ', () => {

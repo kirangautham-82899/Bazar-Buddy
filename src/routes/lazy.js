@@ -2,13 +2,14 @@
 // so a prefetched chunk is reused (the browser caches the import).
 export const loadAppShell = () => import('./AppShell');
 export const loadAuthPage = () => import('../pages/auth/AuthPage');
-export const loadDashboardPage = () => import('../pages/dashboard/DashboardPage');
-export const loadHome = () => import('../features/home/HomeSection');
-export const loadMarket = () => import('../features/market/MarketSection');
-export const loadWallet = () => import('../features/wallet/WalletSection');
-export const loadTrade = () => import('../features/trade/TradeSection');
-export const loadProfile = () => import('../features/profile/ProfileSection');
-export const loadHelp = () => import('../features/help/HelpSection');
+export const loadShopLayout = () => import('../features/shop/ShopLayout');
+export const loadShopHome = () => import('../features/shop/ShopHome');
+export const loadCategoryPage = () => import('../features/shop/CategoryPage');
+export const loadSearchPage = () => import('../features/shop/SearchPage');
+export const loadCartPage = () => import('../features/cart/CartPage');
+export const loadOrdersPage = () => import('../features/orders/OrdersPage');
+export const loadAccountPage = () => import('../features/account/AccountPage');
+export const loadAdmin = () => import('../features/admin/AdminLayout');
 
 const saveData = () =>
   typeof navigator !== 'undefined' && (navigator.connection?.saveData || /2g/.test(navigator.connection?.effectiveType || ''));

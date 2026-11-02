@@ -9,16 +9,15 @@ import {
 } from 'firebase/auth';
 import { FaArrowLeft, FaEnvelope, FaEye, FaEyeSlash, FaLock, FaPhone, FaUser } from 'react-icons/fa';
 import { auth } from '../../config/firebase';
-import { useLanguage } from '../../context/LanguageContext';
+import { t } from '../../content/strings';
 import { useToast } from '../../context/ToastContext';
 import { ensureUserProfile, updateUserProfile } from '../../services/userService';
 import { isValidEmail, normalizePhone, validateAuthForm } from '../../utils/validation';
-import { catalog } from '../../data/products';
+import starterCatalog from '../../data/starterCatalog';
 import BrandMark from '../../components/common/BrandMark';
-import LanguageToggle from '../../components/common/LanguageToggle';
 import ProductIcon from '../../components/common/ProductIcon';
 import { Aurora } from '../../components/motion';
-import { loadDashboardPage, loadHome, prefetchWhenIdle } from '../../routes/lazy';
+import { loadShopHome, loadShopLayout, prefetchWhenIdle } from '../../routes/lazy';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import './AuthPage.css';
 
@@ -34,7 +33,7 @@ const FIREBASE_ERRORS = {
 };
 
 const BENEFITS = ['authBenefit1', 'authBenefit2', 'authBenefit3'];
-const ORBIT = ['tomato', 'onion', 'potato', 'green-chilli', 'lemon', 'paneer'].map((id) => catalog.find((p) => p.id === id));
+const ORBIT = ['tomato', 'onion', 'potato', 'green-chilli', 'lemon', 'paneer'].map((id) => starterCatalog.find((p) => p.id === id));
 
 const Field = ({ icon: Icon, name, label, error, t, trailing, ...inputProps }) => (
   <div className="field">
@@ -85,7 +84,6 @@ const Collapsible = ({ show, children }) => (
 );
 
 const BrandPanel = () => {
-  const { t } = useLanguage();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -107,7 +105,7 @@ const BrandPanel = () => {
           {ORBIT.map((p, i) => (
             <span key={p.id} className="orbit-item" style={{ '--i': i, '--n': ORBIT.length }}>
               <span className="orbit-counter">
-                <ProductIcon id={p.id} category={p.category} size="md" />
+                <ProductIcon icon={p.icon} category={p.category} size="md" />
               </span>
             </span>
           ))}
@@ -138,7 +136,6 @@ const BrandPanel = () => {
 };
 
 const AuthPage = () => {
-  const { t, language } = useLanguage();
   const toast = useToast();
   const [params, setParams] = useSearchParams();
   const isLogin = params.get('mode') !== 'register';
@@ -151,11 +148,13 @@ const AuthPage = () => {
 
   useDocumentMeta({ title: `${isLogin ? t('login') : t('register')} – ${t('appName')}`, noindex: true });
 
-  // While the vendor types, fetch the dashboard so it opens instantly after login.
-  useEffect(() => prefetchWhenIdle(loadDashboardPage, loadHome), []);
+  // While the vendor types, fetch the shop so it opens instantly after login.
+  useEffect(() => prefetchWhenIdle(loadShopLayout, loadShopHome), []);
 
   const setMode = (mode) => {
-    setParams(mode === 'register' ? { mode } : {}, { replace: true });
+    // Keep ?next= so the vendor still returns to the cart (or wherever) after signing in.
+    const next = params.get('next');
+    setParams({ ...(mode === 'register' ? { mode } : {}), ...(next ? { next } : {}) }, { replace: true });
     setErrors({});
     setFormError('');
   };
@@ -188,7 +187,7 @@ const AuthPage = () => {
         await signInWithEmailAndPassword(auth, email, form.password);
       } else {
         const { user } = await createUserWithEmailAndPassword(auth, email, form.password);
-        const details = { name: form.name.trim(), phone: normalizePhone(form.phone), language };
+        const details = { name: form.name.trim(), phone: normalizePhone(form.phone) };
         await updateProfile(user, { displayName: details.name });
         await ensureUserProfile(user, details);
         // The auth listener may have created the profile first, so always write the details.
@@ -224,7 +223,7 @@ const AuthPage = () => {
           <Link to="/" className="btn btn-sm btn-ghost">
             <FaArrowLeft aria-hidden="true" /> {t('backHome')}
           </Link>
-          <LanguageToggle short />
+          <Link to="/shop" className="btn btn-sm btn-outline">{t('startShopping')}</Link>
         </div>
 
         <motion.section

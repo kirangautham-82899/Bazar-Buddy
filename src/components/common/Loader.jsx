@@ -1,11 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { GiBasket } from 'react-icons/gi';
-import { useLanguage } from '../../context/LanguageContext';
+import { t } from '../../content/strings';
 
 // Full-screen: the brand tile breathes. Inline: a small spinner.
 const Loader = ({ fullScreen = false }) => {
-  const { t } = useLanguage();
   return (
     <div className={fullScreen ? 'screen-center' : 'empty-state'} role="status">
       {fullScreen ? (

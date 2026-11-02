@@ -1,10 +1,9 @@
 import React from 'react';
-import { useLanguage } from '../../../context/LanguageContext';
+import { t } from '../../../content/strings';
 import { Reveal } from '../../../components/motion';
 
 // Eyebrow + title (+ optional lead) used at the top of every landing section.
 const SectionHeading = ({ id, eyebrow, title, lead, align = 'center' }) => {
-  const { t } = useLanguage();
   return (
     <Reveal className={`section-head section-head-${align}`}>
       <p className="eyebrow-text">{t(eyebrow)}</p>

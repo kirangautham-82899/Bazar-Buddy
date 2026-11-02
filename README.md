@@ -2,127 +2,83 @@
 
 # 🛒 Bazar Buddy
 
-### Fresh raw material at fair prices for every street vendor
+### Quick wholesale delivery of vegetables and groceries for street vendors
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white"/>
   <img src="https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white"/>
   <img src="https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
   <img src="https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel"/>
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/>
 </p>
 
 </div>
 
 ## Overview
 
-Bazar Buddy is a mobile-first wholesale marketplace for street vendors across India. Vendors search for raw material in **English, Hindi or Hinglish (also by voice)**, see whether a price is fair compared with nearby suppliers, place orders and follow their progress, earn reward coins, and trade spare stock with vendor groups nearby.
+Bazar Buddy is an Instamart-style quick-commerce store for street vendors across India: browse live prices and stock, fill a cart, check out with a delivery address and track the order to the stall. The team runs the catalog and moves orders along from a built-in admin panel.
 
-## Features
+## What's inside
 
-| Feature | What it does |
+| For | What it does |
 |---|---|
-| 🌐 **English & Hindi** | Every screen is translated. The language picked at the start is kept everywhere and can be changed from the top bar or Profile. |
-| 🔍 **Smart search** | Matches English, Hindi (with or without the nukta) and Hinglish words like *pyaz*, *aloo* and *tamatar*. Tolerates small typos, ranks the best matches first, and filters by category. |
-| 🎙️ **Voice search** | Tap the mic and speak in Hindi (`hi-IN`) or Indian English (`en-IN`). Works in Chrome, Edge and Android browsers. |
-| ⚖️ **Fair-price check** | Compares each price with the median of nearby vendor groups and flags anything more than 15% above it. |
-| 🧺 **Live cart** | Saved in Firestore and synced across devices. Every change runs in a transaction, so quick taps never overwrite each other. |
-| 🚚 **Delivery options** | Express (45 min, ₹30), Scheduled (tomorrow 6–7 AM, ₹10) or Saver (24 h, free), plus OTP-verified delivery (₹5). |
-| 💳 **Payment** | UPI (QR code and UPI ID) or cash on delivery. |
-| 📦 **Orders** | Order history with a progress tracker and expected delivery time. You can cancel before the order is out for delivery, and coins are refunded. |
-| 💰 **Apna Coins** | Earn 1 coin per ₹20 spent. Redeem 50 coins for a free delivery, which is applied automatically at checkout. |
-| 🗺️ **Vendor groups** | Leaflet map plus an accessible list of nearby groups, with stock, prices, reviews and join requests (sample groups ship in `src/data/vendorGroups.js` until real ones are onboarded). |
-| 🔁 **Community barter** | A live board where vendors post swap offers. |
-| 🥬 **Mandi theme** | Leaf green, tomato red and turmeric yellow on a warm cream background, with a calm, cardless landing page: six sections (hero, features, categories, how it works, FAQ, sign-up) with even spacing and no boxes. |
-| 🔎 **SEO** | Landing page pre-rendered to HTML at build time, with keyword-focused title and description, JSON-LD (Organization, WebSite, WebApplication, FAQPage), Open Graph share image, `robots.txt` and `sitemap.xml`. Login and dashboard are `noindex`. |
-| ✨ **Motion design** | Word-by-word hero reveal, scroll-linked parallax, tilt cards, sliding tab indicators, cards that reflow when you filter, animated counters and a success tick with confetti. All of it respects the reduce-motion setting. |
-| 🖼️ **No pictures** | No image files or Lottie animations: visuals come from CSS gradients, code-drawn SVG and vector icons, so pages stay light. The UPI QR is generated with the real amount. |
-| ♿ **Accessible** | Real buttons and links, labelled form fields, keyboard-friendly dialogs, screen-reader announcements, and support for reduced motion. |
+| **Anyone** | `/shop`: delivery time and address header, search (typed or spoken, English and Hinglish like *pyaz*, *aloo*), category tiles, product rows, a category browser with a side rail, and a floating "View cart" bar. No account needed to browse; the cart is saved on the device. |
+| **Shoppers** | Checkout with delivery speed (express 45 min / early morning / saver), delivery address, UPI (QR with the exact amount) or cash on delivery, free-delivery threshold. Orders page with live status (placed → confirmed → packed → out for delivery → delivered), cancel before packing, order again. Account page with profile, address, help and FAQ. A guest cart merges into the account on login. |
+| **Team (admins)** | `/admin`: live order queue with status filters and one-tap next step; confirming re-checks prices and deducts stock, cancelling a confirmed order restocks. Products: add/edit name, category, unit, price, MRP, stock, search keywords, icon, sort order; show/hide; one-click starter catalog for a new project. |
+| **Everyone** | Landing page pre-rendered for search engines, JSON-LD, sitemap, fast loading (Firebase never loads on the landing page), mandi colour palette, motion that respects reduce-motion, no image files. |
 
 ## Tech stack
 
-React 19 · Vite 6 · React Router 7 · Firebase Auth + Cloud Firestore (offline cache) · Framer Motion · React Icons · Leaflet / React-Leaflet · qrcode.react · Vitest + Testing Library · ESLint · Vercel
+React 19 · Vite 6 · React Router 7 · Firebase Auth + Cloud Firestore (offline cache) · Framer Motion · React Icons · qrcode.react · Vitest + Testing Library · ESLint · Vercel
 
 ## Project structure
 
 ```text
 Bazar-Buddy/
-├── firebase/
-│   ├── firestore.rules           # security rules
-│   └── firestore.indexes.json    # composite index for the orders query
-├── public/                       # manifest, app icons
-├── src/
-│   ├── main.jsx                  # browser entry (hydrates the pre-rendered landing page)
-│   ├── entry-server.jsx          # build-time renderer for the landing page
-│   ├── App.jsx                   # landing page + lazy app shell
-│   ├── routes/
-│   │   ├── AppShell.jsx          # Firebase, auth, toasts, login + dashboard routes
-│   │   ├── lazy.js               # chunk loaders + idle prefetching
-│   │   └── sessionCheck.js       # lets the landing page detect a signed-in vendor
-│   ├── components/
-│   │   ├── common/               # BrandMark, ProductIcon, LanguageToggle, Modal, Loader, Toast styles
-│   │   ├── layout/               # TopNavbar, BottomNav, RouteGuards
-│   │   └── motion/               # Reveal, Stagger, WordReveal, TiltCard, Aurora, Confetti…
-│   ├── config/                   # firebase.js, app.js (fees, coin rules)
-│   ├── context/                  # Language, Auth, Toast, Shop (cart + orders)
-│   ├── data/                     # product catalog, vendor groups
-│   ├── features/                 # one folder per dashboard tab
-│   │   ├── home/
-│   │   ├── market/               # search, product cards, cart + checkout
-│   │   ├── orders/               # order list + tracker (used by Home and Market)
-│   │   ├── wallet/
-│   │   ├── trade/                # map, group details, barter board
-│   │   ├── profile/
-│   │   └── help/
-│   ├── hooks/                    # useVoiceSearch, useNow
-│   ├── i18n/                     # translations (en + hi), language list
-│   ├── seo/                      # JSON-LD builder + SEO tests
-│   ├── pages/
-│   │   ├── landing/              # LandingPage (section order) + content.js (what each section shows)
-│   │   │   └── sections/         # Nav, Hero, PhoneMock, Features, Categories, HowItWorks, Faq, FinalCta, Footer (each with its CSS)
-│   │   ├── auth/                 # AuthPage
-│   │   └── dashboard/            # DashboardPage (tab transitions)
-│   ├── services/                 # Firestore only: cart, orders, users, vendors
-│   ├── styles/                   # global.css (design tokens, shared classes)
-│   └── utils/                    # search, pricing, order status, validation, format
+├── firebase/                     # firestore.rules, firestore.indexes.json
+├── public/                       # manifest, icons, robots.txt, share image
 ├── scripts/prerender.js          # writes landing HTML, JSON-LD and sitemap.xml into dist/
-├── index.html                    # Vite HTML entry with SEO meta tags
-├── vite.config.js                # build, vendor chunks, Vitest
-├── eslint.config.js
-├── vercel.json                   # SPA rewrites + cache headers
-├── firebase.json
-├── .env.example                  # copy to .env.local
-└── package.json
+├── src/
+│   ├── main.jsx / entry-server.jsx / App.jsx
+│   ├── routes/                   # AppShell (providers + routes), RouteGuards, lazy loaders
+│   ├── content/strings.js        # all copy (English)
+│   ├── config/                   # firebase.js, app.js (delivery fees, free-delivery threshold)
+│   ├── context/                  # Auth (+ admin flag), Catalog (live products), Cart (guest + account), Toast
+│   ├── services/                 # Firestore: catalog, cart, orders, users
+│   ├── data/                     # categories, starter catalog (for the admin import)
+│   ├── features/
+│   │   ├── shop/                 # layout, header, home, category, search, product card, cart bar
+│   │   ├── cart/                 # cart + checkout, address form, order-placed modal
+│   │   ├── orders/               # orders page, tracker
+│   │   ├── account/              # profile, address, help
+│   │   └── admin/                # orders queue, products, product form
+│   ├── pages/                    # landing (sections + content.js), auth
+│   ├── components/               # common (Modal, ProductIcon, BrandMark…) and motion
+│   ├── hooks/ · seo/ · styles/ · utils/
+└── index.html · vite.config.js · vercel.json · firebase.json
 ```
-
-Tests sit next to the code they cover (`*.test.js` / `*.test.jsx`). `src/pages/dashboard/DashboardPage.test.jsx` renders every tab with Firebase mocked.
 
 ### Routes
 
-| Path | Screen |
-|---|---|
-| `/` | Landing page (signed-in vendors are sent to the dashboard) |
-| `/auth` | Login / register / password reset (`?mode=register` opens sign-up) |
-| `/dashboard` | Home (login required) |
-| `/dashboard/market` | Search, products, cart, my orders |
-| `/dashboard/wallet` | Coins, savings, redemptions, transactions |
-| `/dashboard/trade` | Vendor map, groups, barter board |
-| `/dashboard/profile` | Profile, language, logout |
-| `/dashboard/help` | Support numbers and FAQs |
+| Path | Screen | Access |
+|---|---|---|
+| `/` | Landing page | Public |
+| `/shop`, `/shop/category/:id`, `/shop/search?q=` | Shop | Public |
+| `/cart` | Cart and checkout | Public (login to order) |
+| `/orders`, `/account` | Orders, account | Signed in |
+| `/admin`, `/admin/products` | Admin panel | Admins |
+| `/auth?next=` | Login / register, then back to `next` | Public |
 
 ### Firestore data model
 
-| Collection | Contents | Who can access |
+| Collection | Contents | Access |
 |---|---|---|
-| `users/{uid}` | name, phone, language, coins, freeDeliveryCredits, savings | Owner only |
-| `users/{uid}/redemptions` | coin redemption history | Owner only |
-| `carts/{uid}` | `items: [{id, quantity}]`, speed, verified, payment | Owner only |
-| `orders/{id}` | items, fees, total, OTP, status, coinsEarned | Owner; can only cancel |
-| `vendorGroups/{id}/reviews` | rating (1–5) and text | Any signed-in user can read and add |
-| `vendorGroups/{id}/joinRequests/{uid}` | one request per vendor | Owner |
-| `barters/{id}` | offer and request | Any signed-in user can read; the author can delete |
+| `products/{id}` | name, category, unit, price, mrp, stock, active, icon, keywords, sortOrder | Read: anyone · Write: admins |
+| `users/{uid}` | name, phone, email, address | Owner, admins can read |
+| `carts/{uid}` | items `[{id, quantity}]`, speed, payment | Owner |
+| `orders/{id}` | customer, address, items (price snapshot), totals, speed, payment, status, statusHistory | Owner reads and can cancel before packing · Admins read and update status |
+| `admins/{uid}` | marks a team member | Read own · no writes from the app |
 
-Prices are always read from the catalog in `src/data/products.js`, never from the cart document.
+Prices in the cart always come from the live catalog. `placeOrder` re-reads every product inside a transaction and rejects sold-out items; confirming in the admin panel re-checks the total against current prices before deducting stock.
 
 ## Getting started
 
@@ -134,63 +90,38 @@ npm run dev
 
 Or pull the config straight from Vercel: `npx vercel env pull .env.development.local --environment production`.
 
-In the Firebase console, enable **Authentication → Email/Password** and create a **Firestore** database. Then deploy the rules and index:
+### Firebase setup
 
-```bash
-npx firebase-tools deploy --only firestore --project <your-project-id>
-```
+1. Enable **Authentication → Email/Password** and create a **Firestore** database.
+2. Deploy the rules and indexes: `npx firebase-tools deploy --only firestore --project <your-project-id>`.
+3. **Make yourself an admin:** register in the app, copy your user UID from Authentication → Users, then in Firestore create a document `admins/<that UID>` (any field, e.g. `role: "owner"`).
+4. Open `/admin/products`, click **Import starter catalog** (or add products by hand), then set real prices and stock. Products with stock 0 show as out of stock.
 
-If the Firebase variables are missing, the app shows a setup screen instead of crashing.
-
-Optional variables: `REACT_APP_UPI_ID`, `REACT_APP_SUPPORT_PHONE`, `REACT_APP_TOLL_FREE`.
+Optional variables: `REACT_APP_UPI_ID`, `REACT_APP_SUPPORT_PHONE`, `REACT_APP_TOLL_FREE`, `REACT_APP_SITE_URL`.
 
 ### Scripts
 
 | Command | Purpose |
 |---|---|
-| `npm run dev` (or `npm start`) | Vite dev server on http://localhost:3000, with instant reload |
-| `npm test` | Vitest in watch mode |
-| `npm run test:ci` | Run all tests once |
+| `npm run dev` | Vite dev server on http://localhost:3000 |
+| `npm test` / `npm run test:ci` | Vitest (watch / once) |
 | `npm run lint` | ESLint |
-| `npm run build` | Production build in `dist/`, then pre-renders the landing page and writes `sitemap.xml` |
+| `npm run build` | Production build in `dist/`, pre-renders the landing page and writes `sitemap.xml` |
 | `npm run preview` | Serve the production build locally |
-
-## Performance
-
-| | Before (Create React App) | Now (Vite) |
-|---|---|---|
-| Dev server cold start | 65 s | ~0.5 s (ready), ~3 s including Node startup |
-| Dev page load | 13.7 MB bundle | ~0.2 s, modules served on demand |
-| Production build | 49 s | ~5–8 s |
-| JS needed for the landing page (gzip) | 285 kB + chunks, Firebase included | ~164 kB, no Firebase |
-
-How:
-- **Firebase stays off the landing page.** Firebase, login and the dashboard live in a lazy app-shell chunk. They are prefetched while the browser is idle (skipped on Data Saver / 2G) and when a finger or cursor heads for a call-to-action button.
-- **Libraries split into long-lived vendor chunks** (`react`, `motion`, `firebase`, `map`), so a deploy doesn't force visitors to re-download libraries. Vercel serves `/assets/*` with a one-year immutable cache.
-- **Every tab is its own chunk.** The other tabs are prefetched once the dashboard is open, so switching is instant.
-- **Firestore offline cache** (IndexedDB) shows the cart, orders and profile instantly on repeat visits. Auth is initialised without the unused popup/redirect code.
-- **No images or Lottie files**, one font family, and an inline background color so the first paint isn't a white flash.
 
 ## Deployment (Vercel)
 
-The Vercel project is connected to this GitHub repo: every push to `main` deploys to production at https://bazar-buddy-neon.vercel.app, and other branches get preview links. The app lives at the repo root, so the Root Directory setting stays empty. The `REACT_APP_FIREBASE_*` variables are set in Project Settings → Environment Variables. `vercel.json` sets the Vite framework preset (output `dist/`), rewrites every route to `index.html` so deep links work, and adds long-term cache headers for hashed assets.
+Every push to `main` deploys to production at https://bazar-buddy-neon.vercel.app; other branches get preview links. `vercel.json` sets the Vite preset, SPA rewrites and long-term cache headers for hashed assets. Firestore rules are deployed separately with the Firebase CLI (step 2 above) whenever `firebase/firestore.rules` changes.
 
 ## Getting found on Google
 
-The site already sends the right signals (pre-rendered content, structured data, sitemap, fast loading). To get indexed and rank:
+The site is verified in Google Search Console (`public/googlef7f218449ee0b5a0.html`, keep this file). Submit `sitemap.xml` there, consider a custom domain, and build links from vendor associations and directories. Searches for "Bazar Buddy" should show the site first once indexed; generic terms take time.
 
-1. Add the site to [Google Search Console](https://search.google.com/search-console) and submit `https://bazar-buddy-neon.vercel.app/sitemap.xml`. Do the same in Bing Webmaster Tools.
-2. Use a custom domain (e.g. `bazarbuddy.in`). Set `REACT_APP_SITE_URL` on Vercel and update the URLs in `index.html` and `public/robots.txt`.
-3. Create a Google Business Profile, and get links from vendor associations, local news and directories.
+## Before handling real money
 
-Searches for "Bazar Buddy" should show the site first once it is indexed. Generic terms such as "wholesale vegetables app" take time and links; no code can guarantee a #1 ranking.
-
-## Known limitations / roadmap
-
-- **Order progress is estimated** from the order time and delivery speed. Connect a supplier or delivery-partner API to report real status.
-- **UPI payments are not verified automatically.** The supplier confirms them on delivery. Add a payment gateway (e.g. Razorpay) with server-side verification before handling real money.
-- **Coin balances are updated by the client** and only limited by the security rules. Move coin and order logic to Cloud Functions for production.
-- The catalog and vendor groups are static files. Next step: a supplier dashboard backed by Firestore.
+- **UPI payments are not verified automatically.** Staff check the payment before confirming. Add a payment gateway (e.g. Razorpay) with server-side verification.
+- **Orders are written by the shopper's device.** The admin "Confirm" step re-checks prices and stock, so a tampered order cannot be confirmed; moving order placement into a Cloud Function (Blaze plan) would reject it outright.
+- **Delivery times are estimates** from the chosen speed; there is no rider tracking yet.
 
 ## License
 

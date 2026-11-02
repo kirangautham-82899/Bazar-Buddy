@@ -1,14 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '../../../context/LanguageContext';
+import { t } from '../../../content/strings';
 import BrandMark from '../../../components/common/BrandMark';
-import LanguageToggle from '../../../components/common/LanguageToggle';
 import { NAV_LINKS } from '../content';
 import { warmAuthProps } from '../warmAuth';
 import './Nav.css';
 
 const Nav = () => {
-  const { t } = useLanguage();
   return (
     <header className="landing-nav">
       <Link to="/" className="landing-brand" aria-label={t('appName')}>
@@ -20,7 +18,7 @@ const Nav = () => {
         ))}
       </nav>
       <div className="landing-nav-actions">
-        <LanguageToggle short />
+        <Link to="/shop" className="text-link nav-shop-link">{t('startShopping')}</Link>
         <Link to="/auth" className="btn btn-sm" {...warmAuthProps}>
           {t('navLogin')}
         </Link>

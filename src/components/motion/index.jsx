@@ -1,10 +1,8 @@
 // Reusable motion primitives. All of them respect the OS "reduce motion"
 // setting through <MotionConfig reducedMotion="user"> in App.jsx.
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
-  animate,
   motion,
-  useInView,
   useReducedMotion,
   useSpring,
 } from 'framer-motion';
@@ -77,40 +75,6 @@ export const WordReveal = ({ text, as = 'h1', className, delay = 0 }) => {
       ))}
     </Tag>
   );
-};
-
-// Counts up to `value` when it becomes visible, and re-tweens when it changes.
-const defaultFormat = (n) => Math.round(n).toLocaleString('en-IN');
-
-export const AnimatedNumber = ({ value, format = defaultFormat, duration = 1.2 }) => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
-  const reduce = useReducedMotion();
-  const current = useRef(0);
-  // Kept in a ref so an inline `format` prop doesn't restart the tween every render.
-  const formatRef = useRef(format);
-  formatRef.current = format;
-  const [display, setDisplay] = useState(() => format(0));
-
-  useEffect(() => {
-    if (!inView) return undefined;
-    if (reduce) {
-      current.current = value;
-      setDisplay(formatRef.current(value));
-      return undefined;
-    }
-    const controls = animate(current.current, value, {
-      duration,
-      ease: EASE_OUT,
-      onUpdate: (v) => {
-        current.current = v;
-        setDisplay(formatRef.current(v));
-      },
-    });
-    return () => controls.stop();
-  }, [inView, value, duration, reduce]);
-
-  return <span ref={ref} className="tabular">{display}</span>;
 };
 
 // Pulls slightly toward the pointer, then springs back.

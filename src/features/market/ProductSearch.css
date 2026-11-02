@@ -1,0 +1,125 @@
+.product-search {
+  position: sticky;
+  top: var(--top-nav-height);
+  z-index: 10;
+  margin: 0 -16px 12px;
+  padding: 8px 16px 4px;
+  background: var(--color-bg);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px 4px 14px;
+  border: 1.5px solid var(--color-line);
+  border-radius: 999px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-bar:focus-within {
+  border-color: var(--color-brand);
+}
+
+.search-icon {
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+.search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-clear,
+.search-voice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.search-clear {
+  background: transparent;
+  color: var(--color-muted);
+}
+
+.search-voice {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+.search-voice.listening {
+  background: var(--color-danger);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(214, 69, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(214, 69, 69, 0);
+  }
+}
+
+.search-hint {
+  margin: 6px 4px 0;
+  font-size: 0.85rem;
+  color: var(--color-danger);
+}
+
+.category-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 0 4px;
+  scrollbar-width: none;
+}
+
+.category-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 4px 14px;
+  border: 1.5px solid var(--color-line);
+  border-radius: 999px;
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip.active {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: #fff;
+  font-weight: 600;
+}
+
+.search-count {
+  margin: 4px 4px 0;
+  font-size: 0.8rem;
+}

@@ -1,0 +1,92 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: url('../assets/images/register-bg.jpg') center / cover no-repeat fixed, var(--color-brand-soft);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-lang {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.auth-lang-btn {
+  min-height: 36px;
+  padding: 4px 12px;
+  border: 1.5px solid var(--color-line);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.auth-lang-btn.active {
+  border-color: var(--color-brand);
+  background: var(--color-brand-soft);
+  color: var(--color-brand-dark);
+  font-weight: 600;
+}
+
+.auth-animation {
+  height: 150px;
+}
+
+.auth-title {
+  font-size: 1.4rem;
+  text-align: center;
+  color: var(--color-brand-dark);
+  margin-bottom: 16px;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-brand);
+}
+
+.input-with-icon .input {
+  padding-left: 42px;
+}
+
+.auth-error {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: 0.9rem;
+}
+
+.auth-switch {
+  margin-top: 12px;
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  padding: 4px;
+  color: var(--color-brand);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}

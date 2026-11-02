@@ -1,0 +1,9 @@
+.dashboard {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.dashboard-main {
+  padding-top: var(--top-nav-height);
+  padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 8px);
+}

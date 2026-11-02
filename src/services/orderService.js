@@ -44,7 +44,7 @@ export const placeOrder = (uid) =>
 
     tx.set(orderRef, {
       uid,
-      items: items.map(({ id, name, price, unit, quantity, emoji }) => ({ id, name, price, unit, quantity, emoji })),
+      items: items.map(({ id, name, price, unit, quantity }) => ({ id, name, price, unit, quantity })),
       speed: options.speed,
       verified: options.verified,
       otp,

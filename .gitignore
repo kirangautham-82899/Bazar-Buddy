@@ -3,6 +3,8 @@ node_modules/
 
 # production build
 build/
+dist/
+.vite/
 
 # environment (never commit real keys)
 .env

@@ -1,8 +1,9 @@
 import React, { useId, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaChevronDown, FaPhoneAlt } from 'react-icons/fa';
+import { FaChevronDown, FaHeadset, FaPhoneAlt, FaPhoneVolume, FaQuestion } from 'react-icons/fa';
 import { useLanguage } from '../../context/LanguageContext';
 import { SUPPORT_PHONE, TOLL_FREE } from '../../config/app';
+import { Reveal, Stagger, staggerItem } from '../../components/motion';
 import './HelpSection.css';
 
 const FAQ_COUNT = 5;
@@ -38,32 +39,44 @@ const FaqItem = ({ question, answer }) => {
 const HelpSection = () => {
   const { t } = useLanguage();
   return (
-    <motion.div className="page" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <h1 className="page-title">🆘 {t('helpTitle')}</h1>
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">{t('helpTitle')}</h1>
+        <p className="page-subtitle">{t('helpSubtitle')}</p>
+      </header>
 
-      <div className="grid grid-2">
-        <section className="card help-card">
-          <h2 className="card-title">📞 {t('callSupport')}</h2>
+      <Stagger className="grid grid-2">
+        <motion.section className="card help-card" variants={staggerItem}>
+          <h2 className="card-title">
+            <span className="card-title-icon"><FaHeadset aria-hidden="true" /></span>
+            {t('callSupport')}
+          </h2>
           <p className="muted">{t('callDesc')}</p>
           <a href={`tel:${SUPPORT_PHONE}`} className="btn btn-block">
             <FaPhoneAlt aria-hidden="true" /> {t('callNow')}
           </a>
-        </section>
+        </motion.section>
 
-        <section className="card help-card">
-          <h2 className="card-title">☎️ {t('tollFree')}</h2>
+        <motion.section className="card help-card" variants={staggerItem}>
+          <h2 className="card-title">
+            <span className="card-title-icon"><FaPhoneVolume aria-hidden="true" /></span>
+            {t('tollFree')}
+          </h2>
           <p className="muted">{t('tollDesc')}</p>
-          <a href={`tel:${TOLL_FREE.replace(/-/g, '')}`} className="help-toll">{TOLL_FREE}</a>
-        </section>
-      </div>
+          <a href={`tel:${TOLL_FREE.replace(/-/g, '')}`} className="help-toll gradient-text">{TOLL_FREE}</a>
+        </motion.section>
+      </Stagger>
 
-      <section className="card help-faq">
-        <h2 className="card-title">❓ {t('faqTitle')}</h2>
+      <Reveal as="section" className="card help-faq" delay={0.15}>
+        <h2 className="card-title">
+          <span className="card-title-icon"><FaQuestion aria-hidden="true" /></span>
+          {t('faqTitle')}
+        </h2>
         {Array.from({ length: FAQ_COUNT }, (_, i) => (
           <FaqItem key={i} question={t(`faq${i + 1}q`)} answer={t(`faq${i + 1}a`)} />
         ))}
-      </section>
-    </motion.div>
+      </Reveal>
+    </div>
   );
 };
 

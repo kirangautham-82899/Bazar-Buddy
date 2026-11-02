@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { FaMicrophone, FaSearch, FaStop, FaTimes } from 'react-icons/fa';
 import { useLanguage } from '../../context/LanguageContext';
 import { useVoiceSearch } from '../../hooks/useVoiceSearch';
@@ -57,7 +58,10 @@ const ProductSearch = ({ query, onQueryChange, category, onCategoryChange, resul
             aria-pressed={category === c}
             onClick={() => onCategoryChange(c)}
           >
-            {c === 'all' ? t('allCategories') : t(CATEGORY_LABEL_KEYS[c])}
+            {category === c && (
+              <motion.span layoutId="category-pill" className="chip-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
+            )}
+            <span className="chip-label">{c === 'all' ? t('allCategories') : t(CATEGORY_LABEL_KEYS[c])}</span>
           </button>
         ))}
       </div>

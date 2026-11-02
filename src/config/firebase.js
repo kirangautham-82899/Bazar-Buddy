@@ -1,15 +1,15 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { browserLocalPersistence, indexedDBLocalPersistence, initializeAuth } from 'firebase/auth';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
+  apiKey: import.meta.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: import.meta.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: import.meta.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 // Without these the SDK throws on first use, so the app shows a setup screen instead.
@@ -19,5 +19,13 @@ export const isFirebaseConfigured = Boolean(
 
 const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
 
-export const auth = app ? getAuth(app) : null;
-export const db = app ? getFirestore(app) : null;
+// Email/password only, so skip getAuth()'s popup/redirect sign-in code.
+export const auth = app
+  ? initializeAuth(app, { persistence: [indexedDBLocalPersistence, browserLocalPersistence] })
+  : null;
+
+// Cache Firestore data on the device: the cart, orders and profile show instantly
+// on repeat visits and keep working on a flaky connection, then sync.
+export const db = app
+  ? initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) })
+  : null;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaTrash } from 'react-icons/fa';
+import { FaExchangeAlt, FaPaperPlane, FaTrash } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useShop } from '../../context/ShopContext';
@@ -38,7 +38,10 @@ const BarterBoard = () => {
 
   return (
     <section className="card barter" aria-labelledby="barter-title">
-      <h2 id="barter-title" className="card-title">🔁 {t('barter')}</h2>
+      <h2 id="barter-title" className="card-title">
+        <span className="card-title-icon"><FaExchangeAlt aria-hidden="true" /></span>
+        {t('barter')}
+      </h2>
       <p className="muted">{t('barterDesc')}</p>
 
       <form className="barter-form" onSubmit={handleSubmit}>
@@ -46,19 +49,31 @@ const BarterBoard = () => {
         <input id="barter-offer" className="input" placeholder={t('offerItem')} value={offer} maxLength={80} onChange={(e) => setOffer(e.target.value)} required />
         <label htmlFor="barter-request" className="visually-hidden">{t('requestItem')}</label>
         <input id="barter-request" className="input" placeholder={t('requestItem')} value={request} maxLength={80} onChange={(e) => setRequest(e.target.value)} required />
-        <button type="submit" className="btn" disabled={posting}>📩 {t('postBarter')}</button>
+        <motion.button whileTap={{ scale: 0.96 }} type="submit" className="btn" disabled={posting}>
+          <FaPaperPlane aria-hidden="true" /> {t('postBarter')}
+        </motion.button>
       </form>
 
       {barters.length === 0 ? (
         <p className="empty-state">{t('noBarters')}</p>
       ) : (
-        <ul className="barter-list">
+        <motion.ul layout className="barter-list">
           <AnimatePresence initial={false}>
             {barters.map((b) => (
-              <motion.li key={b.id} className="barter-entry" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
-                <span>
-                  📦 <strong>{b.offer}</strong> ↔ 🎯 <strong>{b.request}</strong>
-                  <span className="muted barter-by"> · {b.uid === user.uid ? t('you') : b.name || '—'}</span>
+              <motion.li
+                key={b.id}
+                layout
+                className="barter-entry"
+                initial={{ opacity: 0, y: -10, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 40 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+              >
+                <span className="barter-swap">
+                  <span className="barter-chip">{b.offer}</span>
+                  <FaExchangeAlt className="barter-arrow" aria-label="↔" />
+                  <span className="barter-chip barter-chip-want">{b.request}</span>
+                  <span className="muted barter-by">{b.uid === user.uid ? t('you') : b.name || '—'}</span>
                 </span>
                 {b.uid === user.uid && (
                   <button type="button" className="icon-btn icon-btn-danger" onClick={() => deleteBarter(b.id).catch(reportError)} aria-label={t('delete')}>
@@ -68,7 +83,7 @@ const BarterBoard = () => {
               </motion.li>
             ))}
           </AnimatePresence>
-        </ul>
+        </motion.ul>
       )}
     </section>
   );

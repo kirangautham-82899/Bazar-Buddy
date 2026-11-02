@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { signOut, updateProfile } from 'firebase/auth';
-import { FaQuestionCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaEnvelope, FaPen, FaPhone, FaQuestionCircle, FaSignOutAlt, FaUser } from 'react-icons/fa';
 import { auth } from '../../config/firebase';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -55,14 +55,26 @@ const ProfileSection = () => {
   const initial = (profile?.name || user.email || '?').charAt(0).toUpperCase();
 
   return (
-    <motion.div className="page profile-page" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-      <h1 className="page-title">{t('profile')}</h1>
-
+    <div className="page profile-page">
       <section className="card profile-card">
-        <div className="profile-avatar" aria-hidden="true">{initial}</div>
+        <div className="profile-cover" aria-hidden="true" />
+        <motion.div
+          className="profile-avatar"
+          aria-hidden="true"
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+        >
+          {initial}
+        </motion.div>
+        <div className="profile-identity">
+          <h1 className="page-title">{profile?.name || user.displayName || t('profile')}</h1>
+          <p className="muted">{user.email}</p>
+        </div>
 
+        <AnimatePresence mode="wait" initial={false}>
         {editing ? (
-          <form onSubmit={handleSave} noValidate>
+          <motion.form key="edit" onSubmit={handleSave} noValidate initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
             <div className="field">
               <label htmlFor="profile-name">{t('name')}</label>
               <input id="profile-name" className="input" value={form.name} aria-invalid={Boolean(errors.name)} onChange={(e) => setForm({ ...form, name: e.target.value })} autoComplete="name" />
@@ -77,17 +89,20 @@ const ProfileSection = () => {
               <button type="submit" className="btn" disabled={saving}>{t('save')}</button>
               <button type="button" className="btn btn-secondary" onClick={() => setEditing(false)}>{t('cancel')}</button>
             </div>
-          </form>
+          </motion.form>
         ) : (
-          <>
+          <motion.div key="view" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
             <dl className="profile-details">
-              <div><dt>{t('name')}</dt><dd>{profile?.name || user.displayName || t('notSet')}</dd></div>
-              <div><dt>{t('email')}</dt><dd>{user.email}</dd></div>
-              <div><dt>{t('phone')}</dt><dd>{profile?.phone || t('notSet')}</dd></div>
+              <div><dt><FaUser aria-hidden="true" /> {t('name')}</dt><dd>{profile?.name || user.displayName || t('notSet')}</dd></div>
+              <div><dt><FaEnvelope aria-hidden="true" /> {t('email')}</dt><dd>{user.email}</dd></div>
+              <div><dt><FaPhone aria-hidden="true" /> {t('phone')}</dt><dd>{profile?.phone || t('notSet')}</dd></div>
             </dl>
-            <button type="button" className="btn btn-secondary btn-block" onClick={startEditing}>{t('editProfile')}</button>
-          </>
+            <button type="button" className="btn btn-secondary btn-block" onClick={startEditing}>
+              <FaPen aria-hidden="true" /> {t('editProfile')}
+            </button>
+          </motion.div>
         )}
+        </AnimatePresence>
 
         <fieldset className="choice-group choice-row profile-language">
           <legend>{t('languageLabel')}</legend>
@@ -106,7 +121,7 @@ const ProfileSection = () => {
           <FaSignOutAlt aria-hidden="true" /> {t('logout')}
         </button>
       </section>
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,31 +1,49 @@
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
   gap: 12px;
 }
 
 .product-card {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 12px;
+  gap: 6px;
+  padding: 14px;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-lg);
-  background: var(--gradient-card);
+  background: #fff;
   box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.product-emoji {
-  font-size: 2rem;
-  line-height: 1;
+.product-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.product-card.in-cart {
+  border-color: #f5b8d3;
+  box-shadow: 0 0 0 3px rgba(224, 51, 127, 0.08), var(--shadow-sm);
+}
+
+.product-ribbon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--gradient-warm);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .product-name {
   font-size: 0.95rem;
-  font-weight: 600;
-  margin: 4px 0 0;
+  font-weight: 700;
+  margin: 6px 0 0;
 }
 
 .product-price {
@@ -35,6 +53,10 @@
   gap: 2px 4px;
   margin: 0;
   font-size: 0.9rem;
+}
+
+.product-price strong {
+  font-size: 1.05rem;
 }
 
 .product-mrp {
@@ -47,19 +69,27 @@
   padding-top: 8px;
 }
 
+.product-action .stepper {
+  width: 100%;
+}
+
+/* Quantity stepper */
 .stepper {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
   gap: 4px;
   min-width: 112px;
-  border-radius: var(--radius-md);
-  background: var(--color-brand);
+  height: 36px;
+  border-radius: 12px;
+  background: var(--gradient-brand);
   color: #fff;
+  box-shadow: var(--shadow-brand);
 }
 
-.product-action .stepper {
-  width: 100%;
+.stepper-compact {
+  min-width: 96px;
+  height: 34px;
 }
 
 .stepper-btn {
@@ -67,26 +97,31 @@
   align-items: center;
   justify-content: center;
   width: 36px;
-  height: 36px;
+  height: 100%;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   background: transparent;
   color: inherit;
   cursor: pointer;
+  font-size: 0.8rem;
 }
 
 .stepper-btn:hover {
-  background: var(--color-brand-dark);
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .stepper-value {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
   min-width: 24px;
-  text-align: center;
+  overflow: hidden;
   font-weight: 700;
 }
 
+/* Cart & orders */
 .market-bottom {
-  margin-top: 20px;
+  margin-top: 24px;
   align-items: start;
 }
 
@@ -98,18 +133,15 @@
 .cart-lines {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   margin-bottom: 16px;
 }
 
 .cart-line {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.cart-line-emoji {
-  font-size: 1.5rem;
+  gap: 10px;
+  padding: 6px 0;
+  overflow: hidden;
 }
 
 .cart-line-info {
@@ -120,12 +152,18 @@
   font-size: 0.9rem;
 }
 
+.cart-line-info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .cart-line-info .muted {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 .choice-standalone {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .choice-row {
@@ -137,15 +175,15 @@
 }
 
 .totals {
-  margin: 0 0 12px;
-  padding: 12px 0 0;
+  margin: 0 0 14px;
+  padding: 14px 0 0;
   border-top: 1px dashed var(--color-line);
 }
 
 .totals > div {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   font-size: 0.92rem;
 }
 
@@ -153,41 +191,67 @@
   margin: 0;
 }
 
-.totals-saving {
-  color: var(--color-success);
-}
-
 .totals-note {
-  margin: 0 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
   font-size: 0.82rem;
   color: var(--color-success);
+  overflow: hidden;
 }
 
 .totals-grand {
-  padding-top: 6px;
-  font-size: 1.05rem !important;
-  font-weight: 700;
+  padding-top: 8px;
+  font-size: 1.15rem !important;
+  font-weight: 800;
+}
+
+/* Order placed */
+.order-success {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.order-success-coins {
+  margin: 0;
+  font-weight: 600;
 }
 
 .upi-pay {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  margin-bottom: 12px;
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+.upi-pay h3 {
+  font-size: 1rem;
+}
+
+.upi-pay p {
+  margin: 4px 0 0;
 }
 
 .upi-qr {
-  width: 200px;
-  height: 200px;
-  object-fit: contain;
-  margin-bottom: 12px;
+  padding: 12px;
+  margin: 4px 0 8px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-line);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
 }
 
+.upi-qr svg {
+  display: block;
+}
 
-.upi-pay + .otp-box,
-.otp-box + .btn {
-  margin-bottom: 12px;
+.upi-app-link {
+  margin: 10px 0 4px;
 }

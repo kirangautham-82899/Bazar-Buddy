@@ -1,0 +1,243 @@
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  background: var(--color-bg);
+}
+
+@media (min-width: 960px) {
+  .auth-page {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Brand panel (desktop) */
+.auth-panel {
+  position: relative;
+  isolation: isolate;
+  display: none;
+  overflow: hidden;
+  color: #fff;
+}
+
+@media (min-width: 960px) {
+  .auth-panel {
+    display: flex;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+}
+
+.auth-panel .aurora {
+  z-index: -1;
+}
+
+.auth-panel-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 36px 48px;
+}
+
+.auth-panel-brand {
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.auth-orbit {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: auto auto 32px;
+}
+
+.orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+}
+
+.orbit-ring-2 {
+  inset: 70px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: radial-gradient(circle, rgba(255, 79, 154, 0.35), transparent 70%);
+}
+
+/* Items ride a rotating ring; the inner wrapper counter-rotates to stay upright. */
+.orbit-item {
+  position: absolute;
+  inset: 0;
+  animation: orbit 24s linear infinite;
+  animation-delay: calc(var(--i) * -24s / var(--n));
+}
+
+.orbit-counter {
+  position: absolute;
+  top: -26px;
+  left: calc(50% - 26px);
+  animation: orbit 24s linear infinite reverse;
+  animation-delay: calc(var(--i) * -24s / var(--n));
+}
+
+.orbit-counter .product-icon {
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+
+.auth-panel-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  max-width: 420px;
+  margin-bottom: 10px;
+}
+
+.auth-benefit {
+  min-height: 3.2em;
+  max-width: 420px;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.auth-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.auth-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  transition: width 0.4s var(--ease-out), background 0.4s ease;
+}
+
+.auth-dots span.active {
+  width: 24px;
+  background: #fff;
+}
+
+/* Form side */
+.auth-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 16px 40px;
+  background:
+    radial-gradient(600px 300px at 100% 0%, rgba(255, 140, 192, 0.18), transparent 70%),
+    radial-gradient(500px 300px at 0% 100%, rgba(196, 163, 255, 0.18), transparent 70%);
+}
+
+.auth-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  margin: auto 0;
+  padding: 28px 24px;
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-mobile-brand {
+  margin-bottom: 18px;
+}
+
+@media (min-width: 960px) {
+  .auth-mobile-brand {
+    display: none;
+  }
+}
+
+.auth-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.auth-subtitle {
+  margin: 6px 0 18px;
+}
+
+.auth-tabs {
+  display: grid;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-muted);
+  transition: color 0.2s ease;
+  pointer-events: none;
+}
+
+.input-with-icon:focus-within .input-icon {
+  color: var(--color-brand);
+}
+
+.input-with-icon .input {
+  padding-left: 44px;
+}
+
+.input-trailing {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.input-trailing:hover {
+  color: var(--color-brand);
+  background: var(--color-brand-soft);
+}
+
+.input-with-icon:has(.input-trailing) .input {
+  padding-right: 50px;
+}
+
+.auth-error {
+  padding: 10px 12px;
+  margin: 0 0 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  overflow: hidden;
+}
+
+.auth-forgot {
+  margin-top: 6px;
+}

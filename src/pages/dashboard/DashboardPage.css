@@ -1,0 +1,32 @@
+.dashboard {
+  position: relative;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.dashboard-glow {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 340px;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(500px 220px at 15% 0%, rgba(255, 140, 192, 0.22), transparent 70%),
+    radial-gradient(520px 240px at 85% 0%, rgba(196, 163, 255, 0.22), transparent 70%);
+}
+
+.dashboard-main {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--top-nav-height);
+  padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 16px);
+}
+
+/* Page heading shared by every tab */
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}

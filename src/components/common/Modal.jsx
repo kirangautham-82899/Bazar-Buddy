@@ -41,9 +41,10 @@ const Modal = ({ open, title, onClose, children }) => {
             aria-labelledby={titleId}
             tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 40, opacity: 0 }}
+            initial={{ y: 60, opacity: 0, scale: 0.96 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 40, opacity: 0, scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
           >
             <div className="modal-header">
               <h2 id={titleId} className="modal-title">{title}</h2>

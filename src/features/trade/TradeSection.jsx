@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { FaBolt, FaCheckCircle } from 'react-icons/fa';
+import { FaBolt, FaCheckCircle, FaChevronRight, FaUsers } from 'react-icons/fa';
+import { Stagger, staggerItem } from '../../components/motion';
 import { useLanguage } from '../../context/LanguageContext';
 import vendorGroups from '../../data/vendorGroups';
 import { DEFAULT_MAP_CENTER } from '../../config/app';
@@ -11,13 +12,16 @@ import GroupDetails from './GroupDetails';
 import BarterBoard from './BarterBoard';
 import './TradeSection.css';
 
-// Bundlers don't resolve Leaflet's default marker images on their own.
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-});
+// Map pins drawn in CSS instead of Leaflet's PNG marker images.
+const pinIcon = (verified) =>
+  L.divIcon({
+    className: '',
+    html: `<span class="map-pin${verified ? ' map-pin-verified' : ''}"><span class="map-pin-dot"></span></span>`,
+    iconSize: [30, 40],
+    iconAnchor: [15, 38],
+    popupAnchor: [0, -34],
+  });
+const PIN = { verified: pinIcon(true), regular: pinIcon(false) };
 
 const GroupBadges = ({ group }) => {
   const { t } = useLanguage();
@@ -35,17 +39,27 @@ const TradeSection = () => {
   const selectedGroup = vendorGroups.find((g) => g.id === selectedId) || null;
 
   return (
-    <motion.div className="page" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-      <h1 className="page-title">{t('vendorMap')}</h1>
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">{t('vendorMap')}</h1>
+        <p className="page-subtitle">{t('tradeSubtitle')}</p>
+      </header>
 
-      <div className="map-wrap" role="region" aria-label={t('mapLabel')}>
+      <motion.div
+        className="map-wrap"
+        role="region"
+        aria-label={t('mapLabel')}
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         <MapContainer center={DEFAULT_MAP_CENTER} zoom={11} scrollWheelZoom={false} className="vendor-map">
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {vendorGroups.map((group) => (
-            <Marker key={group.id} position={[group.lat, group.lng]} title={group.name}>
+            <Marker key={group.id} position={[group.lat, group.lng]} title={group.name} icon={group.verified ? PIN.verified : PIN.regular}>
               <Popup>
                 <strong>{group.name}</strong>
                 <br />
@@ -58,29 +72,34 @@ const TradeSection = () => {
             </Marker>
           ))}
         </MapContainer>
-      </div>
+      </motion.div>
 
       <section className="card trade-groups" aria-labelledby="group-list-title">
-        <h2 id="group-list-title" className="card-title">{t('groupList')}</h2>
-        <ul className="group-list">
+        <h2 id="group-list-title" className="card-title">
+          <span className="card-title-icon"><FaUsers aria-hidden="true" /></span>
+          {t('groupList')}
+        </h2>
+        <Stagger as="ul" className="group-list" stagger={0.035} delay={0.1}>
           {vendorGroups.map((group) => (
-            <li key={group.id}>
+            <motion.li key={group.id} variants={staggerItem}>
               <button type="button" className="group-row" onClick={() => setSelectedId(group.id)}>
+                <span className="group-avatar" aria-hidden="true">{group.name.charAt(0)}</span>
                 <span className="group-row-main">
                   <strong>{group.name}</strong>
                   <span className="muted">{t('members', { n: group.members })} · {group.offer}</span>
                 </span>
                 <GroupBadges group={group} />
+                <FaChevronRight className="group-row-chevron" aria-hidden="true" />
               </button>
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </Stagger>
       </section>
 
       <BarterBoard />
 
       <GroupDetails group={selectedGroup} onClose={() => setSelectedId(null)} badges={selectedGroup && <GroupBadges group={selectedGroup} />} />
-    </motion.div>
+    </div>
   );
 };
 

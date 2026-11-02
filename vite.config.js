@@ -41,5 +41,7 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/setupTests.js',
     css: false,
+    // App-level tests lazy-load screens; a cold first run can take several seconds.
+    testTimeout: 15000,
   },
 });

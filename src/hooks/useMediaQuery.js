@@ -6,7 +6,13 @@ export const useMediaQuery = (queryText) => {
     (onChange) => {
       const list = window.matchMedia(queryText);
       list.addEventListener('change', onChange);
-      return () => list.removeEventListener('change', onChange);
+      // Some browsers and device emulators skip the media-query change event on
+      // resize, so the plain resize event is the backstop (React ignores no-op updates).
+      window.addEventListener('resize', onChange);
+      return () => {
+        list.removeEventListener('change', onChange);
+        window.removeEventListener('resize', onChange);
+      };
     },
     [queryText]
   );

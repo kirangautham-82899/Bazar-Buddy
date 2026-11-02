@@ -2,13 +2,12 @@
 // so the FAQ rich result can never drift from the visible FAQ.
 import { translate } from '../i18n/translations';
 import { SITE_URL } from '../config/app';
-import { servedAreas } from '../data/vendorGroups';
+import { LANDING_FAQ } from '../pages/landing/content';
 
-export const FAQ_NUMBERS = [1, 6, 4, 5, 7, 2, 3];
+const INDIA = { '@type': 'Country', name: 'India' };
 
 export const buildStructuredData = (lang = 'en') => {
   const t = (key) => translate(lang, key);
-  const areas = servedAreas.map((name) => ({ '@type': 'Place', name: `${name}, Delhi NCR` }));
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -20,7 +19,7 @@ export const buildStructuredData = (lang = 'en') => {
         url: `${SITE_URL}/`,
         logo: `${SITE_URL}/logo512.png`,
         description: t('footerTagline'),
-        areaServed: areas,
+        areaServed: INDIA,
       },
       {
         '@type': 'WebSite',
@@ -39,12 +38,12 @@ export const buildStructuredData = (lang = 'en') => {
         inLanguage: ['en-IN', 'hi-IN'],
         description: t('heroSubtitle'),
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
-        areaServed: areas,
+        areaServed: INDIA,
         publisher: { '@id': `${SITE_URL}/#organization` },
       },
       {
         '@type': 'FAQPage',
-        mainEntity: FAQ_NUMBERS.map((n) => ({
+        mainEntity: LANDING_FAQ.map((n) => ({
           '@type': 'Question',
           name: t(`faq${n}q`),
           acceptedAnswer: { '@type': 'Answer', text: t(`faq${n}a`) },

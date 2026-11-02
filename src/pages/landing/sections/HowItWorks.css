@@ -1,0 +1,116 @@
+/* Three numbered steps joined by a line that fills on scroll:
+   vertical on phones, horizontal from tablet width. */
+.steps {
+  position: relative;
+}
+
+.steps-list {
+  display: grid;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 820px) {
+  .steps-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    text-align: center;
+  }
+}
+
+.steps-track {
+  position: absolute;
+  left: 23px;
+  top: 24px;
+  bottom: 24px;
+  width: 2px;
+  background: var(--color-line);
+}
+
+.steps-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-warm);
+}
+
+.steps-fill-y {
+  transform-origin: top center;
+}
+
+.steps-fill-x {
+  display: none;
+  transform-origin: left center;
+}
+
+@media (min-width: 820px) {
+  .steps-track {
+    left: 16.6%;
+    right: 16.6%;
+    top: 23px;
+    bottom: auto;
+    width: auto;
+    height: 2px;
+  }
+
+  .steps-fill-y {
+    display: none;
+  }
+
+  .steps-fill-x {
+    display: block;
+  }
+}
+
+.step {
+  position: relative;
+  padding-left: 72px;
+}
+
+@media (min-width: 820px) {
+  .step {
+    padding: 0;
+  }
+}
+
+.step-number {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--color-brand);
+  background: var(--color-bg);
+  color: var(--color-brand);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+@media (min-width: 820px) {
+  .step-number {
+    position: relative;
+    margin-bottom: 18px;
+  }
+}
+
+.step h3 {
+  margin: 4px 0 6px;
+  font-size: 1.15rem;
+}
+
+.step p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+@media (min-width: 820px) {
+  .step p {
+    max-width: 280px;
+    margin-inline: auto;
+  }
+}

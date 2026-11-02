@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { FaMicrophone, FaSearch } from 'react-icons/fa';
-import { useLanguage } from '../../context/LanguageContext';
-import { catalog } from '../../data/products';
-import vendorGroups from '../../data/vendorGroups';
-import { searchProducts } from '../../utils/search';
-import { fairPriceFor, isOverpriced } from '../../utils/pricing';
-import { formatRupees, productName } from '../../utils/format';
-import ProductIcon from '../../components/common/ProductIcon';
+import { useLanguage } from '../../../context/LanguageContext';
+import { catalog } from '../../../data/products';
+import vendorGroups from '../../../data/vendorGroups';
+import { searchProducts } from '../../../utils/search';
+import { fairPriceFor, isOverpriced } from '../../../utils/pricing';
+import { formatRupees, productName } from '../../../utils/format';
+import ProductIcon from '../../../components/common/ProductIcon';
 
 const QUERIES = ['pyaz', 'टमाटर', 'aloo', 'mirch'];
 

@@ -16,7 +16,7 @@
 
 ## Overview
 
-Bazar Buddy is a mobile-first marketplace for street vendors. Vendors search for raw material in **English, Hindi or Hinglish (also by voice)**, see whether a price is fair compared with nearby suppliers, place orders and follow their progress, earn reward coins, and trade spare stock with vendor groups nearby.
+Bazar Buddy is a mobile-first wholesale marketplace for street vendors across India. Vendors search for raw material in **English, Hindi or Hinglish (also by voice)**, see whether a price is fair compared with nearby suppliers, place orders and follow their progress, earn reward coins, and trade spare stock with vendor groups nearby.
 
 ## Features
 
@@ -31,9 +31,9 @@ Bazar Buddy is a mobile-first marketplace for street vendors. Vendors search for
 | 💳 **Payment** | UPI (QR code and UPI ID) or cash on delivery. |
 | 📦 **Orders** | Order history with a progress tracker and expected delivery time. You can cancel before the order is out for delivery, and coins are refunded. |
 | 💰 **Apna Coins** | Earn 1 coin per ₹20 spent. Redeem 50 coins for a free delivery, which is applied automatically at checkout. |
-| 🗺️ **Vendor groups** | Leaflet map plus an accessible list of 15 groups around Delhi NCR, with stock, prices, reviews and join requests. |
+| 🗺️ **Vendor groups** | Leaflet map plus an accessible list of nearby groups, with stock, prices, reviews and join requests (sample groups ship in `src/data/vendorGroups.js` until real ones are onboarded). |
 | 🔁 **Community barter** | A live board where vendors post swap offers. |
-| 🥬 **Mandi theme** | Leaf green, tomato red and turmeric yellow on a warm cream background, with a cardless landing page: open sections, hairlines, big type. |
+| 🥬 **Mandi theme** | Leaf green, tomato red and turmeric yellow on a warm cream background, with a calm, cardless landing page: six sections (hero, features, categories, how it works, FAQ, sign-up) with even spacing and no boxes. |
 | 🔎 **SEO** | Landing page pre-rendered to HTML at build time, with keyword-focused title and description, JSON-LD (Organization, WebSite, WebApplication, FAQPage), Open Graph share image, `robots.txt` and `sitemap.xml`. Login and dashboard are `noindex`. |
 | ✨ **Motion design** | Word-by-word hero reveal, scroll-linked parallax, tilt cards, sliding tab indicators, cards that reflow when you filter, animated counters and a success tick with confetti. All of it respects the reduce-motion setting. |
 | 🖼️ **No pictures** | No image files or Lottie animations: visuals come from CSS gradients, code-drawn SVG and vector icons, so pages stay light. The UPI QR is generated with the real amount. |
@@ -78,7 +78,8 @@ Bazar-Buddy/
 │   ├── i18n/                     # translations (en + hi), language list
 │   ├── seo/                      # JSON-LD builder + SEO tests
 │   ├── pages/
-│   │   ├── landing/              # LandingPage, PhoneMock
+│   │   ├── landing/              # LandingPage (section order) + content.js (what each section shows)
+│   │   │   └── sections/         # Nav, Hero, PhoneMock, Features, Categories, HowItWorks, Faq, FinalCta, Footer (each with its CSS)
 │   │   ├── auth/                 # AuthPage
 │   │   └── dashboard/            # DashboardPage (tab transitions)
 │   ├── services/                 # Firestore only: cart, orders, users, vendors
@@ -182,7 +183,7 @@ The site already sends the right signals (pre-rendered content, structured data,
 2. Use a custom domain (e.g. `bazarbuddy.in`). Set `REACT_APP_SITE_URL` on Vercel and update the URLs in `index.html` and `public/robots.txt`.
 3. Create a Google Business Profile, and get links from vendor associations, local news and directories.
 
-Searches for "Bazar Buddy" should show the site first once it is indexed. Generic terms such as "wholesale vegetables Delhi" take time and links; no code can guarantee a #1 ranking.
+Searches for "Bazar Buddy" should show the site first once it is indexed. Generic terms such as "wholesale vegetables app" take time and links; no code can guarantee a #1 ranking.
 
 ## Known limitations / roadmap
 

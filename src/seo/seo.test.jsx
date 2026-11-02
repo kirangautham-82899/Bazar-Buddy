@@ -2,7 +2,8 @@
 // Guards what search engines see: the pre-rendered landing HTML and the JSON-LD.
 import { readFileSync } from 'node:fs';
 import { render } from '../entry-server';
-import { FAQ_NUMBERS, buildStructuredData } from './structuredData';
+import { buildStructuredData } from './structuredData';
+import { LANDING_FAQ } from '../pages/landing/content';
 import { translate } from '../i18n/translations';
 
 const t = (key) => translate('en', key);
@@ -14,17 +15,17 @@ describe('pre-rendered landing page', () => {
     expect(html).toMatch(/<h1[^>]*aria-label="Fresh vegetables &amp; groceries at fair mandi prices"/);
     expect(html).toContain(t('heroSubtitle'));
     expect(html).toContain(t('categoriesTitle'));
-    expect(html).toContain(t('areasTitle'));
-    expect(html).toContain('Chandni Chowk');
+    expect(html).toContain(t('howTitle'));
+    expect(html).toContain(t('catVegetables'));
+  });
+
+  it('speaks to all of India, not one city', () => {
+    expect(html).toContain('across India');
+    expect(html).not.toMatch(/Delhi|NCR/);
   });
 
   it('includes every FAQ answer in the HTML', () => {
-    FAQ_NUMBERS.forEach((n) => expect(html).toContain(t(`faq${n}a`)));
-  });
-
-  it('names products in both English and Hindi', () => {
-    expect(html).toContain('Tomatoes');
-    expect(html).toContain('टमाटर');
+    LANDING_FAQ.forEach((n) => expect(html).toContain(t(`faq${n}a`)));
   });
 
   it('has exactly one h1', () => {
@@ -40,9 +41,14 @@ describe('structured data', () => {
     expect(types).toEqual(['Organization', 'WebSite', 'WebApplication', 'FAQPage']);
   });
 
+  it('serves the whole country', () => {
+    const app = data['@graph'].find((node) => node['@type'] === 'WebApplication');
+    expect(app.areaServed).toEqual({ '@type': 'Country', name: 'India' });
+  });
+
   it('mirrors the visible FAQ exactly', () => {
     const faq = data['@graph'].find((node) => node['@type'] === 'FAQPage');
-    expect(faq.mainEntity.map((q) => q.name)).toEqual(FAQ_NUMBERS.map((n) => t(`faq${n}q`)));
+    expect(faq.mainEntity.map((q) => q.name)).toEqual(LANDING_FAQ.map((n) => t(`faq${n}q`)));
     faq.mainEntity.forEach((q) => expect(q.acceptedAnswer.text.length).toBeGreaterThan(20));
   });
 });
@@ -57,5 +63,6 @@ describe('index.html', () => {
     expect(html).toContain('property="og:image"');
     expect(html).toContain('<!--app-html-->');
     expect(html).toContain('<!--structured-data-->');
+    expect(html).not.toMatch(/Delhi|NCR/);
   });
 });

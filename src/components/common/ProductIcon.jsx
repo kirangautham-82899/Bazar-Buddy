@@ -65,7 +65,7 @@ const CATEGORY_TONES = {
   combo: 'brand',
 };
 
-export const toneFor = (category) => CATEGORY_TONES[category] || 'brand';
+const toneFor = (category) => CATEGORY_TONES[category] || 'brand';
 
 const ProductIcon = ({ id, category, size = 'md' }) => {
   const Icon = ICONS[id] || GiBasket;

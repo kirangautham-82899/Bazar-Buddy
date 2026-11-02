@@ -1,0 +1,44 @@
+/* Full-bleed CTA band */
+.cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: 104px;
+  padding: 88px 16px;
+  text-align: center;
+  color: #fff;
+}
+
+.cta .aurora {
+  z-index: -1;
+}
+
+.cta-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  margin: 0;
+  font-size: clamp(2rem, 5.4vw, 3.2rem);
+  font-weight: 800;
+}
+
+.cta-content p {
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 12px;
+}
+
+.cta-btn {
+  background: var(--color-turmeric);
+  color: var(--color-ink);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5);
+}
+
+.cta-btn:hover {
+  box-shadow: 0 20px 44px -12px rgba(0, 0, 0, 0.6);
+}

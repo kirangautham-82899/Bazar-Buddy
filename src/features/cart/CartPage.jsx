@@ -12,6 +12,7 @@ import { DELIVERY_OPTIONS, DELIVERY_SPEEDS, FREE_DELIVERY_ABOVE, PAYMENT_METHODS
 import { formatAddress, formatRupees } from '../../utils/format';
 import { lineTotal } from '../../utils/pricing';
 import ProductIcon from '../../components/common/ProductIcon';
+import PageHead from '../../components/common/PageHead';
 import Modal from '../../components/common/Modal';
 import QuantityStepper from '../shop/QuantityStepper';
 import AddressForm from './AddressForm';
@@ -86,7 +87,7 @@ const CartPage = () => {
 
   return (
     <div className="page cart-page">
-      <h1 className="page-title">{t('cart')}</h1>
+      <PageHead title={t('cart')} subtitle={t('cartSubtitle')} />
 
       {/* Phones: one column with a sticky Place order button.
           Desktop: details on the left, bill and Place order pinned on the right. */}

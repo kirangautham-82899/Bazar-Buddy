@@ -6,6 +6,7 @@ import { useCatalog } from '../../context/CatalogContext';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import CATEGORIES, { findCategory } from '../../data/categories';
 import ProductIcon from '../../components/common/ProductIcon';
+import PageHead from '../../components/common/PageHead';
 import CatalogState from './CatalogState';
 import ProductList from './ProductList';
 
@@ -35,7 +36,7 @@ const CategoryPage = () => {
         ))}
       </nav>
       <section className="category-content" aria-labelledby="category-title">
-        <h1 id="category-title" className="shop-section-title">{t(category.labelKey)}</h1>
+        <PageHead id="category-title" title={t(category.labelKey)} subtitle={items.length ? t('itemsCount', { n: items.length }) : null} />
         {!loading && products.length > 0 && !items.length ? (
           <p className="empty-state">{t('categoryEmpty')}</p>
         ) : (

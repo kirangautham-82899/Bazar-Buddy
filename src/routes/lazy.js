@@ -9,6 +9,7 @@ export const loadSearchPage = () => import('../features/shop/SearchPage');
 export const loadCartPage = () => import('../features/cart/CartPage');
 export const loadOrdersPage = () => import('../features/orders/OrdersPage');
 export const loadAccountPage = () => import('../features/account/AccountPage');
+export const loadMarketsPage = () => import('../features/markets/MarketsPage');
 export const loadAdmin = () => import('../features/admin/AdminLayout');
 
 const saveData = () =>

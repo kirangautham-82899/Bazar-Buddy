@@ -8,6 +8,7 @@ import CATEGORIES from '../../data/categories';
 import { searchProducts } from '../../utils/search';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
 import SearchBox from './SearchBox';
+import PageHead from '../../components/common/PageHead';
 import CatalogState from './CatalogState';
 import ProductList from './ProductList';
 
@@ -27,7 +28,7 @@ const SearchPage = () => {
   return (
     <div className="page search-page">
       {/* On desktop the search box lives in the top bar. */}
-      {!isDesktop && <SearchBox query={query} onQueryChange={setQuery} autoFocus />}
+      {isDesktop ? <PageHead title={t('searchLabel')} subtitle={t('searchHint')} /> : <SearchBox query={query} onQueryChange={setQuery} autoFocus />}
       <CatalogState />
       {query.trim() ? (
         <>

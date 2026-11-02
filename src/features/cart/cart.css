@@ -1,12 +1,9 @@
 .cart-page {
   max-width: 640px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
 }
 
 .cart-block {
-  padding: 16px;
+  padding: var(--space-5);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-lg);
   background: #fff;
@@ -259,14 +256,14 @@
 .cart-columns {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-4);
 }
 
 .cart-main,
 .cart-summary {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-4);
 }
 
 .shop-desktop .cart-page {
@@ -277,12 +274,12 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
   align-items: start;
-  gap: 24px;
+  gap: var(--space-6);
 }
 
 .shop-desktop .cart-summary {
   position: sticky;
-  top: 132px;
+  top: calc(76px + var(--space-6));
 }
 
 .shop-desktop .checkout-bar {

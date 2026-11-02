@@ -11,6 +11,8 @@ import CATEGORIES from '../../data/categories';
 import { FREE_DELIVERY_ABOVE } from '../../config/app';
 import { discountPct } from '../../utils/pricing';
 import ProductIcon from '../../components/common/ProductIcon';
+import PageHead from '../../components/common/PageHead';
+import { useAuth } from '../../context/AuthContext';
 import { Stagger, staggerItem } from '../../components/motion';
 import CatalogState from './CatalogState';
 import ProductList from './ProductList';
@@ -28,6 +30,9 @@ const buyAgain = (orders, findProduct) => {
     .map((item) => findProduct(item.id))
     .filter((p) => p && p.stock > 0);
 };
+
+// Good morning / afternoon / evening, by the vendor's local time.
+const greetingKey = (hour = new Date().getHours()) => (hour < 12 ? 'goodMorning' : hour < 17 ? 'goodAfternoon' : 'goodEvening');
 
 const ProductRow = ({ id, title, items, link, isDesktop }) => {
   const limit = isDesktop ? ROW_LIMIT.desktop : ROW_LIMIT.mobile;
@@ -50,6 +55,8 @@ const ShopHome = () => {
   const { products, findProduct } = useCatalog();
   const orders = useMyOrders();
   const isDesktop = useIsDesktop();
+  const { profile } = useAuth();
+  const firstName = profile?.name?.split(' ')[0];
   useDocumentMeta({ title: `${t('navHome')} – ${t('appName')}` });
 
   const deals = useMemo(
@@ -67,6 +74,10 @@ const ShopHome = () => {
 
   return (
     <div className="page shop-home">
+      <PageHead
+        title={firstName ? t('greetingName', { greeting: t(greetingKey()), name: firstName }) : t(greetingKey())}
+        subtitle={t('homeSubtitle')}
+      />
       <motion.p className="promo-strip" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}>
         <FaTruck aria-hidden="true" /> {t('freeDeliveryBanner', { amount: FREE_DELIVERY_ABOVE })}
       </motion.p>

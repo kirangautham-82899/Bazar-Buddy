@@ -1,21 +1,23 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaBoxOpen, FaHome, FaThLarge, FaUser } from 'react-icons/fa';
+import { FaBoxOpen, FaHome, FaMapMarkedAlt, FaThLarge, FaUser } from 'react-icons/fa';
 import { t } from '../../content/strings';
 import CATEGORIES from '../../data/categories';
 
 const TABS = [
-  { to: '/shop', end: true, icon: FaHome, label: 'navHome', match: (p) => p === '/shop' || p === '/shop/search' },
+  { to: '/shop', icon: FaHome, label: 'navHome', match: (p) => p === '/shop' || p === '/shop/search' },
   { to: `/shop/category/${CATEGORIES[0].id}`, icon: FaThLarge, label: 'navCategories', match: (p) => p.startsWith('/shop/category') },
+  { to: '/markets', icon: FaMapMarkedAlt, label: 'navMarkets', match: (p) => p.startsWith('/markets') },
   { to: '/orders', icon: FaBoxOpen, label: 'navOrders', match: (p) => p.startsWith('/orders') },
   { to: '/account', icon: FaUser, label: 'navAccount', match: (p) => p.startsWith('/account') },
 ];
 
+// Phone-only tab bar: the five places a vendor goes most.
 const BottomNav = () => {
   const { pathname } = useLocation();
   return (
-    <nav className="bottom-nav" aria-label={t('mainNav')}>
+    <nav className="bottom-nav" aria-label={t('tabBar')}>
       <div className="bottom-nav-inner">
         {TABS.map(({ to, icon: Icon, label, match }) => {
           const active = match(pathname);

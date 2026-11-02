@@ -63,38 +63,6 @@
   scrollbar-width: none;
 }
 
-.chip {
-  position: relative;
-  isolation: isolate;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  min-height: 36px;
-  padding: 6px 14px;
-  border: 1.5px solid var(--color-line);
-  border-radius: 999px;
-  background: #fff;
-  color: var(--color-muted);
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.chip.active {
-  border-color: transparent;
-  color: #fff;
-}
-
-.chip-pill {
-  position: absolute;
-  inset: -1.5px;
-  z-index: -1;
-  border-radius: inherit;
-  background: var(--gradient-brand);
-}
-
 .chip-count {
   min-width: 20px;
   padding: 0 6px;
@@ -381,4 +349,39 @@
 
 .product-form-actions .btn:first-child {
   flex: 1;
+}
+
+/* Desktop: the admin header becomes a fixed side navbar. */
+@media (min-width: 1024px) {
+  .admin {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+
+  .admin-header {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--space-8);
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .admin-tabs {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .admin-tab {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .admin-main {
+    width: 100%;
+    max-width: 1200px;
+    padding: var(--space-8);
+  }
 }

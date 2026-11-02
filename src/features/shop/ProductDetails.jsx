@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { t } from '../../content/strings';
 import { useCart } from '../../context/CartContext';
 import { findCategory } from '../../data/categories';
+import { PRODUCT_MARKET_ITEM } from '../../data/mandis';
 import ProductIcon from '../../components/common/ProductIcon';
 import Modal from '../../components/common/Modal';
 import { discountPct } from '../../utils/pricing';
@@ -47,11 +48,18 @@ const ProductDetails = ({ product, open, onClose }) => {
           </p>
           <span className={`badge ${stock.tone}`}>{stock.text}</span>
           {product.description && <p className="product-details-desc">{product.description}</p>}
-          {category && (
-            <Link to={`/shop/category/${category.id}`} className="see-all" onClick={onClose}>
-              {t('moreIn', { category: t(category.labelKey) })}
-            </Link>
-          )}
+          <div className="product-details-links">
+            {category && (
+              <Link to={`/shop/category/${category.id}`} className="see-all" onClick={onClose}>
+                {t('moreIn', { category: t(category.labelKey) })}
+              </Link>
+            )}
+            {PRODUCT_MARKET_ITEM[product.id] && (
+              <Link to={`/markets?item=${encodeURIComponent(PRODUCT_MARKET_ITEM[product.id])}`} className="see-all" onClick={onClose}>
+                {t('seeMandiPrices')}
+              </Link>
+            )}
+          </div>
         </div>
 
         {product.stock > 0 && (

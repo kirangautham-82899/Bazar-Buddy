@@ -49,6 +49,11 @@ vi.mock('../services/cartService', async (importOriginal) => ({
   mergeIntoCart: vi.fn(() => Promise.resolve()),
   updateCartOptions: vi.fn(() => Promise.resolve()),
 }));
+vi.mock('../services/marketService', () => ({
+  lookupPincode: vi.fn(async () => ({ pin: '560002', district: 'Bengaluru Urban', state: 'Karnataka', places: [] })),
+  fetchMandiPrices: vi.fn(async () => ({ configured: false, scope: null, records: [] })),
+  currentPosition: vi.fn(),
+}));
 vi.mock('../services/orderService', () => ({
   subscribeMyOrders: (_uid, cb) => {
     cb(state.orders);
@@ -120,7 +125,8 @@ describe('shop (guest)', () => {
 
   it('uses the phone layout on small screens', async () => {
     renderAt('/shop');
-    expect(await screen.findByRole('navigation', { name: 'Main navigation' }, WAIT)).toHaveTextContent('Categories');
+    expect(await screen.findByRole('navigation', { name: 'Quick links' }, WAIT)).toHaveTextContent('Markets');
+    expect(screen.getByRole('button', { name: 'Menu' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Shop by category' })).toBeInTheDocument();
   });
 
@@ -128,9 +134,27 @@ describe('shop (guest)', () => {
     window.__desktop = true;
     renderAt('/shop');
     expect(await screen.findByRole('link', { name: /^Cart:/ }, WAIT)).toBeInTheDocument();
+    // Side navbar: main sections and every category.
+    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toHaveTextContent('Markets');
     expect(screen.getByRole('navigation', { name: 'Categories' })).toHaveTextContent('Vegetables');
     expect(screen.queryByRole('heading', { name: 'Shop by category' })).not.toBeInTheDocument();
     expect(document.querySelector('.bottom-nav')).toBeNull();
+  });
+
+  it('finds local markets for a PIN code', async () => {
+    renderAt('/markets?item=Tomato');
+    fireEvent.change(await screen.findByLabelText('PIN code', {}, WAIT), { target: { value: '560002' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Find markets' }));
+    expect(await screen.findByRole('heading', { name: 'Markets near Bengaluru Urban, Karnataka' })).toBeInTheDocument();
+    expect(screen.getByText('K.R. Market')).toBeInTheDocument();
+    expect(await screen.findByText(/Live daily mandi prices will appear here/)).toBeInTheDocument();
+  });
+
+  it('opens the side menu on phones', async () => {
+    renderAt('/shop');
+    fireEvent.click(await screen.findByRole('button', { name: 'Menu' }, WAIT));
+    const drawer = await screen.findByRole('dialog', { name: 'Menu' });
+    expect(within(drawer).getByRole('link', { name: /Markets/ })).toHaveAttribute('href', '/markets');
   });
 
   it('shows a friendly message while the catalog is empty', async () => {

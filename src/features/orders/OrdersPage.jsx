@@ -12,6 +12,7 @@ import { useMyOrders } from '../../hooks/useMyOrders';
 import { STATUS_LABEL_KEYS, canCustomerCancel, estimatedDelivery, isActiveStatus, toDate } from '../../utils/orderStatus';
 import { formatDateTime, formatRupees, itemName, shortId } from '../../utils/format';
 import { Skeleton } from '../../components/motion';
+import PageHead from '../../components/common/PageHead';
 import OrderTracker from './OrderTracker';
 import './orders.css';
 
@@ -89,7 +90,7 @@ const OrdersPage = () => {
 
   return (
     <div className="page orders-page">
-      <h1 className="page-title">{t('myOrders')}</h1>
+      <PageHead title={t('myOrders')} subtitle={t('ordersSubtitle')} />
       {orders === null ? (
         <Skeleton lines={5} />
       ) : orders.length === 0 ? (

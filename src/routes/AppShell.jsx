@@ -17,6 +17,7 @@ import {
   loadAuthPage,
   loadCartPage,
   loadCategoryPage,
+  loadMarketsPage,
   loadOrdersPage,
   loadSearchPage,
   loadShopHome,
@@ -31,6 +32,7 @@ const SearchPage = lazy(loadSearchPage);
 const CartPage = lazy(loadCartPage);
 const OrdersPage = lazy(loadOrdersPage);
 const AccountPage = lazy(loadAccountPage);
+const MarketsPage = lazy(loadMarketsPage);
 const AdminLayout = lazy(loadAdmin);
 
 const AppShell = () => {
@@ -49,6 +51,7 @@ const AppShell = () => {
                   <Route path="shop" element={<ShopHome />} />
                   <Route path="shop/category/:categoryId" element={<CategoryPage />} />
                   <Route path="shop/search" element={<SearchPage />} />
+                  <Route path="markets" element={<MarketsPage />} />
                   <Route path="cart" element={<CartPage />} />
                   <Route path="orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
                   <Route path="account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />

@@ -47,3 +47,10 @@
   font-size: 5.5rem;
   background: transparent;
 }
+
+.product-icon-xs {
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  border-radius: 9px;
+}

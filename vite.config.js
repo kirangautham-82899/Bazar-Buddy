@@ -1,5 +1,18 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import pincodeHandler from './api/pincode.js';
+import mandiPricesHandler from './api/mandi-prices.js';
+
+// Serves the Vercel functions in /api during `npm run dev`, so the whole app
+// (including local markets) works locally exactly as it does on Vercel.
+const apiRoutes = (env) => ({
+  name: 'bazar-buddy-api',
+  configureServer(server) {
+    process.env.DATA_GOV_IN_API_KEY ??= env.DATA_GOV_IN_API_KEY;
+    server.middlewares.use('/api/pincode', (req, res) => pincodeHandler(req, res));
+    server.middlewares.use('/api/mandi-prices', (req, res) => mandiPricesHandler(req, res));
+  },
+});
 
 // Libraries split into long-lived chunks: an app deploy doesn't force
 // visitors to re-download React, Firebase or the animation library.
@@ -18,8 +31,8 @@ const vendorChunk = (id) => {
   );
 };
 
-export default defineConfig({
-  plugins: [react()],
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), apiRoutes(loadEnv(mode, process.cwd(), ''))],
   // Keep the existing REACT_APP_* variable names (also set on Vercel).
   envPrefix: ['VITE_', 'REACT_APP_'],
   server: { port: 3000, open: false },
@@ -44,4 +57,4 @@ export default defineConfig({
     // App-level tests lazy-load screens; a cold first run can take several seconds.
     testTimeout: 15000,
   },
-});
+}));

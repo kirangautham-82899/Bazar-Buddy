@@ -24,6 +24,18 @@
   --gradient-warm: linear-gradient(135deg, #ef5a3c 0%, #f4b12e 100%);
   --gradient-soft: linear-gradient(135deg, #effaf1 0%, #fff8e6 100%);
 
+  /* Spacing scale: every gap, margin and padding uses one of these steps. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --sidebar-width: 264px;
+
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 22px;
@@ -292,7 +304,35 @@ a {
 .page {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 20px 16px;
+  padding: var(--space-5) var(--space-4);
+}
+
+/* Page heading used by every inner page: title, optional subtitle and actions. */
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.page-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.page-head .page-subtitle {
+  margin: 0;
+}
+
+/* Vertical rhythm for stacked blocks inside a page. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .page-header {
@@ -545,6 +585,39 @@ a {
   border-radius: 999px;
   background: #fff;
   box-shadow: var(--shadow-sm);
+}
+
+/* Filter chips with a sliding selected pill (pill animated via layoutId) */
+.chip {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--color-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip.active {
+  border-color: transparent;
+  color: #fff;
+}
+
+.chip-pill {
+  position: absolute;
+  inset: -1.5px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--gradient-brand);
 }
 
 /* Full-screen states */

@@ -1,0 +1,241 @@
+.markets-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.markets-page .page-head {
+  margin-bottom: 0;
+}
+
+/* Search block */
+.markets-search {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.markets-form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .markets-form {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+}
+
+.markets-input {
+  position: relative;
+}
+
+.markets-input svg {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-accent);
+}
+
+.markets-input .input {
+  padding-left: 42px;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+}
+
+.chip-row {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+  scrollbar-width: none;
+}
+
+.chip-row::-webkit-scrollbar {
+  display: none;
+}
+
+.markets-error {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.markets-idle {
+  padding: var(--space-10) var(--space-4);
+}
+
+/* Results */
+.markets-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.markets-results-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.markets-results-head .shop-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.markets-results-head p {
+  margin: 0;
+}
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.market-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.market-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.market-card-head {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.market-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+}
+
+.market-title h3 {
+  margin: 0 0 2px;
+  font-size: 1rem;
+}
+
+.market-title p {
+  margin: 0;
+}
+
+.market-known {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.market-known ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.market-known li {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--color-bg);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.market-known li.match {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.market-directions {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+/* Live prices */
+.markets-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-turmeric-soft);
+  color: #6b4a00;
+}
+
+.markets-note svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.price-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.price-table th,
+.price-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.price-table th {
+  background: var(--color-bg);
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.price-table td .small {
+  display: block;
+}
+
+.price-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.price-source {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-line);
+}

@@ -16,3 +16,6 @@ export const DELIVERY_OPTIONS = {
 export const VERIFIED_DELIVERY_FEE = 5;
 
 export const DEFAULT_MAP_CENTER = [28.6139, 77.209];
+
+// Public URL used for canonical links, the sitemap and structured data.
+export const SITE_URL = (import.meta.env.REACT_APP_SITE_URL || 'https://bazar-buddy-neon.vercel.app').replace(/\/$/, '');

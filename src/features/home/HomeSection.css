@@ -10,10 +10,10 @@
   border-radius: var(--radius-xl);
   color: #fff;
   background:
-    radial-gradient(260px 160px at 100% 0%, rgba(255, 179, 107, 0.55), transparent 70%),
-    radial-gradient(300px 200px at 0% 100%, rgba(139, 92, 246, 0.6), transparent 70%),
-    linear-gradient(135deg, #e0337f 0%, #9b3ff0 100%);
-  box-shadow: 0 24px 50px -24px rgba(155, 63, 240, 0.7);
+    radial-gradient(260px 160px at 100% 0%, rgba(244, 177, 46, 0.5), transparent 70%),
+    radial-gradient(300px 200px at 0% 100%, rgba(111, 208, 143, 0.45), transparent 70%),
+    linear-gradient(135deg, #1f8a4c 0%, #0f5a31 100%);
+  box-shadow: 0 24px 50px -24px rgba(21, 122, 67, 0.7);
 }
 
 .home-hero::after {

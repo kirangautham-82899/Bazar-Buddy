@@ -6,7 +6,7 @@ import { SUPPORT_PHONE, TOLL_FREE } from '../../config/app';
 import { Reveal, Stagger, staggerItem } from '../../components/motion';
 import './HelpSection.css';
 
-const FAQ_COUNT = 5;
+const FAQ_COUNT = 7;
 
 const FaqItem = ({ question, answer }) => {
   const [open, setOpen] = useState(false);

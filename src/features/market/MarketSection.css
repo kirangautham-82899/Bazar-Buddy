@@ -24,8 +24,8 @@
 }
 
 .product-card.in-cart {
-  border-color: #f5b8d3;
-  box-shadow: 0 0 0 3px rgba(224, 51, 127, 0.08), var(--shadow-sm);
+  border-color: #a8dbb8;
+  box-shadow: 0 0 0 3px rgba(31, 138, 76, 0.08), var(--shadow-sm);
 }
 
 .product-ribbon {

@@ -10,7 +10,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 0 16px;
-  background: rgba(251, 247, 251, 0.6);
+  background: rgba(250, 247, 239, 0.6);
   backdrop-filter: blur(16px) saturate(1.4);
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
   transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -18,7 +18,7 @@
 
 .top-navbar.scrolled {
   background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 1px 0 var(--color-line), 0 8px 24px -16px rgba(29, 23, 48, 0.25);
+  box-shadow: 0 1px 0 var(--color-line), 0 8px 24px -16px rgba(27, 42, 31, 0.25);
 }
 
 .navbar-brand {

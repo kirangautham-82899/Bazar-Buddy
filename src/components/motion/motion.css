@@ -18,28 +18,6 @@
   display: inline-flex;
 }
 
-.tilt-card {
-  position: relative;
-  transform-style: preserve-3d;
-  transform-perspective: 900px;
-  perspective: 900px;
-  will-change: transform;
-}
-
-.tilt-glare {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  mix-blend-mode: soft-light;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.tilt-card:hover .tilt-glare {
-  opacity: 1;
-}
-
 /* Aurora background */
 .aurora {
   position: absolute;
@@ -62,7 +40,7 @@
   height: 480px;
   top: -160px;
   left: -120px;
-  background: #ff8cc0;
+  background: #9be3b0;
   animation: drift-1 18s ease-in-out infinite alternate;
 }
 
@@ -71,7 +49,7 @@
   height: 420px;
   top: 10%;
   right: -140px;
-  background: #c4a3ff;
+  background: #ffd27a;
   animation: drift-2 22s ease-in-out infinite alternate;
 }
 
@@ -80,13 +58,13 @@
   height: 360px;
   bottom: -160px;
   left: 30%;
-  background: #ffd38a;
+  background: #ffb199;
   opacity: 0.4;
   animation: drift-3 20s ease-in-out infinite alternate;
 }
 
 .aurora-dark {
-  background: radial-gradient(120% 120% at 0% 0%, #3b0f3a 0%, #1d1730 55%, #120e1f 100%);
+  background: radial-gradient(120% 120% at 0% 0%, #123d26 0%, #1b2a1f 55%, #0a1d13 100%);
 }
 
 .aurora-dark .aurora-blob {
@@ -98,7 +76,7 @@
   height: 420px;
   top: -120px;
   left: -100px;
-  background: #ff4f9a;
+  background: #2fb36a;
   animation: drift-1 16s ease-in-out infinite alternate;
 }
 
@@ -107,7 +85,7 @@
   height: 380px;
   bottom: -120px;
   right: -100px;
-  background: #8b5cf6;
+  background: #e8553d;
   animation: drift-2 20s ease-in-out infinite alternate;
 }
 
@@ -124,8 +102,8 @@
 .aurora-grid {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(29, 23, 48, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(29, 23, 48, 0.05) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(27, 42, 31, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27, 42, 31, 0.05) 1px, transparent 1px);
   background-size: 44px 44px;
   mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
   -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
@@ -192,7 +170,7 @@
   display: block;
   height: 14px;
   border-radius: 8px;
-  background: linear-gradient(90deg, #f3e9f1 0%, #fbf4fa 40%, #f3e9f1 80%);
+  background: linear-gradient(90deg, #ece6d6 0%, #f6f2e7 40%, #ece6d6 80%);
   background-size: 200% 100%;
   animation: shimmer 1.3s linear infinite;
 }

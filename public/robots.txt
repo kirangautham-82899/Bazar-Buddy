@@ -1,3 +1,6 @@
-# https://www.robotstxt.org/robotstxt.html
+# Bazar Buddy – https://bazar-buddy-neon.vercel.app
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /dashboard
+
+Sitemap: https://bazar-buddy-neon.vercel.app/sitemap.xml

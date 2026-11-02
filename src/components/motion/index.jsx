@@ -5,11 +5,8 @@ import {
   animate,
   motion,
   useInView,
-  useMotionTemplate,
-  useMotionValue,
   useReducedMotion,
   useSpring,
-  useTransform,
 } from 'framer-motion';
 import './motion.css';
 
@@ -139,34 +136,6 @@ export const Magnetic = ({ children, strength = 0.3, className }) => {
   );
 };
 
-// 3D tilt with a soft glare that follows the pointer.
-export const TiltCard = ({ children, className, max = 10 }) => {
-  const px = useMotionValue(0.5);
-  const py = useMotionValue(0.5);
-  const rotateX = useSpring(useTransform(py, [0, 1], [max, -max]), { stiffness: 200, damping: 20 });
-  const rotateY = useSpring(useTransform(px, [0, 1], [-max, max]), { stiffness: 200, damping: 20 });
-  const glareX = useTransform(px, (v) => `${v * 100}%`);
-  const glareY = useTransform(py, (v) => `${v * 100}%`);
-  const glare = useMotionTemplate`radial-gradient(circle at ${glareX} ${glareY}, rgba(255,255,255,0.55), transparent 55%)`;
-
-  const onMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    px.set((e.clientX - rect.left) / rect.width);
-    py.set((e.clientY - rect.top) / rect.height);
-  };
-  const reset = () => {
-    px.set(0.5);
-    py.set(0.5);
-  };
-
-  return (
-    <motion.div className={`tilt-card ${className || ''}`} style={{ rotateX, rotateY }} onPointerMove={onMove} onPointerLeave={reset}>
-      {children}
-      <motion.span className="tilt-glare" style={{ background: glare }} aria-hidden="true" />
-    </motion.div>
-  );
-};
-
 // Drifting gradient blobs plus a faint grid, drawn entirely in CSS.
 export const Aurora = ({ variant = 'light' }) => (
   <div className={`aurora aurora-${variant}`} aria-hidden="true">
@@ -199,7 +168,7 @@ export const SuccessCheck = ({ size = 88 }) => (
   </motion.svg>
 );
 
-const CONFETTI_COLORS = ['#ff4f9a', '#b14cff', '#ffb020', '#22c55e', '#38bdf8'];
+const CONFETTI_COLORS = ['#2fb36a', '#e8553d', '#f4b12e', '#157a43', '#ff8a5b'];
 
 // A short burst of CSS shapes; nothing renders when motion is reduced.
 export const Confetti = ({ count = 26 }) => {

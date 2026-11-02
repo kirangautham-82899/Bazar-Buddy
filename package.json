@@ -30,7 +30,7 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.js",
     "preview": "vite preview",
     "test": "vitest",
     "test:ci": "vitest run",

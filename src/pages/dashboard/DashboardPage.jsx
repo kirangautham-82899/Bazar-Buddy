@@ -14,6 +14,8 @@ import {
   loadWallet,
   prefetchWhenIdle,
 } from '../../routes/lazy';
+import { useDocumentMeta } from '../../hooks/useDocumentMeta';
+import { useLanguage } from '../../context/LanguageContext';
 import './DashboardPage.css';
 
 // Each tab slides and fades in; the outlet is frozen so the old tab can animate out.
@@ -36,6 +38,8 @@ const AnimatedOutlet = () => {
 };
 
 const DashboardPage = () => {
+  const { t } = useLanguage();
+  useDocumentMeta({ title: t('appName'), noindex: true });
   // Once the first tab is up, quietly fetch the others so switching tabs is instant.
   useEffect(() => prefetchWhenIdle(loadHome, loadMarket, loadWallet, loadProfile, loadHelp, loadTrade), []);
 

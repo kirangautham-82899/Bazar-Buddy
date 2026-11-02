@@ -4,6 +4,7 @@ node_modules/
 # production build
 build/
 dist/
+dist-ssr/
 .vite/
 
 # environment (never commit real keys)

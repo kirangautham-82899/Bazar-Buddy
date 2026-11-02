@@ -11,8 +11,8 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(500px 220px at 15% 0%, rgba(255, 140, 192, 0.22), transparent 70%),
-    radial-gradient(520px 240px at 85% 0%, rgba(196, 163, 255, 0.22), transparent 70%);
+    radial-gradient(500px 220px at 15% 0%, rgba(111, 208, 143, 0.22), transparent 70%),
+    radial-gradient(520px 240px at 85% 0%, rgba(246, 181, 46, 0.22), transparent 70%);
 }
 
 .dashboard-main {

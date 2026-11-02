@@ -15,11 +15,15 @@ const QUERIES = ['pyaz', 'टमाटर', 'aloo', 'mirch'];
 const useTypewriter = (words, { typeMs = 110, holdMs = 1600 } = {}) => {
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
-  const [text, setText] = useState(reduce ? words[0] : '');
+  // Always start empty so the pre-rendered HTML matches the first browser render.
+  const [text, setText] = useState('');
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    if (reduce) return undefined;
+    if (reduce) {
+      setText(words[0]);
+      return undefined;
+    }
     const word = [...words[index]];
     const current = [...text];
     let delay = deleting ? typeMs / 2 : typeMs;

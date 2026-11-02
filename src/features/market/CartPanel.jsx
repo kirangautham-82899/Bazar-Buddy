@@ -36,7 +36,7 @@ const OrderPlacedModal = ({ order, onClose }) => {
             <motion.div className="upi-pay" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
               <h3>{t('payViaUpi')}</h3>
               <div className="upi-qr">
-                <QRCodeSVG value={upiLink(order)} size={184} level="M" fgColor="#1d1730" title={t('scanToPay', { total: order.total })} />
+                <QRCodeSVG value={upiLink(order)} size={184} level="M" fgColor="#1b2a1f" title={t('scanToPay', { total: order.total })} />
               </div>
               <p>{t('scanToPay', { total: order.total })}</p>
               <p className="muted small">{t('upiId', { id: UPI_ID })}</p>

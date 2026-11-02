@@ -187,8 +187,8 @@
 }
 
 .barter-chip-want {
-  background: #efe8ff;
-  color: #5b34c7;
+  background: #fdeae5;
+  color: #b8401f;
 }
 
 .barter-arrow {
@@ -257,7 +257,7 @@
   border-radius: 50% 50% 50% 0;
   background: var(--gradient-brand);
   transform: rotate(-45deg);
-  box-shadow: 0 6px 14px -4px rgba(224, 51, 127, 0.7);
+  box-shadow: 0 6px 14px -4px rgba(31, 138, 76, 0.7);
   animation: pin-drop 0.5s var(--ease-out) both;
 }
 

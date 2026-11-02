@@ -19,6 +19,7 @@ import LanguageToggle from '../../components/common/LanguageToggle';
 import ProductIcon from '../../components/common/ProductIcon';
 import { Aurora } from '../../components/motion';
 import { loadDashboardPage, loadHome, prefetchWhenIdle } from '../../routes/lazy';
+import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import './AuthPage.css';
 
 const FIREBASE_ERRORS = {
@@ -147,6 +148,8 @@ const AuthPage = () => {
   const [errorKey, setErrorKey] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  useDocumentMeta({ title: `${isLogin ? t('login') : t('register')} – ${t('appName')}`, noindex: true });
 
   // While the vendor types, fetch the dashboard so it opens instantly after login.
   useEffect(() => prefetchWhenIdle(loadDashboardPage, loadHome), []);

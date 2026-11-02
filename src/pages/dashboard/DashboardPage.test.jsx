@@ -2,6 +2,7 @@
 // crash or missing translation on any screen fails the test run.
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import App from '../../App';
 
 const mockUser = { uid: 'vendor-1', email: 'ravi@example.com', displayName: 'Ravi Kumar' };
@@ -98,7 +99,11 @@ beforeEach(() => window.localStorage.setItem('bazarBuddy.language', 'en'));
 
 const renderAt = (path) => {
   window.history.pushState({}, '', path);
-  return render(<App />);
+  return render(
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
 };
 
 describe('dashboard tabs', () => {

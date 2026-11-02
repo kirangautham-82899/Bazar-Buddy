@@ -18,8 +18,8 @@
   color: #fff;
   background:
     radial-gradient(220px 140px at 100% 0%, rgba(255, 211, 107, 0.55), transparent 70%),
-    linear-gradient(135deg, #1d1730 0%, #3b1d5a 100%);
-  box-shadow: 0 24px 50px -24px rgba(29, 23, 48, 0.7);
+    linear-gradient(135deg, #1b2a1f 0%, #14532d 100%);
+  box-shadow: 0 24px 50px -24px rgba(27, 42, 31, 0.7);
 }
 
 .wallet-hero-icon {
@@ -61,7 +61,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #fbbf24, #ff7eb3);
+  background: linear-gradient(90deg, #fbbf24, #6fd08f);
   transform-origin: left center;
 }
 
@@ -94,7 +94,7 @@
 }
 
 .tone-violet-bg {
-  background: #efe8ff;
+  background: #fdeae5;
   color: var(--color-accent);
 }
 

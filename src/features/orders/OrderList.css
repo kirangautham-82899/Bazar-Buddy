@@ -15,8 +15,8 @@
 }
 
 .order-item.live {
-  border-color: #f5c6dc;
-  background: linear-gradient(180deg, #fff7fb, #fff 60%);
+  border-color: #b9e3c4;
+  background: linear-gradient(180deg, #f6fbf3, #fff 60%);
 }
 
 .order-item-head {
@@ -169,8 +169,8 @@
   padding: 10px 12px;
   border-radius: var(--radius-md);
   border: 1.5px dashed var(--color-accent);
-  background: #f4efff;
-  color: #5b34c7;
+  background: #fff6e3;
+  color: #b8401f;
   font-weight: 700;
   letter-spacing: 0.04em;
 }

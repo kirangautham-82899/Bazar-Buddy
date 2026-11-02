@@ -18,10 +18,10 @@
   margin: 0 auto;
   padding: 6px;
   border-radius: 24px;
-  background: rgba(29, 23, 48, 0.9);
+  background: rgba(27, 42, 31, 0.9);
   backdrop-filter: blur(16px) saturate(1.5);
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  box-shadow: 0 18px 40px -16px rgba(29, 23, 48, 0.6);
+  box-shadow: 0 18px 40px -16px rgba(27, 42, 31, 0.6);
 }
 
 .nav-item {
@@ -52,7 +52,7 @@
   z-index: -1;
   border-radius: inherit;
   background: var(--gradient-brand);
-  box-shadow: 0 8px 18px -6px rgba(224, 51, 127, 0.7);
+  box-shadow: 0 8px 18px -6px rgba(31, 138, 76, 0.7);
 }
 
 .nav-icon {

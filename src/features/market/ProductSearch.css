@@ -4,7 +4,7 @@
   z-index: 10;
   margin: 0 -16px 14px;
   padding: 8px 16px 6px;
-  background: linear-gradient(180deg, var(--color-bg) 75%, rgba(251, 247, 251, 0));
+  background: linear-gradient(180deg, var(--color-bg) 75%, rgba(250, 247, 239, 0));
 }
 
 .search-bar {
@@ -21,7 +21,7 @@
 
 .search-bar:focus-within {
   border-color: var(--color-brand);
-  box-shadow: var(--shadow-md), 0 0 0 4px rgba(224, 51, 127, 0.12);
+  box-shadow: var(--shadow-md), 0 0 0 4px rgba(31, 138, 76, 0.12);
 }
 
 .search-icon {
@@ -125,7 +125,7 @@
 }
 
 .chip:hover {
-  border-color: #f5b8d3;
+  border-color: #a8dbb8;
 }
 
 .chip.active {

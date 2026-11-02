@@ -32,4 +32,4 @@
 .tone-red { --tone-bg: #ffe4e4; --tone-fg: #d64545; }
 .tone-sky { --tone-bg: #e2f1ff; --tone-fg: #2b7bd6; }
 .tone-olive { --tone-bg: #eef3d9; --tone-fg: #6f8a1f; }
-.tone-brand { --tone-bg: #ffe3f0; --tone-fg: var(--color-brand); }
+.tone-brand { --tone-bg: #e2f3e6; --tone-fg: var(--color-brand); }

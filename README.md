@@ -1,404 +1,147 @@
-````md
 <div align="center">
 
-# 🛒 Bazar-Buddy
+# 🛒 Bazar Buddy
 
-### Empowering Street Vendors with Hyperlocal Raw Material Aggregation
+### Fresh raw material at fair prices for every street vendor
 
 <p align="center">
-  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Firebase-Backend-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
-  <img src="https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
   <img src="https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel"/>
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/>
 </p>
 
-### 🌾 Connecting Street Vendors • Suppliers • Communities
-
-*"Making raw material sourcing affordable, transparent, and accessible for every street vendor."*
-
----
-
 </div>
 
-# 📖 Overview
+## Overview
 
-Bazar-Buddy is a **mobile-first smart marketplace** designed specifically for **street vendors**.
+Bazar Buddy is a mobile-first marketplace for street vendors. Vendors search for raw material in **English, Hindi or Hinglish (also by voice)**, see whether a price is fair compared with nearby suppliers, place orders and follow their progress, earn reward coins, and trade spare stock with vendor groups nearby.
 
-Instead of purchasing raw materials individually at fluctuating prices, vendors can collaborate, place group orders, compare prices, receive AI-powered alerts, track deliveries in real time, and even barter unused inventory within their community.
+## Features
 
-The platform removes middlemen, improves transparency, and helps vendors save money while increasing operational efficiency.
+| Feature | What it does |
+|---|---|
+| 🌐 **English & Hindi** | Every screen is translated. The language picked at the start is kept everywhere and can be changed from the top bar or Profile. |
+| 🔍 **Smart search** | Matches English, Hindi (with or without the nukta) and Hinglish words like *pyaz*, *aloo* and *tamatar*. Tolerates small typos, ranks the best matches first, and filters by category. |
+| 🎙️ **Voice search** | Tap the mic and speak in Hindi (`hi-IN`) or Indian English (`en-IN`). Works in Chrome, Edge and Android browsers. |
+| ⚖️ **Fair-price check** | Compares each price with the median of nearby vendor groups and flags anything more than 15% above it. |
+| 🧺 **Live cart** | Saved in Firestore and synced across devices. Every change runs in a transaction, so quick taps never overwrite each other. |
+| 🚚 **Delivery options** | Express (45 min, ₹30), Scheduled (tomorrow 6–7 AM, ₹10) or Saver (24 h, free), plus OTP-verified delivery (₹5). |
+| 💳 **Payment** | UPI (QR code and UPI ID) or cash on delivery. |
+| 📦 **Orders** | Order history with a progress tracker and expected delivery time. You can cancel before the order is out for delivery, and coins are refunded. |
+| 💰 **Apna Coins** | Earn 1 coin per ₹20 spent. Redeem 50 coins for a free delivery, which is applied automatically at checkout. |
+| 🗺️ **Vendor groups** | Leaflet map plus an accessible list of 15 groups around Delhi NCR, with stock, prices, reviews and join requests. |
+| 🔁 **Community barter** | A live board where vendors post swap offers. |
+| ♿ **Accessible** | Real buttons and links, labelled form fields, keyboard-friendly dialogs, screen-reader announcements, and support for reduced motion. |
 
----
+## Tech stack
 
-# 🚨 Problem Statement
+React 19 (Create React App) · React Router 7 · Firebase Auth + Cloud Firestore · Framer Motion · Lottie · Leaflet / React-Leaflet · Jest + Testing Library · Vercel
 
-Street vendors contribute significantly to the local economy but face daily challenges:
-
-❌ Unreliable suppliers
-
-❌ Price manipulation
-
-❌ No centralized marketplace
-
-❌ No group ordering platform
-
-❌ Lack of delivery tracking
-
-❌ Language barriers
-
-❌ Limited digital adoption
-
-❌ No trust verification between vendors
-
-These issues reduce profitability and create unnecessary operational risks.
-
----
-
-# 💡 Our Solution
-
-Bazar-Buddy introduces a **single digital ecosystem** where vendors can:
-
-- 🛍️ Buy raw materials
-- 🤝 Place group orders
-- 📍 Track deliveries live
-- 🎤 Search using voice
-- 💬 Join vendor communities
-- 🔄 Barter unused inventory
-- 💳 Pay instantly using UPI
-- 📊 Get AI-powered fair price recommendations
-
----
-
-# ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| 🌐 Multilingual UI | Supports English & Hindi |
-| 🎙 Voice Search | Voice-to-text product search |
-| 🤝 Group Ordering | Multiple vendors can order together |
-| 💰 UPI Payments | Fast & secure digital payments |
-| 📦 Live Order Tracking | Track delivery status in real-time |
-| 🚚 Verified Delivery | SMS & Voice confirmation system |
-| 💬 Vendor Groups | Community chat & collaboration |
-| 🤖 AI Price Alerts | Warns users about overpriced items |
-| 🔄 Community Barter | Exchange unused inventory |
-| 🛒 Live Cart | Firebase synchronized cart |
-| 📱 Mobile First | Fully responsive design |
-| 🎨 Beautiful UI | Soft pastel theme with Lottie animations |
-| 📞 Help Center | Toll-free support & FAQs |
-
----
-
-# 🎯 Key Highlights
-
-## 🔍 Smart Search
-
-- Voice Search
-- Hindi Support
-- English Support
-- Product Suggestions
-
----
-
-## 💸 Smart Orders
-
-- Group Purchase
-- Split Costs
-- Live Tracking
-- Delivery Notifications
-
----
-
-## 🤖 AI Assistance
-
-The AI engine analyzes market prices and warns users if:
-
-- Product price is unusually high
-- Better alternatives exist
-- Group ordering can reduce costs
-
----
-
-## 🤝 Vendor Community
-
-- Create Groups
-- Chat with Nearby Vendors
-- Share Information
-- Community Barter
-- Trusted Vendor Network
-
----
-
-# 🏗 System Architecture
+## Project structure
 
 ```text
-                     +---------------------+
-                     |      React App      |
-                     +----------+----------+
-                                |
-      ----------------------------------------------------
-      |                     |                     |
- Firebase Auth      Firestore Database     Realtime Database
-      |                     |                     |
- Authentication      Products & Orders      Live Tracking
-      |                     |                     |
-      ------------------ Firebase ------------------
-                                |
-                         Leaflet Maps
-                                |
-                       Delivery Tracking
+Bazar-Buddy/
+├── README.md
+└── bazar-buddy/                  # the React app (Vercel root directory)
+    ├── public/                   # index.html, manifest, icons
+    ├── firestore.rules           # security rules (deploy with the Firebase CLI)
+    ├── firestore.indexes.json    # composite index for the orders query
+    ├── firebase.json
+    ├── .env.example              # copy to .env.local
+    └── src/
+        ├── App.jsx               # providers + routes (sections are lazy-loaded)
+        ├── index.js
+        ├── assets/
+        │   ├── animations/       # Lottie JSON
+        │   └── images/
+        ├── components/
+        │   ├── common/           # Modal, Loader, SetupScreen
+        │   └── layout/           # TopNavbar, BottomNav, RouteGuards
+        ├── config/               # firebase.js, app.js (fees, coin rules)
+        ├── context/              # Language, Auth, Toast, Shop (cart + orders)
+        ├── data/                 # product catalog, vendor groups
+        ├── features/
+        │   ├── home/
+        │   ├── market/           # search, products, cart, orders
+        │   ├── wallet/
+        │   ├── trade/            # map, group details, barter board
+        │   ├── profile/
+        │   └── help/
+        ├── hooks/                # useVoiceSearch, useNow
+        ├── i18n/                 # translations (en + hi)
+        ├── pages/                # LanguagePage, AuthPage, DashboardPage
+        ├── services/             # Firestore access: cart, orders, users, vendors
+        ├── styles/               # global.css (design tokens)
+        └── utils/                # search, pricing, order status, validation, format
 ```
 
----
+### Routes
 
-# 🛠 Tech Stack
+| Path | Screen |
+|---|---|
+| `/` | Language picker (skipped once a language is chosen) |
+| `/auth` | Login / register / password reset |
+| `/dashboard` | Home (login required) |
+| `/dashboard/market` | Search, products, cart, my orders |
+| `/dashboard/wallet` | Coins, savings, redemptions, transactions |
+| `/dashboard/trade` | Vendor map, groups, barter board |
+| `/dashboard/profile` | Profile, language, logout |
+| `/dashboard/help` | Support numbers and FAQs |
 
-## Frontend
+### Firestore data model
 
-- React.js
-- Tailwind CSS
-- Framer Motion
-- Lottie Animations
-- CSS3
+| Collection | Contents | Who can access |
+|---|---|---|
+| `users/{uid}` | name, phone, language, coins, freeDeliveryCredits, savings | Owner only |
+| `users/{uid}/redemptions` | coin redemption history | Owner only |
+| `carts/{uid}` | `items: [{id, quantity}]`, speed, verified, payment | Owner only |
+| `orders/{id}` | items, fees, total, OTP, status, coinsEarned | Owner; can only cancel |
+| `vendorGroups/{id}/reviews` | rating (1–5) and text | Any signed-in user can read and add |
+| `vendorGroups/{id}/joinRequests/{uid}` | one request per vendor | Owner |
+| `barters/{id}` | offer and request | Any signed-in user can read; the author can delete |
 
----
+Prices are always read from the catalog in `src/data/products.js`, never from the cart document.
 
-## Backend
-
-- Firebase Authentication
-- Cloud Firestore
-- Firebase Realtime Database
-
----
-
-## Maps & Location
-
-- Leaflet.js
-
----
-
-## Deployment
-
-- Vercel
-
----
-
-# 📸 Application Preview
-
-> Replace these placeholders with screenshots.
-
-## 🏠 Home Page
-
-```
-assets/home.png
-```
-
----
-
-## 🛒 Marketplace
-
-```
-assets/marketplace.png
-```
-
----
-
-## 💬 Vendor Community
-
-```
-assets/community.png
-```
-
----
-
-## 📦 Order Tracking
-
-```
-assets/tracking.png
-```
-
----
-
-## 🤖 AI Price Alerts
-
-```
-assets/price-alert.png
-```
-
----
-
-# 🚀 Installation
-
-## Clone Repository
-
-```bash
-git clone https://github.com/yourusername/bazar-buddy.git
-```
-
----
-
-## Move into Project
+## Getting started
 
 ```bash
 cd bazar-buddy
-```
-
----
-
-## Install Dependencies
-
-```bash
 npm install
-```
-
----
-
-## Configure Firebase
-
-Create a `.env` file.
-
-```env
-REACT_APP_FIREBASE_API_KEY=YOUR_API_KEY
-
-REACT_APP_FIREBASE_AUTH_DOMAIN=YOUR_AUTH_DOMAIN
-
-REACT_APP_FIREBASE_PROJECT_ID=YOUR_PROJECT_ID
-
-REACT_APP_FIREBASE_STORAGE_BUCKET=YOUR_STORAGE_BUCKET
-
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID=YOUR_MESSAGING_ID
-
-REACT_APP_FIREBASE_APP_ID=YOUR_APP_ID
-
-REACT_APP_FIREBASE_MEASUREMENT_ID=YOUR_MEASUREMENT_ID
-```
-
----
-
-## Start Development Server
-
-```bash
+cp .env.example .env.local   # then fill in your Firebase web config
 npm start
 ```
 
-Runs on
-
-```
-http://localhost:3000
-```
-
----
-
-# 📂 Project Structure
-
-```text
-Bazar-Buddy
-│
-├── public/
-│
-├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── hooks/
-│   ├── firebase/
-│   ├── assets/
-│   ├── context/
-│   ├── services/
-│   └── utils/
-│
-├── .env
-├── package.json
-└── README.md
-```
-
----
-
-# 🌍 Future Scope
-
-- 📱 Android App
-
-- 🍎 iOS App
-
-- 🛰 Offline Mode
-
-- 🌐 More Indian Languages
-
-- 📈 AI Demand Prediction
-
-- 📦 Inventory Management
-
-- 🚛 Logistics Partner Integration
-
-- 📊 Vendor Analytics Dashboard
-
-- 🧾 GST Billing
-
-- 💵 Loan & Credit Support
-
----
-
-# 🎯 Why Bazar-Buddy?
-
-✔ Affordable sourcing
-
-✔ Fair pricing
-
-✔ Digital empowerment
-
-✔ Community collaboration
-
-✔ Faster deliveries
-
-✔ AI-powered decisions
-
-✔ Inclusive multilingual experience
-
----
-
-# 🤝 Contributing
-
-Contributions are always welcome!
+In the Firebase console, enable **Authentication → Email/Password** and create a **Firestore** database. Then deploy the rules and index:
 
 ```bash
-Fork the Repository
-
-Create a Feature Branch
-
-Commit Changes
-
-Push Changes
-
-Create a Pull Request
+npx firebase-tools deploy --only firestore --project <your-project-id>
 ```
 
----
+If the Firebase variables are missing, the app shows a setup screen instead of crashing.
 
-# ⭐ Support
+Optional variables: `REACT_APP_UPI_ID`, `REACT_APP_SUPPORT_PHONE`, `REACT_APP_TOLL_FREE`.
 
-If you found this project useful,
+### Scripts
 
-please consider giving it a ⭐ on GitHub!
+| Command | Purpose |
+|---|---|
+| `npm start` | Dev server on http://localhost:3000 |
+| `npm test` | Tests in watch mode |
+| `npm run test:ci` | Run all tests once |
+| `npm run build` | Production build in `build/` |
 
-It helps the project reach more developers ❤️
+## Deployment (Vercel)
 
----
+Set the Vercel project's **Root Directory** to `bazar-buddy` and add the `REACT_APP_FIREBASE_*` variables in Project Settings → Environment Variables. `vercel.json` already rewrites every route to `index.html` so deep links work.
 
-<div align="center">
+## Known limitations / roadmap
 
-## 💚 Built with Passion for Street Vendors
+- **Order progress is estimated** from the order time and delivery speed. Connect a supplier or delivery-partner API to report real status.
+- **UPI payments are not verified automatically.** The supplier confirms them on delivery. Add a payment gateway (e.g. Razorpay) with server-side verification before handling real money.
+- **Coin balances are updated by the client** and only limited by the security rules. Move coin and order logic to Cloud Functions for production.
+- The catalog and vendor groups are static files. Next step: a supplier dashboard backed by Firestore.
 
-### Empowering Local Businesses Through Technology
+## License
 
-⭐ Star the repository if you like the project!
-
-</div>
- 
----
-
-# 📄 License
-
-Licensed under the **MIT License**
-
-Feel free to use, modify, and contribute.
-````
+MIT

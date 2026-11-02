@@ -1,0 +1,29 @@
+# dependencies
+node_modules/
+bazar-buddy/node_modules/
+
+# production build
+bazar-buddy/build/
+
+# environment (never commit real keys)
+.env
+.env.local
+.env.*.local
+bazar-buddy/.env
+bazar-buddy/.env.local
+bazar-buddy/.env.*.local
+
+# logs & caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+coverage/
+.firebase/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.vercel

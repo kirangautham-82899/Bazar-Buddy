@@ -1,0 +1,168 @@
+.map-wrap {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+
+.vendor-map {
+  height: 320px;
+  width: 100%;
+  z-index: 0;
+}
+
+@media (min-width: 720px) {
+  .vendor-map {
+    height: 420px;
+  }
+}
+
+.map-popup-btn {
+  margin-top: 6px;
+}
+
+.trade-groups,
+.barter {
+  margin-bottom: 16px;
+}
+
+.group-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.group-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding: 10px 4px;
+  border: none;
+  border-bottom: 1px solid var(--color-line);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.group-row:hover {
+  background: var(--color-brand-soft);
+}
+
+.group-row-main {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.group-row-main .muted {
+  font-size: 0.8rem;
+}
+
+.group-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.group-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.group-subtitle {
+  font-size: 0.95rem;
+  margin: 8px 0 0;
+}
+
+.group-prices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.group-prices li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9rem;
+}
+
+.group-prices .badge {
+  margin-left: 6px;
+}
+
+.price-warning {
+  color: var(--color-warning);
+  font-size: 0.82rem;
+}
+
+.price-ok {
+  color: var(--color-success);
+  font-size: 0.82rem;
+}
+
+.review-form {
+  margin-top: 8px;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.88rem;
+}
+
+.review-list span[aria-label] {
+  color: #f5a623;
+}
+
+.review-list p {
+  margin: 2px 0 0;
+}
+
+.barter-form {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+@media (min-width: 720px) {
+  .barter-form {
+    grid-template-columns: 1fr 1fr auto;
+  }
+}
+
+.barter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.barter-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--gradient-card);
+  font-size: 0.9rem;
+}
+
+.barter-by {
+  font-size: 0.8rem;
+}
+
+.barter-entry .cart-remove {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}

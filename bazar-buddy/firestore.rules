@@ -1,0 +1,80 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function str(v, max) { return v is string && v.size() > 0 && v.size() <= max; }
+
+    // Vendor profile. Coins can only move inside the documented limits;
+    // move coin logic to Cloud Functions before handling real money.
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && request.resource.data.coins == 0
+        && request.resource.data.freeDeliveryCredits == 0;
+      allow update: if isOwner(uid)
+        && request.resource.data.coins is int
+        && request.resource.data.coins >= 0
+        && request.resource.data.freeDeliveryCredits is int
+        && request.resource.data.freeDeliveryCredits >= 0
+        && request.resource.data.coins - resource.data.coins <= 200;
+
+      match /redemptions/{id} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid);
+      }
+    }
+
+    // One cart per vendor.
+    match /carts/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.items is list
+        && request.resource.data.items.size() <= 50;
+    }
+
+    match /orders/{orderId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'placed'
+        && request.resource.data.total is number
+        && request.resource.data.total > 0
+        && request.resource.data.items.size() > 0;
+      // Vendors may only cancel their own order.
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'cancelledAt'])
+        && request.resource.data.status == 'cancelled';
+    }
+
+    match /vendorGroups/{groupId} {
+      match /reviews/{reviewId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5
+          && request.resource.data.text is string
+          && request.resource.data.text.size() <= 300;
+      }
+      // Document id is the requester's uid, so each vendor can request once.
+      match /joinRequests/{uid} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid);
+      }
+    }
+
+    match /barters/{barterId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && str(request.resource.data.offer, 80)
+        && str(request.resource.data.request, 80);
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+  }
+}

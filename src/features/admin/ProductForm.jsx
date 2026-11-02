@@ -14,7 +14,7 @@ export const validateProduct = ({ name, price, mrp, stock }) => {
   return errors;
 };
 
-const EMPTY = { name: '', category: CATEGORIES[0].id, unit: 'kg', price: '', mrp: '', stock: '', active: true, icon: '', keywords: '', sortOrder: '' };
+const EMPTY = { name: '', category: CATEGORIES[0].id, unit: 'kg', price: '', mrp: '', stock: '', active: true, icon: '', keywords: '', description: '', sortOrder: '' };
 
 // Add or edit one product. Saves straight to Firestore; the shop updates live.
 const ProductForm = ({ product, onDone }) => {
@@ -85,6 +85,7 @@ const ProductForm = ({ product, onDone }) => {
       {field('stock', 'stock', <input id="product-stock" className="input" type="number" min="0" step="1" inputMode="numeric" value={form.stock} onChange={set('stock')} aria-invalid={Boolean(errors.stock)} />)}
       {field('sortOrder', 'sortOrder', <input id="product-sortOrder" className="input" type="number" inputMode="numeric" value={form.sortOrder} onChange={set('sortOrder')} />)}
       {field('keywords', 'keywords', <input id="product-keywords" className="input" value={form.keywords} onChange={set('keywords')} placeholder="pyaz, kanda" />)}
+      {field('description', 'description', <textarea id="product-description" className="input" rows={2} maxLength={300} value={form.description} onChange={set('description')} />)}
 
       <fieldset className="icon-picker">
         <legend>{t('icon')}</legend>

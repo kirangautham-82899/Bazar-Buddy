@@ -143,3 +143,22 @@
   margin: 0 0 14px;
   color: var(--color-muted);
 }
+
+/* Desktop: profile banner across the top, settings and FAQ side by side */
+.shop-desktop .account-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  max-width: 1000px;
+  gap: 20px 32px;
+}
+
+.shop-desktop .account-hero,
+.shop-desktop .account-page > .btn {
+  grid-column: 1 / -1;
+}
+
+.shop-desktop .account-page > .btn {
+  justify-self: start;
+  width: auto;
+}

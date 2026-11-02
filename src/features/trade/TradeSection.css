@@ -88,9 +88,19 @@
 
 .group-prices li {
   display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-size: 0.9rem;
+}
+
+.group-price-text {
+  display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 0.9rem;
+  min-width: 0;
 }
 
 .group-prices .badge {
@@ -98,6 +108,9 @@
 }
 
 .price-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--color-warning);
   font-size: 0.82rem;
 }
@@ -151,10 +164,116 @@
   gap: 8px;
   padding: 10px 12px;
   border-radius: var(--radius-md);
-  background: var(--gradient-card);
+  border: 1px solid var(--color-line);
+  background: #fff;
   font-size: 0.9rem;
+}
+
+.barter-swap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  min-width: 0;
+}
+
+.barter-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-brand-soft);
+  color: var(--color-brand-dark);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.barter-chip-want {
+  background: #efe8ff;
+  color: #5b34c7;
+}
+
+.barter-arrow {
+  color: var(--color-muted);
 }
 
 .barter-by {
   font-size: 0.8rem;
+}
+
+.map-wrap {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.group-row {
+  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  transition: background 0.2s ease;
+}
+
+.group-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: var(--gradient-soft);
+  color: var(--color-brand-dark);
+  font-weight: 800;
+}
+
+.group-row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.group-row-chevron {
+  color: var(--color-muted);
+  transition: transform 0.2s ease;
+}
+
+.group-row:hover .group-row-chevron {
+  transform: translateX(3px);
+  color: var(--color-brand);
+}
+
+.group-row {
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 520px) {
+  .group-badges {
+    display: none;
+  }
+}
+
+/* CSS map pin (replaces Leaflet's marker images) */
+.map-pin {
+  position: relative;
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--gradient-brand);
+  transform: rotate(-45deg);
+  box-shadow: 0 6px 14px -4px rgba(224, 51, 127, 0.7);
+  animation: pin-drop 0.5s var(--ease-out) both;
+}
+
+.map-pin-verified {
+  background: linear-gradient(135deg, #16a34a, #4ade80);
+  box-shadow: 0 6px 14px -4px rgba(22, 163, 74, 0.7);
+}
+
+.map-pin-dot {
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+@keyframes pin-drop {
+  from { opacity: 0; transform: translateY(-16px) rotate(-45deg); }
+  to { opacity: 1; transform: rotate(-45deg); }
 }

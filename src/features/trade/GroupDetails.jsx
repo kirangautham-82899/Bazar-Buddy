@@ -9,6 +9,8 @@ import vendorGroups from '../../data/vendorGroups';
 import { findProduct } from '../../data/products';
 import { deviationPct, fairPriceFor, isOverpriced } from '../../utils/pricing';
 import { productName } from '../../utils/format';
+import { FaExclamationTriangle } from 'react-icons/fa';
+import ProductIcon from '../../components/common/ProductIcon';
 
 const GroupDetails = ({ group, onClose, badges }) => {
   const { t, language } = useLanguage();
@@ -79,17 +81,20 @@ const GroupDetails = ({ group, onClose, badges }) => {
             const inStock = group.stock[id];
             return (
               <li key={id}>
-                <span>
-                  {product.emoji} {t('sells', { item: productName(product, language), price })}
-                  <span className={`badge ${inStock ? 'badge-success' : 'badge-danger'}`}>
-                    {inStock ? t('inStock') : t('outOfStock')}
+                <ProductIcon id={product.id} category={product.category} size="sm" />
+                <span className="group-price-text">
+                  <span>
+                    {t('sells', { item: productName(product, language), price })}
+                    <span className={`badge ${inStock ? 'badge-success' : 'badge-danger'}`}>
+                      {inStock ? t('inStock') : t('outOfStock')}
+                    </span>
                   </span>
+                  {isOverpriced(price, fair) ? (
+                    <span className="price-warning"><FaExclamationTriangle aria-hidden="true" /> {t('highPrice', { price, fair, pct: deviationPct(price, fair) })}</span>
+                  ) : (
+                    <span className="price-ok">✓ {t('fairPriceOk')}</span>
+                  )}
                 </span>
-                {isOverpriced(price, fair) ? (
-                  <span className="price-warning">⚠️ {t('highPrice', { price, fair, pct: deviationPct(price, fair) })}</span>
-                ) : (
-                  <span className="price-ok">✓ {t('fairPriceOk')}</span>
-                )}
               </li>
             );
           })}

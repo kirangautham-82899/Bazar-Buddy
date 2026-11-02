@@ -6,6 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white"/>
   <img src="https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
   <img src="https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel"/>
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/>
@@ -32,11 +33,13 @@ Bazar Buddy is a mobile-first marketplace for street vendors. Vendors search for
 | 💰 **Apna Coins** | Earn 1 coin per ₹20 spent. Redeem 50 coins for a free delivery, which is applied automatically at checkout. |
 | 🗺️ **Vendor groups** | Leaflet map plus an accessible list of 15 groups around Delhi NCR, with stock, prices, reviews and join requests. |
 | 🔁 **Community barter** | A live board where vendors post swap offers. |
+| ✨ **Motion design** | Word-by-word hero reveal, scroll-linked parallax, tilt cards, sliding tab indicators, cards that reflow when you filter, animated counters and a success tick with confetti. All of it respects the reduce-motion setting. |
+| 🖼️ **No pictures** | No image files or Lottie animations: visuals come from CSS gradients, code-drawn SVG and vector icons, so pages stay light. The UPI QR is generated with the real amount. |
 | ♿ **Accessible** | Real buttons and links, labelled form fields, keyboard-friendly dialogs, screen-reader announcements, and support for reduced motion. |
 
 ## Tech stack
 
-React 19 (Create React App) · React Router 7 · Firebase Auth + Cloud Firestore · Framer Motion · Lottie · Leaflet / React-Leaflet · Jest + Testing Library · Vercel
+React 19 · Vite 6 · React Router 7 · Firebase Auth + Cloud Firestore (offline cache) · Framer Motion · React Icons · Leaflet / React-Leaflet · qrcode.react · Vitest + Testing Library · ESLint · Vercel
 
 ## Project structure
 
@@ -45,16 +48,18 @@ Bazar-Buddy/
 ├── firebase/
 │   ├── firestore.rules           # security rules
 │   └── firestore.indexes.json    # composite index for the orders query
-├── public/                       # index.html, manifest, app icons
+├── public/                       # manifest, app icons
 ├── src/
-│   ├── App.jsx                   # providers + routes (sections are lazy-loaded)
-│   ├── index.js
-│   ├── assets/
-│   │   ├── animations/           # Lottie JSON
-│   │   └── images/
+│   ├── main.jsx                  # entry point
+│   ├── App.jsx                   # landing page + lazy app shell
+│   ├── routes/
+│   │   ├── AppShell.jsx          # Firebase, auth, toasts, login + dashboard routes
+│   │   ├── lazy.js               # chunk loaders + idle prefetching
+│   │   └── sessionCheck.js       # lets the landing page detect a signed-in vendor
 │   ├── components/
-│   │   ├── common/               # Modal, Loader, Toast styles, SetupScreen
-│   │   └── layout/               # TopNavbar, BottomNav, RouteGuards
+│   │   ├── common/               # BrandMark, ProductIcon, LanguageToggle, Modal, Loader, Toast styles
+│   │   ├── layout/               # TopNavbar, BottomNav, RouteGuards
+│   │   └── motion/               # Reveal, Stagger, WordReveal, TiltCard, Aurora, Confetti…
 │   ├── config/                   # firebase.js, app.js (fees, coin rules)
 │   ├── context/                  # Language, Auth, Toast, Shop (cart + orders)
 │   ├── data/                     # product catalog, vendor groups
@@ -68,24 +73,30 @@ Bazar-Buddy/
 │   │   └── help/
 │   ├── hooks/                    # useVoiceSearch, useNow
 │   ├── i18n/                     # translations (en + hi), language list
-│   ├── pages/                    # LanguagePage, AuthPage, DashboardPage
+│   ├── pages/
+│   │   ├── landing/              # LandingPage, PhoneMock
+│   │   ├── auth/                 # AuthPage
+│   │   └── dashboard/            # DashboardPage (tab transitions)
 │   ├── services/                 # Firestore only: cart, orders, users, vendors
 │   ├── styles/                   # global.css (design tokens, shared classes)
 │   └── utils/                    # search, pricing, order status, validation, format
-├── .env.example                  # copy to .env.local
+├── index.html                    # Vite HTML entry
+├── vite.config.js                # build, vendor chunks, Vitest
+├── eslint.config.js
+├── vercel.json                   # SPA rewrites + cache headers
 ├── firebase.json
-├── vercel.json                   # SPA rewrites
+├── .env.example                  # copy to .env.local
 └── package.json
 ```
 
-Tests sit next to the code they cover (`*.test.js`).
+Tests sit next to the code they cover (`*.test.js` / `*.test.jsx`). `src/pages/dashboard/DashboardPage.test.jsx` renders every tab with Firebase mocked.
 
 ### Routes
 
 | Path | Screen |
 |---|---|
-| `/` | Language picker (skipped once a language is chosen) |
-| `/auth` | Login / register / password reset |
+| `/` | Landing page (signed-in vendors are sent to the dashboard) |
+| `/auth` | Login / register / password reset (`?mode=register` opens sign-up) |
 | `/dashboard` | Home (login required) |
 | `/dashboard/market` | Search, products, cart, my orders |
 | `/dashboard/wallet` | Coins, savings, redemptions, transactions |
@@ -112,8 +123,10 @@ Prices are always read from the catalog in `src/data/products.js`, never from th
 ```bash
 npm install
 cp .env.example .env.local   # then fill in your Firebase web config
-npm start
+npm run dev
 ```
+
+Or pull the config straight from Vercel: `npx vercel env pull .env.development.local --environment production`.
 
 In the Firebase console, enable **Authentication → Email/Password** and create a **Firestore** database. Then deploy the rules and index:
 
@@ -129,14 +142,32 @@ Optional variables: `REACT_APP_UPI_ID`, `REACT_APP_SUPPORT_PHONE`, `REACT_APP_TO
 
 | Command | Purpose |
 |---|---|
-| `npm start` | Dev server on http://localhost:3000 |
-| `npm test` | Tests in watch mode |
+| `npm run dev` (or `npm start`) | Vite dev server on http://localhost:3000, with instant reload |
+| `npm test` | Vitest in watch mode |
 | `npm run test:ci` | Run all tests once |
-| `npm run build` | Production build in `build/` |
+| `npm run lint` | ESLint |
+| `npm run build` | Production build in `dist/` |
+| `npm run preview` | Serve the production build locally |
+
+## Performance
+
+| | Before (Create React App) | Now (Vite) |
+|---|---|---|
+| Dev server cold start | 65 s | ~0.5 s (ready), ~3 s including Node startup |
+| Dev page load | 13.7 MB bundle | ~0.2 s, modules served on demand |
+| Production build | 49 s | ~5–8 s |
+| JS needed for the landing page (gzip) | 285 kB + chunks, Firebase included | ~164 kB, no Firebase |
+
+How:
+- **Firebase stays off the landing page.** Firebase, login and the dashboard live in a lazy app-shell chunk. They are prefetched while the browser is idle (skipped on Data Saver / 2G) and when a finger or cursor heads for a call-to-action button.
+- **Libraries split into long-lived vendor chunks** (`react`, `motion`, `firebase`, `map`), so a deploy doesn't force visitors to re-download libraries. Vercel serves `/assets/*` with a one-year immutable cache.
+- **Every tab is its own chunk.** The other tabs are prefetched once the dashboard is open, so switching is instant.
+- **Firestore offline cache** (IndexedDB) shows the cart, orders and profile instantly on repeat visits. Auth is initialised without the unused popup/redirect code.
+- **No images or Lottie files**, one font family, and an inline background color so the first paint isn't a white flash.
 
 ## Deployment (Vercel)
 
-The Vercel project is connected to this GitHub repo: every push to `main` deploys to production at https://bazar-buddy-neon.vercel.app, and other branches get preview links. The app lives at the repo root, so the Root Directory setting stays empty. The `REACT_APP_FIREBASE_*` variables are set in Project Settings → Environment Variables. `vercel.json` rewrites every route to `index.html` so deep links work.
+The Vercel project is connected to this GitHub repo: every push to `main` deploys to production at https://bazar-buddy-neon.vercel.app, and other branches get preview links. The app lives at the repo root, so the Root Directory setting stays empty. The `REACT_APP_FIREBASE_*` variables are set in Project Settings → Environment Variables. `vercel.json` sets the Vite framework preset (output `dist/`), rewrites every route to `index.html` so deep links work, and adds long-term cache headers for hashed assets.
 
 ## Known limitations / roadmap
 

@@ -1,0 +1,35 @@
+.product-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 30%;
+  background: var(--tone-bg);
+  color: var(--tone-fg);
+}
+
+.product-icon-sm {
+  width: 36px;
+  height: 36px;
+  font-size: 1.25rem;
+}
+
+.product-icon-md {
+  width: 52px;
+  height: 52px;
+  font-size: 1.8rem;
+}
+
+.product-icon-lg {
+  width: 64px;
+  height: 64px;
+  font-size: 2.2rem;
+}
+
+.tone-green { --tone-bg: #e4f7ea; --tone-fg: #1f9d55; }
+.tone-amber { --tone-bg: #fff3d6; --tone-fg: #c27c0e; }
+.tone-wheat { --tone-bg: #f8eedc; --tone-fg: #9a6b1f; }
+.tone-red { --tone-bg: #ffe4e4; --tone-fg: #d64545; }
+.tone-sky { --tone-bg: #e2f1ff; --tone-fg: #2b7bd6; }
+.tone-olive { --tone-bg: #eef3d9; --tone-fg: #6f8a1f; }
+.tone-brand { --tone-bg: #ffe3f0; --tone-fg: var(--color-brand); }

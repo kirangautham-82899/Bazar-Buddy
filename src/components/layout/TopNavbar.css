@@ -9,49 +9,28 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 0 12px;
-  background: var(--gradient-bar);
-  box-shadow: var(--shadow-sm);
-  border-radius: 0 0 16px 16px;
+  padding: 0 16px;
+  background: rgba(251, 247, 251, 0.6);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.top-navbar.scrolled {
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 1px 0 var(--color-line), 0 8px 24px -16px rgba(29, 23, 48, 0.25);
 }
 
 .navbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 4px;
   min-width: 0;
   text-decoration: none;
-}
-
-.navbar-logo {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-}
-
-.brand-name {
-  font-family: var(--font-brand);
-  font-size: 1.4rem;
-  color: #e94e77;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
-}
-
-.language-select {
-  min-height: 40px;
-  padding: 4px 8px;
-  border: 1.5px solid var(--color-line);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  font-size: 0.85rem;
 }
 
 .navbar-cart {
@@ -60,27 +39,29 @@
 
 .cart-count {
   position: absolute;
-  top: -2px;
-  right: -2px;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
+  top: -6px;
+  right: -6px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
   border-radius: 999px;
-  background: var(--color-brand);
+  background: var(--gradient-brand);
   color: #fff;
   font-size: 0.7rem;
   font-weight: 700;
-  line-height: 20px;
+  line-height: 22px;
   text-align: center;
+  box-shadow: 0 0 0 2px #fff;
 }
 
-@media (max-width: 380px) {
-  .brand-name {
-    font-size: 1.1rem;
+@media (max-width: 420px) {
+  .navbar-brand .brand-mark-name {
+    display: none;
   }
+}
 
-  .navbar-logo {
-    width: 36px;
-    height: 36px;
+@media (max-width: 340px) {
+  .navbar-help {
+    display: none;
   }
 }

@@ -2,24 +2,26 @@
   position: sticky;
   top: var(--top-nav-height);
   z-index: 10;
-  margin: 0 -16px 12px;
-  padding: 8px 16px 4px;
-  background: var(--color-bg);
+  margin: 0 -16px 14px;
+  padding: 8px 16px 6px;
+  background: linear-gradient(180deg, var(--color-bg) 75%, rgba(251, 247, 251, 0));
 }
 
 .search-bar {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 4px 4px 14px;
+  padding: 5px 5px 5px 16px;
   border: 1.5px solid var(--color-line);
   border-radius: 999px;
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  background: #fff;
+  box-shadow: var(--shadow-md);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-bar:focus-within {
   border-color: var(--color-brand);
+  box-shadow: var(--shadow-md), 0 0 0 4px rgba(224, 51, 127, 0.12);
 }
 
 .search-icon {
@@ -49,8 +51,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
   border: none;
   border-radius: 50%;
@@ -62,24 +64,29 @@
   color: var(--color-muted);
 }
 
+.search-clear:hover {
+  background: var(--color-bg);
+}
+
 .search-voice {
-  background: var(--color-brand);
+  background: var(--gradient-brand);
   color: #fff;
+  box-shadow: var(--shadow-brand);
+  transition: transform 0.15s ease;
+}
+
+.search-voice:active {
+  transform: scale(0.92);
 }
 
 .search-voice.listening {
   background: var(--color-danger);
-  animation: pulse 1.2s ease-in-out infinite;
+  animation: voice-pulse 1.2s ease-out infinite;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(214, 69, 69, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(214, 69, 69, 0);
-  }
+@keyframes voice-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(220, 60, 60, 0.55); }
+  100% { box-shadow: 0 0 0 14px rgba(220, 60, 60, 0); }
 }
 
 .search-hint {
@@ -92,7 +99,7 @@
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 10px 0 4px;
+  padding: 12px 0 4px;
   scrollbar-width: none;
 }
 
@@ -101,22 +108,38 @@
 }
 
 .chip {
+  position: relative;
   flex-shrink: 0;
-  min-height: 36px;
-  padding: 4px 14px;
+  min-height: 38px;
+  padding: 6px 16px;
   border: 1.5px solid var(--color-line);
   border-radius: 999px;
-  background: var(--color-surface);
-  font-size: 0.85rem;
+  background: #fff;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-muted);
   cursor: pointer;
   white-space: nowrap;
+  isolation: isolate;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.chip:hover {
+  border-color: #f5b8d3;
 }
 
 .chip.active {
-  border-color: var(--color-brand);
-  background: var(--color-brand);
   color: #fff;
-  font-weight: 600;
+  border-color: transparent;
+}
+
+.chip-pill {
+  position: absolute;
+  inset: -1.5px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--gradient-brand);
+  box-shadow: var(--shadow-brand);
 }
 
 .search-count {

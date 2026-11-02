@@ -42,39 +42,43 @@ React 19 (Create React App) · React Router 7 · Firebase Auth + Cloud Firestore
 
 ```text
 Bazar-Buddy/
-├── README.md
-└── bazar-buddy/                  # the React app (Vercel root directory)
-    ├── public/                   # index.html, manifest, icons
-    ├── firestore.rules           # security rules (deploy with the Firebase CLI)
-    ├── firestore.indexes.json    # composite index for the orders query
-    ├── firebase.json
-    ├── .env.example              # copy to .env.local
-    └── src/
-        ├── App.jsx               # providers + routes (sections are lazy-loaded)
-        ├── index.js
-        ├── assets/
-        │   ├── animations/       # Lottie JSON
-        │   └── images/
-        ├── components/
-        │   ├── common/           # Modal, Loader, SetupScreen
-        │   └── layout/           # TopNavbar, BottomNav, RouteGuards
-        ├── config/               # firebase.js, app.js (fees, coin rules)
-        ├── context/              # Language, Auth, Toast, Shop (cart + orders)
-        ├── data/                 # product catalog, vendor groups
-        ├── features/
-        │   ├── home/
-        │   ├── market/           # search, products, cart, orders
-        │   ├── wallet/
-        │   ├── trade/            # map, group details, barter board
-        │   ├── profile/
-        │   └── help/
-        ├── hooks/                # useVoiceSearch, useNow
-        ├── i18n/                 # translations (en + hi)
-        ├── pages/                # LanguagePage, AuthPage, DashboardPage
-        ├── services/             # Firestore access: cart, orders, users, vendors
-        ├── styles/               # global.css (design tokens)
-        └── utils/                # search, pricing, order status, validation, format
+├── firebase/
+│   ├── firestore.rules           # security rules
+│   └── firestore.indexes.json    # composite index for the orders query
+├── public/                       # index.html, manifest, app icons
+├── src/
+│   ├── App.jsx                   # providers + routes (sections are lazy-loaded)
+│   ├── index.js
+│   ├── assets/
+│   │   ├── animations/           # Lottie JSON
+│   │   └── images/
+│   ├── components/
+│   │   ├── common/               # Modal, Loader, Toast styles, SetupScreen
+│   │   └── layout/               # TopNavbar, BottomNav, RouteGuards
+│   ├── config/                   # firebase.js, app.js (fees, coin rules)
+│   ├── context/                  # Language, Auth, Toast, Shop (cart + orders)
+│   ├── data/                     # product catalog, vendor groups
+│   ├── features/                 # one folder per dashboard tab
+│   │   ├── home/
+│   │   ├── market/               # search, product cards, cart + checkout
+│   │   ├── orders/               # order list + tracker (used by Home and Market)
+│   │   ├── wallet/
+│   │   ├── trade/                # map, group details, barter board
+│   │   ├── profile/
+│   │   └── help/
+│   ├── hooks/                    # useVoiceSearch, useNow
+│   ├── i18n/                     # translations (en + hi), language list
+│   ├── pages/                    # LanguagePage, AuthPage, DashboardPage
+│   ├── services/                 # Firestore only: cart, orders, users, vendors
+│   ├── styles/                   # global.css (design tokens, shared classes)
+│   └── utils/                    # search, pricing, order status, validation, format
+├── .env.example                  # copy to .env.local
+├── firebase.json
+├── vercel.json                   # SPA rewrites
+└── package.json
 ```
+
+Tests sit next to the code they cover (`*.test.js`).
 
 ### Routes
 
@@ -106,7 +110,6 @@ Prices are always read from the catalog in `src/data/products.js`, never from th
 ## Getting started
 
 ```bash
-cd bazar-buddy
 npm install
 cp .env.example .env.local   # then fill in your Firebase web config
 npm start
@@ -133,7 +136,7 @@ Optional variables: `REACT_APP_UPI_ID`, `REACT_APP_SUPPORT_PHONE`, `REACT_APP_TO
 
 ## Deployment (Vercel)
 
-Set the Vercel project's **Root Directory** to `bazar-buddy` and add the `REACT_APP_FIREBASE_*` variables in Project Settings → Environment Variables. `vercel.json` already rewrites every route to `index.html` so deep links work.
+The Vercel project is connected to this GitHub repo: every push to `main` deploys to production at https://bazar-buddy-neon.vercel.app, and other branches get preview links. The app lives at the repo root, so the Root Directory setting stays empty. The `REACT_APP_FIREBASE_*` variables are set in Project Settings → Environment Variables. `vercel.json` rewrites every route to `index.html` so deep links work.
 
 ## Known limitations / roadmap
 

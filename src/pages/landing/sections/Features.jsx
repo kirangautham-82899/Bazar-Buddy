@@ -1,13 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useLanguage } from '../../../context/LanguageContext';
+import { t } from '../../../content/strings';
 import { Stagger, staggerItem } from '../../../components/motion';
 import { FEATURES } from '../content';
 import SectionHeading from './SectionHeading';
 import './Features.css';
 
 const Features = () => {
-  const { t } = useLanguage();
   return (
     <section className="section" id="features" aria-labelledby="features-title">
       <SectionHeading id="features-title" eyebrow="featuresEyebrow" title="featuresTitle" />

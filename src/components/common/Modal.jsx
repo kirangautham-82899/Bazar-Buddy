@@ -2,12 +2,11 @@ import React, { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
-import { useLanguage } from '../../context/LanguageContext';
+import { t } from '../../content/strings';
 import './Modal.css';
 
 // Accessible dialog: Escape and backdrop close it, focus moves in and returns on close.
 const Modal = ({ open, title, onClose, children }) => {
-  const { t } = useLanguage();
   const titleId = useId();
   const dialogRef = useRef(null);
 

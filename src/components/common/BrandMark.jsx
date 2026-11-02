@@ -1,12 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { GiBasket } from 'react-icons/gi';
-import { useLanguage } from '../../context/LanguageContext';
+import { t } from '../../content/strings';
 import './BrandMark.css';
 
 // Logo built from an icon and type, no image file.
 const BrandMark = ({ light = false, compact = false }) => {
-  const { t } = useLanguage();
   return (
     <span className={`brand-mark ${light ? 'brand-mark-light' : ''}`}>
       <motion.span

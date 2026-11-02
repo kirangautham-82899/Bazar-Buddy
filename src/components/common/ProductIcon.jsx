@@ -28,6 +28,7 @@ import {
 import './ProductIcon.css';
 
 // Vector icons stand in for product photos, so the app ships no images.
+// Keys are referenced by each product's `icon` field.
 const ICONS = {
   tomato: GiTomato,
   onion: GiBeet,
@@ -67,8 +68,11 @@ const CATEGORY_TONES = {
 
 const toneFor = (category) => CATEGORY_TONES[category] || 'brand';
 
-const ProductIcon = ({ id, category, size = 'md' }) => {
-  const Icon = ICONS[id] || GiBasket;
+// Icon keys an admin can pick from when adding a product.
+export const ICON_KEYS = Object.keys(ICONS);
+
+const ProductIcon = ({ icon, category, size = 'md' }) => {
+  const Icon = ICONS[icon] || GiBasket;
   return (
     <span className={`product-icon product-icon-${size} tone-${toneFor(category)}`} aria-hidden="true">
       <Icon />

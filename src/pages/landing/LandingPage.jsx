@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useSpring } from 'framer-motion';
-import { loadAppShell, loadAuthPage, prefetchWhenIdle } from '../../routes/lazy';
+import { loadAppShell, loadAuthPage, loadShopHome, loadShopLayout, prefetchWhenIdle } from '../../routes/lazy';
 import { onSignedIn } from '../../routes/sessionCheck';
 import Nav from './sections/Nav';
 import Hero from './sections/Hero';
@@ -19,14 +19,14 @@ const LandingPage = () => {
   const { scrollYProgress } = useScroll();
   const bar = useSpring(scrollYProgress, { stiffness: 140, damping: 30 });
 
-  // Prefetch the app, and send vendors who are already signed in to their dashboard.
+  // Prefetch the shop, and send vendors who are already signed in straight to it.
   useEffect(() => {
     let unsubscribe = () => {};
     let active = true;
-    const cancelPrefetch = prefetchWhenIdle(loadAppShell, loadAuthPage);
+    const cancelPrefetch = prefetchWhenIdle(loadAppShell, loadShopLayout, loadShopHome, loadAuthPage);
     const idle = (fn) => ('requestIdleCallback' in window ? window.requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 1200));
     idle(() => {
-      onSignedIn(() => navigate('/dashboard', { replace: true }))
+      onSignedIn(() => navigate('/shop', { replace: true }))
         .then((stop) => (active ? (unsubscribe = stop) : stop()))
         .catch(() => {});
     });

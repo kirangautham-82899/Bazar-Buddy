@@ -5,76 +5,65 @@ service cloud.firestore {
 
     function signedIn() { return request.auth != null; }
     function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
-    function str(v, max) { return v is string && v.size() > 0 && v.size() <= max; }
+    // Team members: create admins/{uid} by hand in the Firebase console.
+    function isAdmin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function onlyChanges(keys) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys); }
 
-    // Vendor profile. Coins can only move inside the documented limits;
-    // move coin logic to Cloud Functions before handling real money.
-    match /users/{uid} {
+    // Nobody can make themselves an admin from the app.
+    match /admins/{uid} {
       allow read: if isOwner(uid);
-      allow create: if isOwner(uid)
-        && request.resource.data.coins == 0
-        && request.resource.data.freeDeliveryCredits == 0;
-      allow update: if isOwner(uid)
-        && request.resource.data.coins is int
-        && request.resource.data.coins >= 0
-        && request.resource.data.freeDeliveryCredits is int
-        && request.resource.data.freeDeliveryCredits >= 0
-        && request.resource.data.coins - resource.data.coins <= 200;
-
-      match /redemptions/{id} {
-        allow read: if isOwner(uid);
-        allow create: if isOwner(uid);
-      }
+      allow write: if false;
     }
 
-    // One cart per vendor.
+    // Catalog: public to browse, edited by the team.
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin()
+        && request.resource.data.name is string
+        && request.resource.data.price is number
+        && request.resource.data.price > 0
+        && request.resource.data.stock is int
+        && request.resource.data.stock >= 0
+        && request.resource.data.active is bool;
+      allow delete: if isAdmin();
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create, update: if isOwner(uid);
+    }
+
+    // One cart per vendor: product ids and quantities only.
     match /carts/{uid} {
       allow read, delete: if isOwner(uid);
       allow create, update: if isOwner(uid)
         && request.resource.data.items is list
-        && request.resource.data.items.size() <= 50;
+        && request.resource.data.items.size() <= 100;
     }
 
     match /orders/{orderId} {
-      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+
       allow create: if signedIn()
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.status == 'placed'
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.items.size() <= 100
         && request.resource.data.total is number
-        && request.resource.data.total > 0
-        && request.resource.data.items.size() > 0;
-      // Vendors may only cancel their own order.
+        && request.resource.data.total > 0;
+
+      // Customers may only cancel, and only before packing.
       allow update: if signedIn()
         && resource.data.uid == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'cancelledAt'])
-        && request.resource.data.status == 'cancelled';
-    }
+        && resource.data.status in ['placed', 'confirmed']
+        && request.resource.data.status == 'cancelled'
+        && onlyChanges(['status', 'statusHistory', 'updatedAt']);
 
-    match /vendorGroups/{groupId} {
-      match /reviews/{reviewId} {
-        allow read: if signedIn();
-        allow create: if signedIn()
-          && request.resource.data.uid == request.auth.uid
-          && request.resource.data.rating is int
-          && request.resource.data.rating >= 1
-          && request.resource.data.rating <= 5
-          && request.resource.data.text is string
-          && request.resource.data.text.size() <= 300;
-      }
-      // Document id is the requester's uid, so each vendor can request once.
-      match /joinRequests/{uid} {
-        allow read: if isOwner(uid);
-        allow create: if isOwner(uid);
-      }
-    }
-
-    match /barters/{barterId} {
-      allow read: if signedIn();
-      allow create: if signedIn()
-        && request.resource.data.uid == request.auth.uid
-        && str(request.resource.data.offer, 80)
-        && str(request.resource.data.request, 80);
-      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+      // The team moves orders along; contents and totals stay as placed.
+      allow update: if isAdmin()
+        && request.resource.data.status in ['placed', 'confirmed', 'packed', 'outForDelivery', 'delivered', 'cancelled']
+        && onlyChanges(['status', 'statusHistory', 'updatedAt']);
     }
   }
 }

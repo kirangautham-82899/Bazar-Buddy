@@ -1,14 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaChevronDown } from 'react-icons/fa';
-import { useLanguage } from '../../../context/LanguageContext';
+import { t } from '../../../content/strings';
 import { Stagger, staggerItem } from '../../../components/motion';
 import { LANDING_FAQ } from '../content';
 import SectionHeading from './SectionHeading';
 import './Faq.css';
 
 const Faq = () => {
-  const { t } = useLanguage();
   return (
     <section className="section section-narrow" id="faq" aria-labelledby="faq-title">
       <SectionHeading id="faq-title" eyebrow="faqEyebrow" title="faqLandingTitle" />

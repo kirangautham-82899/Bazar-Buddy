@@ -1,0 +1,153 @@
+.orders-page {
+  max-width: 680px;
+}
+
+.orders-page .page-title {
+  margin-bottom: 16px;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.order-card.live {
+  border-color: #b9e3c4;
+  background: linear-gradient(180deg, #f3fbf5, #fff 60%);
+}
+
+.order-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.order-card-head > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.order-items {
+  margin: 0;
+}
+
+.order-eta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.order-actions:empty {
+  display: none;
+}
+
+.badge-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: badge-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+
+/* Tracker */
+.tracker {
+  position: relative;
+  padding-top: 2px;
+}
+
+.tracker-bar {
+  position: absolute;
+  top: 9px;
+  left: 10%;
+  right: 10%;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--color-line);
+  overflow: hidden;
+}
+
+.tracker-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--gradient-brand);
+  transform-origin: left center;
+}
+
+.tracker-steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tracker-steps li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  font-size: 0.64rem;
+  line-height: 1.2;
+  color: var(--color-muted);
+}
+
+.tracker-dot {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid var(--color-line);
+  background: #fff;
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+
+.tracker-steps li.done .tracker-dot {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+}
+
+.tracker-steps li.current .tracker-dot::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--color-brand);
+  animation: ring 1.6s ease-out infinite;
+}
+
+@keyframes ring {
+  from { opacity: 0.8; transform: scale(0.7); }
+  to { opacity: 0; transform: scale(1.5); }
+}
+
+.tracker-steps li.done {
+  color: var(--color-ink);
+  font-weight: 600;
+}

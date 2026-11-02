@@ -1,26 +1,5 @@
-import { computeTotals, deviationPct, fairPriceFor, isOverpriced, median } from './pricing';
-
-describe('median', () => {
-  it('handles odd, even and empty lists', () => {
-    expect(median([3, 1, 2])).toBe(2);
-    expect(median([1, 2, 3, 4])).toBe(2.5);
-    expect(median([undefined, null])).toBeNull();
-  });
-});
-
-describe('fair price', () => {
-  const groups = [{ prices: { tomato: 30 } }, { prices: { tomato: 32 } }, { prices: { tomato: 90 } }, { prices: {} }];
-
-  it('uses the median so one expensive group does not skew it', () => {
-    expect(fairPriceFor('tomato', groups, 31)).toBe(32);
-  });
-
-  it('flags prices more than 15% above fair', () => {
-    expect(deviationPct(45, 30)).toBe(50);
-    expect(isOverpriced(45, 30)).toBe(true);
-    expect(isOverpriced(34, 30)).toBe(false);
-  });
-});
+import { FREE_DELIVERY_ABOVE } from '../config/app';
+import { computeTotals, discountPct } from './pricing';
 
 describe('computeTotals', () => {
   const items = [
@@ -28,31 +7,34 @@ describe('computeTotals', () => {
     { price: 248, mrp: 275, quantity: 1 },
   ];
 
-  it('adds delivery and verified fees', () => {
-    const totals = computeTotals(items, { speed: 'express', verified: true });
-    expect(totals.subtotal).toBe(308);
+  it('adds the delivery fee below the free-delivery threshold', () => {
+    const totals = computeTotals(items, { speed: 'express' });
+    expect(totals.itemTotal).toBe(308);
     expect(totals.deliveryFee).toBe(30);
-    expect(totals.verifiedFee).toBe(5);
-    expect(totals.total).toBe(343);
-    expect(totals.comboSavings).toBe(27);
-    expect(totals.coinsEarned).toBe(17);
+    expect(totals.total).toBe(338);
+    expect(totals.savings).toBe(27);
+    expect(totals.amountToFreeDelivery).toBe(FREE_DELIVERY_ABOVE - 308);
   });
 
-  it('uses a free-delivery credit only when there is a fee to waive', () => {
-    const paid = computeTotals(items, { speed: 'scheduled', freeDeliveryCredits: 1 });
-    expect(paid.usesCredit).toBe(true);
-    expect(paid.deliveryFee).toBe(0);
-    expect(paid.creditSaving).toBe(10);
-
-    const saver = computeTotals(items, { speed: 'saver', freeDeliveryCredits: 1 });
-    expect(saver.usesCredit).toBe(false);
+  it('waives delivery once the item total reaches the threshold', () => {
+    const totals = computeTotals([{ price: FREE_DELIVERY_ABOVE, quantity: 1 }], { speed: 'express' });
+    expect(totals.freeDelivery).toBe(true);
+    expect(totals.deliveryFee).toBe(0);
+    expect(totals.total).toBe(FREE_DELIVERY_ABOVE);
   });
 
-  it('caps coins per order', () => {
-    expect(computeTotals([{ price: 10000, quantity: 1 }]).coinsEarned).toBe(200);
+  it('saver delivery is always free', () => {
+    expect(computeTotals(items, { speed: 'saver' }).deliveryFee).toBe(0);
   });
 
-  it('is zero for an empty cart even with fees selected', () => {
-    expect(computeTotals([], { speed: 'express', verified: true }).total).toBe(0);
+  it('is zero for an empty cart', () => {
+    expect(computeTotals([], { speed: 'express' }).total).toBe(0);
+  });
+});
+
+describe('discountPct', () => {
+  it('rounds the saving against MRP', () => {
+    expect(discountPct({ price: 248, mrp: 275 })).toBe(10);
+    expect(discountPct({ price: 30, mrp: null })).toBe(0);
   });
 });

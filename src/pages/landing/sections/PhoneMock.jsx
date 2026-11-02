@@ -1,15 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { FaMicrophone, FaSearch } from 'react-icons/fa';
-import { useLanguage } from '../../../context/LanguageContext';
-import { catalog } from '../../../data/products';
-import vendorGroups from '../../../data/vendorGroups';
+import { t } from '../../../content/strings';
+import starterCatalog from '../../../data/starterCatalog';
 import { searchProducts } from '../../../utils/search';
-import { fairPriceFor, isOverpriced } from '../../../utils/pricing';
-import { formatRupees, productName } from '../../../utils/format';
+import { formatRupees } from '../../../utils/format';
 import ProductIcon from '../../../components/common/ProductIcon';
 
-const QUERIES = ['pyaz', 'टमाटर', 'aloo', 'mirch'];
+const QUERIES = ['pyaz', 'tomato', 'aloo', 'mirch'];
 
 // Types each query letter by letter, pauses, deletes it, then moves on.
 const useTypewriter = (words, { typeMs = 110, holdMs = 1600 } = {}) => {
@@ -44,9 +42,8 @@ const useTypewriter = (words, { typeMs = 110, holdMs = 1600 } = {}) => {
 };
 
 const PhoneMock = () => {
-  const { t, language } = useLanguage();
   const query = useTypewriter(QUERIES);
-  const results = useMemo(() => searchProducts(catalog, query).slice(0, 3), [query]);
+  const results = useMemo(() => searchProducts(starterCatalog, query).slice(0, 3), [query]);
 
   return (
     <div className="phone">
@@ -67,8 +64,6 @@ const PhoneMock = () => {
         <motion.ul layout className="phone-results">
           <AnimatePresence mode="popLayout" initial={false}>
             {results.map((p) => {
-              const fair = fairPriceFor(p.id, vendorGroups, p.price);
-              const hasComparison = vendorGroups.some((g) => g.prices?.[p.id]);
               return (
                 <motion.li
                   key={p.id}
@@ -79,12 +74,12 @@ const PhoneMock = () => {
                   transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   className="phone-row"
                 >
-                  <ProductIcon id={p.id} category={p.category} size="sm" />
-                  <span className="phone-row-name">{productName(p, language)}</span>
-                  <span className="phone-row-price">
-                    {formatRupees(p.price)}
-                    {hasComparison && !isOverpriced(p.price, fair) && <span className="phone-fair">✓ {t('belowFair')}</span>}
+                  <ProductIcon icon={p.icon} category={p.category} size="sm" />
+                  <span className="phone-row-name">
+                    {p.name}
+                    <span className="phone-row-unit">{formatRupees(p.price)}{t('perUnit', { unit: p.unit })}</span>
                   </span>
+                  <span className="phone-add">{t('add')}</span>
                 </motion.li>
               );
             })}

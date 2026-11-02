@@ -1,0 +1,256 @@
+.cart-page {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cart-block {
+  padding: 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.cart-block h2,
+.cart-block legend {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.cart-block .choice-group {
+  margin: 0;
+}
+
+.cart-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-block-head h2 {
+  margin: 0;
+}
+
+.free-delivery {
+  margin-bottom: 12px;
+}
+
+.free-delivery p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-brand-dark);
+}
+
+.free-delivery-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-brand-soft);
+  overflow: hidden;
+}
+
+.free-delivery-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gradient-brand);
+  transform-origin: left center;
+}
+
+.cart-lines {
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--color-line);
+  overflow: hidden;
+}
+
+.cart-line:first-child {
+  border-top: none;
+}
+
+.cart-line.unavailable .product-icon {
+  opacity: 0.4;
+}
+
+.cart-line-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.cart-line-info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cart-line-info .muted {
+  font-size: 0.78rem;
+}
+
+.cart-line-warning {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-danger);
+}
+
+.cart-line-end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.cart-line-total {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.cart-address {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+}
+
+.cart-address svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--color-accent);
+}
+
+.choice-row {
+  grid-template-columns: 1fr 1fr;
+}
+
+.choice-row legend {
+  grid-column: 1 / -1;
+}
+
+.bill {
+  margin: 0;
+}
+
+.bill > div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+}
+
+.bill dd {
+  margin: 0;
+}
+
+.bill-total {
+  padding-top: 10px;
+  border-top: 1px dashed var(--color-line);
+  font-size: 1.08rem !important;
+  font-weight: 800;
+}
+
+.bill-savings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-brand-soft);
+  color: var(--color-brand-dark);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.checkout-bar {
+  position: sticky;
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 8px);
+  z-index: 5;
+  padding-top: 4px;
+}
+
+.cart-empty {
+  padding: 56px 16px;
+}
+
+.cart-empty h1 {
+  margin: 4px 0 0;
+  color: var(--color-ink);
+  font-size: 1.3rem;
+}
+
+/* Address form */
+.address-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+}
+
+.address-form .field-name,
+.address-form .field-phone,
+.address-form .field-line1,
+.address-form .btn {
+  grid-column: 1 / -1;
+}
+
+/* Order placed */
+.order-success {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.upi-pay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+.upi-pay h3 {
+  font-size: 1rem;
+}
+
+.upi-pay p {
+  margin: 4px 0 0;
+}
+
+.upi-qr {
+  padding: 12px;
+  margin: 4px 0 8px;
+  border-radius: var(--radius-md);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.upi-qr svg {
+  display: block;
+}
+
+.upi-app-link {
+  margin: 10px 0 4px;
+}
+
+.money {
+  display: inline-block;
+}

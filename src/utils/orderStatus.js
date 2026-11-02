@@ -1,16 +1,24 @@
-// Order progress is derived from when the order was placed and the delivery
-// speed chosen. When a supplier/delivery integration exists, replace
-// `getOrderStage` with the status it reports.
-import { findProduct } from '../data/products';
+// Order lifecycle. Status is set by the team in the admin panel; customers can
+// only cancel before the order is packed.
+import { EXPRESS_MINUTES } from '../config/app';
 
-export const STAGES = ['placed', 'confirmed', 'outForDelivery', 'delivered'];
+export const STAGES = ['placed', 'confirmed', 'packed', 'outForDelivery', 'delivered'];
 
-export const STAGE_LABEL_KEYS = {
+export const STATUS_LABEL_KEYS = {
   placed: 'statusPlaced',
   confirmed: 'statusConfirmed',
+  packed: 'statusPacked',
   outForDelivery: 'statusOutForDelivery',
   delivered: 'statusDelivered',
   cancelled: 'statusCancelled',
+};
+
+// The next step staff can move an order to, and the button that does it.
+export const NEXT_STATUS = {
+  placed: { status: 'confirmed', labelKey: 'confirmOrder' },
+  confirmed: { status: 'packed', labelKey: 'markPacked' },
+  packed: { status: 'outForDelivery', labelKey: 'markOutForDelivery' },
+  outForDelivery: { status: 'delivered', labelKey: 'markDelivered' },
 };
 
 const MINUTE = 60 * 1000;
@@ -25,7 +33,7 @@ export const toDate = (value) => {
 
 export const estimatedDelivery = (createdAt, speed) => {
   const start = toDate(createdAt) || new Date();
-  if (speed === 'express') return new Date(start.getTime() + 45 * MINUTE);
+  if (speed === 'express') return new Date(start.getTime() + EXPRESS_MINUTES * MINUTE);
   if (speed === 'scheduled') {
     const eta = new Date(start);
     eta.setDate(eta.getDate() + 1);
@@ -35,37 +43,8 @@ export const estimatedDelivery = (createdAt, speed) => {
   return new Date(start.getTime() + 24 * 60 * MINUTE);
 };
 
-export const getOrderStage = (order, now = new Date()) => {
-  if (order.status === 'cancelled') return 'cancelled';
-  // Orders written moments ago have no server timestamp yet.
-  const created = toDate(order.createdAt) || now;
-  const eta = estimatedDelivery(created, order.speed);
-  const total = eta - created;
-  const confirmedAt = created.getTime() + Math.min(5 * MINUTE, total * 0.1);
-  const outAt = eta.getTime() - Math.min(60 * MINUTE, total * 0.5);
-  const t = now.getTime();
+export const isActiveStatus = (status) => status !== 'delivered' && status !== 'cancelled';
 
-  if (t >= eta.getTime()) return 'delivered';
-  if (t >= outAt) return 'outForDelivery';
-  if (t >= confirmedAt) return 'confirmed';
-  return 'placed';
-};
+export const canCustomerCancel = (status) => status === 'placed' || status === 'confirmed';
 
-export const isActiveStage = (stage) => stage !== 'delivered' && stage !== 'cancelled';
-
-export const canCancel = (stage) => stage === 'placed' || stage === 'confirmed';
-
-// Most recently bought products (newest order first, no duplicates) with the
-// quantity last ordered. `orders` must already be sorted newest first.
-export const recentPurchases = (orders, maxItems = 4) => {
-  const seen = new Map();
-  for (const order of orders) {
-    if (order.status === 'cancelled') continue;
-    for (const item of order.items) {
-      if (!seen.has(item.id) && findProduct(item.id)) seen.set(item.id, item.quantity);
-    }
-  }
-  return [...seen.entries()]
-    .slice(0, maxItems)
-    .map(([id, quantity]) => ({ product: findProduct(id), quantity }));
-};
+export const canAdminCancel = (status) => isActiveStatus(status);

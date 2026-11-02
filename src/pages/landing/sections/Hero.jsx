@@ -2,8 +2,8 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FaArrowRight, FaCheck } from 'react-icons/fa';
-import { useLanguage } from '../../../context/LanguageContext';
-import { findProduct } from '../../../data/products';
+import { t } from '../../../content/strings';
+import starterCatalog from '../../../data/starterCatalog';
 import ProductIcon from '../../../components/common/ProductIcon';
 import { Aurora, Magnetic, Stagger, WordReveal, staggerItem } from '../../../components/motion';
 import { HERO_PRODUCE, HERO_TRUST } from '../content';
@@ -12,7 +12,6 @@ import PhoneMock from './PhoneMock';
 import './Hero.css';
 
 const Hero = () => {
-  const { t } = useLanguage();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   // Parallax: the phone and the produce drift at different speeds on scroll.
@@ -37,12 +36,12 @@ const Hero = () => {
 
           <motion.div className="hero-ctas" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.65 }}>
             <Magnetic>
-              <Link to="/auth?mode=register" className="btn btn-lg" {...warmAuthProps}>
-                {t('getStarted')} <FaArrowRight aria-hidden="true" />
+              <Link to="/shop" className="btn btn-lg" {...warmAuthProps}>
+                {t('startShopping')} <FaArrowRight aria-hidden="true" />
               </Link>
             </Magnetic>
             <Link to="/auth" className="text-link" {...warmAuthProps}>
-              {t('haveAccountCta')} <FaArrowRight aria-hidden="true" />
+              {t('navLogin')} <FaArrowRight aria-hidden="true" />
             </Link>
           </motion.div>
 
@@ -65,7 +64,7 @@ const Hero = () => {
           <PhoneMock />
           <motion.div className="hero-produce" style={{ y: produceY }} aria-hidden="true">
             {HERO_PRODUCE.map((id, i) => {
-              const product = findProduct(id);
+              const product = starterCatalog.find((p) => p.id === id);
               return (
                 <motion.span
                   key={id}
@@ -79,7 +78,7 @@ const Hero = () => {
                     rotate: { duration: 5 + i * 0.4, repeat: Infinity, ease: 'easeInOut' },
                   }}
                 >
-                  <ProductIcon id={product.id} category={product.category} size="md" />
+                  <ProductIcon icon={product.icon} category={product.category} size="md" />
                 </motion.span>
               );
             })}

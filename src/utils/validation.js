@@ -21,3 +21,17 @@ export const validateAuthForm = ({ name, email, password, phone }, isLogin) => (
   ...(isValidEmail(email) ? {} : { email: 'errInvalidEmail' }),
   ...(password.length >= 6 ? {} : { password: 'errWeakPassword' }),
 });
+
+const PINCODE_RE = /^[1-9]\d{5}$/;
+
+// Delivery address: every field required, Indian 6-digit PIN code.
+export const validateAddress = ({ name = '', phone = '', line1 = '', area = '', city = '', pincode = '' }) => {
+  const errors = {};
+  if (!name.trim()) errors.name = 'errRequired';
+  if (!isValidPhone(phone)) errors.phone = 'errPhone';
+  if (!line1.trim()) errors.line1 = 'errRequired';
+  if (!area.trim()) errors.area = 'errRequired';
+  if (!city.trim()) errors.city = 'errRequired';
+  if (!PINCODE_RE.test(pincode.trim())) errors.pincode = 'errPincode';
+  return errors;
+};

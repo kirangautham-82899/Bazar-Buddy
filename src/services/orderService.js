@@ -1,5 +1,10 @@
-// orders/{orderId}: one document per order, readable only by the vendor who placed it.
+// orders/{orderId}
+//   uid, customer {name, phone}, address, items [{id, name, unit, price, quantity}],
+//   itemTotal, deliveryFee, total, speed, payment, status, statusHistory[], createdAt
+// Customers create orders and may cancel before packing; admins move them along.
 import {
+  Timestamp,
+  arrayUnion,
   collection,
   doc,
   limit,
@@ -12,85 +17,119 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { computeTotals } from '../utils/pricing';
-import { resolveCartItems } from '../data/products';
+import { canAdminCancel, canCustomerCancel } from '../utils/orderStatus';
 
-const generateOtp = () => {
-  const values = new Uint32Array(1);
-  window.crypto.getRandomValues(values);
-  return String(1000 + (values[0] % 9000));
-};
+export class OrderError extends Error {
+  constructor(code, details = {}) {
+    super(code);
+    this.code = code;
+    this.details = details;
+  }
+}
 
+const withIds = (snap) => snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: 'estimate' }) }));
+const historyEntry = (status) => ({ status, at: Timestamp.now() });
+
+// Reads the saved cart and live product docs inside one transaction, so the order
+// uses current prices and is rejected if anything is out of stock.
 export const placeOrder = (uid) =>
   runTransaction(db, async (tx) => {
-    const userRef = doc(db, 'users', uid);
-    const cartRef = doc(db, 'carts', uid);
-    const [userSnap, cartSnap] = await Promise.all([tx.get(userRef), tx.get(cartRef)]);
-    if (!userSnap.exists()) throw new Error('profile-missing');
-
-    // Re-read the cart inside the transaction so the order matches what was saved.
+    const [cartSnap, userSnap] = await Promise.all([tx.get(doc(db, 'carts', uid)), tx.get(doc(db, 'users', uid))]);
     const cart = cartSnap.exists() ? cartSnap.data() : null;
-    const items = resolveCartItems(cart?.items || []);
-    if (!items.length) throw new Error('empty-cart');
+    const lines = cart?.items || [];
+    if (!lines.length) throw new OrderError('empty-cart');
 
-    const user = userSnap.data();
-    const options = {
-      speed: cart.speed || 'saver',
-      verified: Boolean(cart.verified),
-      freeDeliveryCredits: user.freeDeliveryCredits || 0,
-    };
-    const totals = computeTotals(items, options);
+    const user = userSnap.data() || {};
+    if (!user.address) throw new OrderError('no-address');
+
+    const productSnaps = await Promise.all(lines.map((line) => tx.get(doc(db, 'products', line.id))));
+    const items = lines.map((line, i) => {
+      const product = productSnaps[i].exists() ? productSnaps[i].data() : null;
+      if (!product || !product.active || product.stock <= 0) throw new OrderError('out-of-stock', { item: product?.name || line.id });
+      if (product.stock < line.quantity) throw new OrderError('not-enough-stock', { item: product.name, n: product.stock });
+      return { id: line.id, name: product.name, unit: product.unit, price: product.price, mrp: product.mrp || null, quantity: line.quantity };
+    });
+
+    const speed = cart.speed || 'saver';
+    const totals = computeTotals(items, { speed });
     const orderRef = doc(collection(db, 'orders'));
-    const otp = options.verified ? generateOtp() : null;
-
     tx.set(orderRef, {
       uid,
-      items: items.map(({ id, name, price, unit, quantity }) => ({ id, name, price, unit, quantity })),
-      speed: options.speed,
-      verified: options.verified,
-      otp,
-      payment: cart.payment || 'upi',
-      subtotal: totals.subtotal,
+      customer: { name: user.address.name || user.name || '', phone: user.address.phone || user.phone || '' },
+      address: user.address,
+      items,
+      itemTotal: totals.itemTotal,
       deliveryFee: totals.deliveryFee,
-      verifiedFee: totals.verifiedFee,
-      usedFreeDelivery: totals.usesCredit,
       total: totals.total,
-      coinsEarned: totals.coinsEarned,
-      savings: totals.comboSavings + totals.creditSaving,
+      speed,
+      payment: cart.payment || 'upi',
       status: 'placed',
+      statusHistory: [historyEntry('placed')],
       createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
-
-    tx.update(userRef, {
-      coins: (user.coins || 0) + totals.coinsEarned,
-      freeDeliveryCredits: options.freeDeliveryCredits - (totals.usesCredit ? 1 : 0),
-      savings: (user.savings || 0) + totals.comboSavings + totals.creditSaving,
-    });
-    tx.update(cartRef, { items: [], updatedAt: serverTimestamp() });
-
-    return { id: orderRef.id, total: totals.total, coinsEarned: totals.coinsEarned, payment: cart.payment || 'upi', otp };
+    tx.update(doc(db, 'carts', uid), { items: [], updatedAt: serverTimestamp() });
+    return { id: orderRef.id, total: totals.total, payment: cart.payment || 'upi' };
   });
 
-export const subscribeOrders = (uid, onChange, onError) =>
+export const subscribeMyOrders = (uid, onChange, onError) =>
   onSnapshot(
     query(collection(db, 'orders'), where('uid', '==', uid), orderBy('createdAt', 'desc'), limit(50)),
-    (snap) => onChange(snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: 'estimate' }) }))),
+    (snap) => onChange(withIds(snap)),
     onError
   );
 
-// Cancelling gives back the coins earned and any free-delivery credit used.
-export const cancelOrder = (uid, orderId) =>
+export const cancelMyOrder = (orderId) =>
   runTransaction(db, async (tx) => {
-    const orderRef = doc(db, 'orders', orderId);
-    const userRef = doc(db, 'users', uid);
-    const [orderSnap, userSnap] = await Promise.all([tx.get(orderRef), tx.get(userRef)]);
-    if (!orderSnap.exists() || orderSnap.data().status === 'cancelled') return;
+    const ref = doc(db, 'orders', orderId);
+    const snap = await tx.get(ref);
+    if (!snap.exists() || !canCustomerCancel(snap.data().status)) return;
+    tx.update(ref, { status: 'cancelled', statusHistory: arrayUnion(historyEntry('cancelled')), updatedAt: serverTimestamp() });
+  });
 
-    const order = orderSnap.data();
-    const user = userSnap.data() || {};
-    tx.update(orderRef, { status: 'cancelled', cancelledAt: serverTimestamp() });
-    tx.update(userRef, {
-      coins: Math.max(0, (user.coins || 0) - (order.coinsEarned || 0)),
-      freeDeliveryCredits: (user.freeDeliveryCredits || 0) + (order.usedFreeDelivery ? 1 : 0),
-      savings: Math.max(0, (user.savings || 0) - (order.savings || 0)),
+/* Admin */
+
+export const subscribeAllOrders = (onChange, onError) =>
+  onSnapshot(query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(200)), (snap) => onChange(withIds(snap)), onError);
+
+// Confirming re-checks prices against the live catalog (orders are written by the
+// customer's device) and deducts stock. Later steps only change the status.
+export const advanceOrder = (orderId, nextStatus) =>
+  runTransaction(db, async (tx) => {
+    const ref = doc(db, 'orders', orderId);
+    const snap = await tx.get(ref);
+    if (!snap.exists()) return;
+    const order = snap.data();
+
+    if (nextStatus === 'confirmed') {
+      const productSnaps = await Promise.all(order.items.map((item) => tx.get(doc(db, 'products', item.id))));
+      const live = order.items.map((item, i) => {
+        const product = productSnaps[i].data();
+        if (!product) throw new OrderError('out-of-stock', { item: item.name });
+        if (product.stock < item.quantity) throw new OrderError('not-enough-stock', { item: product.name, n: product.stock });
+        return { ...item, price: product.price };
+      });
+      const expected = computeTotals(live, { speed: order.speed }).total;
+      if (expected !== order.total) throw new OrderError('price-changed', { expected });
+      order.items.forEach((item, i) => {
+        tx.update(productSnaps[i].ref, { stock: productSnaps[i].data().stock - item.quantity, updatedAt: serverTimestamp() });
+      });
+    }
+
+    tx.update(ref, { status: nextStatus, statusHistory: arrayUnion(historyEntry(nextStatus)), updatedAt: serverTimestamp() });
+  });
+
+// Cancelling after confirmation puts the stock back.
+export const adminCancelOrder = (orderId) =>
+  runTransaction(db, async (tx) => {
+    const ref = doc(db, 'orders', orderId);
+    const snap = await tx.get(ref);
+    if (!snap.exists() || !canAdminCancel(snap.data().status)) return;
+    const order = snap.data();
+    const restock = order.status !== 'placed';
+    const productSnaps = restock ? await Promise.all(order.items.map((item) => tx.get(doc(db, 'products', item.id)))) : [];
+    productSnaps.forEach((p, i) => {
+      if (p.exists()) tx.update(p.ref, { stock: p.data().stock + order.items[i].quantity, updatedAt: serverTimestamp() });
     });
+    tx.update(ref, { status: 'cancelled', statusHistory: arrayUnion(historyEntry('cancelled')), updatedAt: serverTimestamp() });
   });

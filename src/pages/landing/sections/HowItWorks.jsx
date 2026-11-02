@@ -1,13 +1,12 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
-import { useLanguage } from '../../../context/LanguageContext';
+import { t } from '../../../content/strings';
 import { Reveal } from '../../../components/motion';
 import { STEPS } from '../content';
 import SectionHeading from './SectionHeading';
 import './HowItWorks.css';
 
 const HowItWorks = () => {
-  const { t } = useLanguage();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 60%'] });
   // The line joining the steps draws itself as the section scrolls past.

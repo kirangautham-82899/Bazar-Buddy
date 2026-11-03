@@ -10,7 +10,7 @@ describe('pre-rendered landing page', () => {
   const html = render('/');
 
   it('contains the H1 and main sections as real text', () => {
-    expect(html).toMatch(/<h1[^>]*aria-label="Fresh vegetables &amp; groceries at fair mandi prices"/);
+    expect(html).toMatch(/<h1[^>]*>Fresh vegetables &amp; groceries at fair mandi prices<\/h1>/);
     expect(html).toContain(t('heroSubtitle'));
     expect(html).toContain(t('categoriesTitle'));
     expect(html).toContain(t('howTitle'));

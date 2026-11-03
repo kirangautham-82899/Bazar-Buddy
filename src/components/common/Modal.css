@@ -5,9 +5,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: rgba(27, 42, 31, 0.5);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(16, 24, 20, 0.4);
   padding: 0;
 }
 
@@ -18,7 +16,7 @@
   overflow-y: auto;
   background: var(--color-surface);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  padding: 20px;
+  padding: var(--space-6);
   box-shadow: var(--shadow-lg);
 }
 
@@ -30,12 +28,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 .modal-title {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   margin: 0;
 }
 

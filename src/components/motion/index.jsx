@@ -1,31 +1,10 @@
 // Reusable motion primitives. All of them respect the OS "reduce motion"
 // setting through <MotionConfig reducedMotion="user"> in App.jsx.
-import React, { useRef, useState } from 'react';
-import {
-  motion,
-  useReducedMotion,
-  useSpring,
-} from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import './motion.css';
 
 const EASE_OUT = [0.22, 1, 0.36, 1];
-
-// Fades and lifts content in the first time it scrolls into view.
-export const Reveal = ({ children, delay = 0, y = 24, as = 'div', className, ...rest }) => {
-  const Tag = motion[as];
-  return (
-    <Tag
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.7, ease: EASE_OUT, delay }}
-      {...rest}
-    >
-      {children}
-    </Tag>
-  );
-};
 
 const staggerParent = (stagger, delay) => ({
   hidden: {},
@@ -49,66 +28,6 @@ export const Stagger = ({ children, as = 'div', stagger = 0.08, delay = 0, inVie
     </Tag>
   );
 };
-
-// Headline that rises in word by word from behind a mask.
-export const WordReveal = ({ text, as = 'h1', className, delay = 0 }) => {
-  const Tag = motion[as];
-  const words = text.split(' ');
-  return (
-    <Tag className={className} aria-label={text} initial="hidden" animate="show" variants={staggerParent(0.07, delay)}>
-      {words.map((word, i) => (
-        // The space must sit outside the inline-block mask or the browser drops it.
-        <React.Fragment key={`${word}-${i}`}>
-          <span className="word-mask" aria-hidden="true">
-            <motion.span
-              className="word"
-              variants={{
-                hidden: { y: '110%', rotate: 4 },
-                show: { y: '0%', rotate: 0, transition: { duration: 0.8, ease: EASE_OUT } },
-              }}
-            >
-              {word}
-            </motion.span>
-          </span>
-          {i < words.length - 1 && ' '}
-        </React.Fragment>
-      ))}
-    </Tag>
-  );
-};
-
-// Pulls slightly toward the pointer, then springs back.
-export const Magnetic = ({ children, strength = 0.3, className }) => {
-  const ref = useRef(null);
-  const x = useSpring(0, { stiffness: 250, damping: 18 });
-  const y = useSpring(0, { stiffness: 250, damping: 18 });
-
-  const onMove = (e) => {
-    const rect = ref.current.getBoundingClientRect();
-    x.set((e.clientX - rect.left - rect.width / 2) * strength);
-    y.set((e.clientY - rect.top - rect.height / 2) * strength);
-  };
-  const reset = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.span ref={ref} className={`magnetic ${className || ''}`} style={{ x, y }} onPointerMove={onMove} onPointerLeave={reset}>
-      {children}
-    </motion.span>
-  );
-};
-
-// Drifting gradient blobs plus a faint grid, drawn entirely in CSS.
-export const Aurora = ({ variant = 'light' }) => (
-  <div className={`aurora aurora-${variant}`} aria-hidden="true">
-    <span className="aurora-blob blob-1" />
-    <span className="aurora-blob blob-2" />
-    <span className="aurora-blob blob-3" />
-    <span className="aurora-grid" />
-  </div>
-);
 
 // Circle and tick that draw themselves.
 export const SuccessCheck = ({ size = 88 }) => (

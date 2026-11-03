@@ -1,10 +1,11 @@
 /* Footer */
 .landing-footer {
   display: grid;
-  gap: 32px;
+  gap: var(--space-8);
   max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 64px 16px 36px;
+  margin: 128px auto 0;
+  padding: var(--space-12) var(--space-4) var(--space-8);
+  border-top: 1px solid var(--color-line);
 }
 
 @media (min-width: 760px) {
@@ -15,31 +16,33 @@
 
 .footer-brand p {
   max-width: 320px;
-  margin-top: 12px;
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
   color: var(--color-muted);
 }
 
 .footer-col {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
 }
 
 .footer-col h2 {
-  margin: 0 0 4px;
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
+  margin: 0 0 var(--space-1);
+  color: var(--color-subtle);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-muted);
 }
 
 .footer-col a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
+  color: var(--color-muted);
+  font-size: 0.9rem;
   text-decoration: none;
-  color: var(--color-ink);
 }
 
 .footer-col a:hover {
@@ -51,6 +54,6 @@
   margin: 0;
   padding-top: 24px;
   border-top: 1px solid var(--color-line);
-  font-size: 0.82rem;
-  color: var(--color-muted);
+  color: var(--color-subtle);
+  font-size: 0.8rem;
 }

@@ -10,11 +10,10 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-6);
-  border-radius: var(--radius-xl);
-  color: #fff;
-  background:
-    radial-gradient(240px 140px at 100% 0%, rgba(244, 177, 46, 0.45), transparent 70%),
-    linear-gradient(135deg, #1f8a4c 0%, #0f5a31 100%);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  color: var(--color-ink);
+  background: var(--color-surface);
 }
 
 .account-hero h1 {
@@ -24,7 +23,7 @@
 
 .account-hero p {
   margin: 2px 0 0;
-  opacity: 0.85;
+  color: var(--color-muted);
   font-size: 0.88rem;
   word-break: break-all;
 }
@@ -33,13 +32,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.18);
-  font-size: 1.6rem;
-  font-weight: 800;
+  border-radius: 50%;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .account-list {
@@ -48,7 +48,7 @@
   overflow: hidden;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-lg);
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .account-row {

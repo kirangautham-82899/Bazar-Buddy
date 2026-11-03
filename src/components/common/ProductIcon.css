@@ -26,13 +26,14 @@
   font-size: 2.2rem;
 }
 
-.tone-green { --tone-bg: #e4f7ea; --tone-fg: #1f9d55; }
-.tone-amber { --tone-bg: #fff3d6; --tone-fg: #c27c0e; }
-.tone-wheat { --tone-bg: #f8eedc; --tone-fg: #9a6b1f; }
-.tone-red { --tone-bg: #ffe4e4; --tone-fg: #d64545; }
-.tone-sky { --tone-bg: #e2f1ff; --tone-fg: #2b7bd6; }
-.tone-olive { --tone-bg: #eef3d9; --tone-fg: #6f8a1f; }
-.tone-brand { --tone-bg: #e2f3e6; --tone-fg: var(--color-brand); }
+/* Muted, matching tints so categories read as a set, not a rainbow. */
+.tone-green { --tone-bg: #ebf5ee; --tone-fg: #2d8a55; }
+.tone-amber { --tone-bg: #fbf3e4; --tone-fg: #b7791f; }
+.tone-wheat { --tone-bg: #f7f1e6; --tone-fg: #94692a; }
+.tone-red { --tone-bg: #fbeeee; --tone-fg: #c94a4a; }
+.tone-sky { --tone-bg: #ecf3fa; --tone-fg: #3a73b0; }
+.tone-olive { --tone-bg: #f1f4e6; --tone-fg: #6d7f2e; }
+.tone-brand { --tone-bg: var(--color-brand-soft); --tone-fg: var(--color-brand); }
 
 .product-icon-xl {
   width: 76px;

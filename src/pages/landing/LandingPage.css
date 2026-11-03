@@ -6,35 +6,42 @@
   overflow-x: clip;
 }
 
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  z-index: 200;
-  background: var(--gradient-warm);
-  transform-origin: 0 50%;
-}
-
-/* Every section: same width, same vertical spacing. */
+/* Every section: same width, same generous vertical spacing. */
 .section {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 96px 16px 0;
-  scroll-margin-top: 72px;
+  padding: 96px var(--space-4) 0;
+  scroll-margin-top: var(--top-nav-height);
 }
 
-.section-narrow {
-  max-width: 760px;
+@media (min-width: 960px) {
+  .section {
+    padding: 128px var(--space-6) 0;
+  }
+}
+
+/* Heading on the left, content on the right (wide screens). */
+@media (min-width: 960px) {
+  .section-split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-16);
+    align-items: start;
+  }
+
+  .section-split .section-head {
+    position: sticky;
+    top: calc(var(--top-nav-height) + var(--space-8));
+    margin-bottom: 0;
+  }
 }
 
 .section-head {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 640px;
-  margin-bottom: 44px;
+  gap: var(--space-3);
+  max-width: 620px;
+  margin-bottom: var(--space-12);
 }
 
 .section-head-center {
@@ -43,23 +50,16 @@
   text-align: center;
 }
 
-.eyebrow-text {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+.section-head .eyebrow {
   margin: 0;
-  color: var(--color-accent);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 .section-title {
   margin: 0;
-  font-size: clamp(1.8rem, 4.4vw, 2.7rem);
-  font-weight: 800;
-  line-height: 1.12;
+  font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
 }
 
 .section-lead {
@@ -71,18 +71,12 @@
 .text-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding-bottom: 2px;
-  border-bottom: 2px solid var(--color-turmeric);
+  gap: var(--space-2);
   color: var(--color-ink);
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
 }
 
-.text-link svg {
-  transition: transform 0.25s var(--ease-out);
-}
-
-.text-link:hover svg {
-  transform: translateX(4px);
+.text-link:hover {
+  color: var(--color-brand);
 }

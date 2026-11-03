@@ -13,10 +13,7 @@ import { t } from '../../content/strings';
 import { useToast } from '../../context/ToastContext';
 import { ensureUserProfile, updateUserProfile } from '../../services/userService';
 import { isValidEmail, normalizePhone, validateAuthForm } from '../../utils/validation';
-import starterCatalog from '../../data/starterCatalog';
 import BrandMark from '../../components/common/BrandMark';
-import ProductIcon from '../../components/common/ProductIcon';
-import { Aurora } from '../../components/motion';
 import { loadShopHome, loadShopLayout, prefetchWhenIdle } from '../../routes/lazy';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import './AuthPage.css';
@@ -33,7 +30,6 @@ const FIREBASE_ERRORS = {
 };
 
 const BENEFITS = ['authBenefit1', 'authBenefit2', 'authBenefit3'];
-const ORBIT = ['tomato', 'onion', 'potato', 'green-chilli', 'lemon', 'paneer'].map((id) => starterCatalog.find((p) => p.id === id));
 
 const Field = ({ icon: Icon, name, label, error, t, trailing, ...inputProps }) => (
   <div className="field">
@@ -93,24 +89,10 @@ const BrandPanel = () => {
 
   return (
     <aside className="auth-panel">
-      <Aurora variant="dark" />
       <div className="auth-panel-content">
         <Link to="/" className="auth-panel-brand">
           <BrandMark light />
         </Link>
-
-        <div className="auth-orbit" aria-hidden="true">
-          <span className="orbit-ring" />
-          <span className="orbit-ring orbit-ring-2" />
-          {ORBIT.map((p, i) => (
-            <span key={p.id} className="orbit-item" style={{ '--i': i, '--n': ORBIT.length }}>
-              <span className="orbit-counter">
-                <ProductIcon icon={p.icon} category={p.category} size="md" />
-              </span>
-            </span>
-          ))}
-        </div>
-
         <h2 className="auth-panel-title">{t('authPanelTitle')}</h2>
         <div className="auth-benefit" aria-live="polite">
           <AnimatePresence mode="wait">

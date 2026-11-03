@@ -23,6 +23,6 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#1f8a4c",
-  "background_color": "#faf7ef"
+  "theme_color": "#0e7c47",
+  "background_color": "#f6f7f5"
 }

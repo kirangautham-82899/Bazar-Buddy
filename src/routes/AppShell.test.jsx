@@ -70,6 +70,9 @@ vi.mock('../services/marketService', () => ({
   fetchMandiPrices: vi.fn(async () => ({ configured: false, scope: null, records: [] })),
   currentPosition: vi.fn(),
 }));
+vi.mock('../services/assistantService', () => ({
+  askAssistant: vi.fn(async () => ({ reply: 'Track it under **My orders**: [Open orders](/orders)\n- Valiya Angadi, 1.5 km' })),
+}));
 vi.mock('../services/orderService', () => ({
   subscribeMyOrders: (_uid, cb) => {
     cb(state.orders);
@@ -100,6 +103,7 @@ beforeAll(() => {
 beforeEach(() => {
   window.__desktop = false;
   window.localStorage.clear();
+  window.sessionStorage.clear();
   Object.assign(state, { user: null, isAdmin: false, orders: [], products });
 });
 
@@ -176,6 +180,18 @@ describe('shop (guest)', () => {
     expect(await screen.findByText('1 open now within 5 km')).toBeInTheDocument();
     expect(screen.queryByText('K.R. Market')).not.toBeInTheDocument();
     expect(await screen.findByText(/Live daily mandi prices will appear here/)).toBeInTheDocument();
+  });
+
+  it('answers questions in the chat assistant with in-app links', async () => {
+    renderAt('/shop');
+    fireEvent.click(await screen.findByRole('button', { name: 'Ask Bazar Buddy' }, WAIT));
+    const chat = await screen.findByRole('dialog', { name: 'Bazar Buddy assistant' });
+    fireEvent.click(within(chat).getByRole('button', { name: 'How do I track my order?' }));
+    expect(await within(chat).findByText('My orders')).toBeInTheDocument();
+    expect(within(chat).getByRole('link', { name: 'Open orders' })).toHaveAttribute('href', '/orders');
+    expect(within(chat).getByText('Valiya Angadi, 1.5 km').tagName).toBe('LI');
+    fireEvent.click(within(chat).getByRole('button', { name: 'Close' }));
+    expect(await screen.findByRole('button', { name: 'Ask Bazar Buddy' })).toBeInTheDocument();
   });
 
   it('opens the side menu on phones', async () => {

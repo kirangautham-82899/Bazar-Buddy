@@ -15,6 +15,23 @@ export const sendJson = (res, status, body, cacheSeconds = 0) => {
   res.end(JSON.stringify(body));
 };
 
+// JSON request body: already parsed on Vercel, read from the stream in the Vite dev server.
+export const readJson = async (req, maxBytes = 64 * 1024) => {
+  if (req.body && typeof req.body === 'object') return req.body;
+  let raw = typeof req.body === 'string' ? req.body : '';
+  if (!raw) {
+    for await (const chunk of req) {
+      raw += chunk;
+      if (raw.length > maxBytes) throw new HttpError(413, 'Request too large');
+    }
+  }
+  try {
+    return JSON.parse(raw || '{}');
+  } catch {
+    throw new HttpError(400, 'Invalid JSON');
+  }
+};
+
 // Wraps a handler body: its result is sent as JSON, a thrown HttpError as an error.
 export const handle = (run, cacheSeconds) => async (req, res) => {
   try {

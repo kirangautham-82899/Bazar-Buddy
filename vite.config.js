@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import placeHandler from './api/place.js';
 import nearbyMarketsHandler from './api/nearby-markets.js';
 import mandiPricesHandler from './api/mandi-prices.js';
+import assistantHandler from './api/assistant.js';
 
 // Serves the Vercel functions in /api during `npm run dev`, so the whole app
 // (including local markets) works locally exactly as it does on Vercel.
@@ -11,9 +12,11 @@ const apiRoutes = (env) => ({
   configureServer(server) {
     process.env.DATA_GOV_IN_API_KEY ??= env.DATA_GOV_IN_API_KEY;
     process.env.GOOGLE_PLACES_API_KEY ??= env.GOOGLE_PLACES_API_KEY;
+    process.env.ANTHROPIC_API_KEY ??= env.ANTHROPIC_API_KEY;
     server.middlewares.use('/api/place', (req, res) => placeHandler(req, res));
     server.middlewares.use('/api/nearby-markets', (req, res) => nearbyMarketsHandler(req, res));
     server.middlewares.use('/api/mandi-prices', (req, res) => mandiPricesHandler(req, res));
+    server.middlewares.use('/api/assistant', (req, res) => assistantHandler(req, res));
   },
 });
 

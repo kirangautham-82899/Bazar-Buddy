@@ -153,6 +153,26 @@ const strings = {
   catalogEmptyAdmin: 'Add products in the admin panel',
   categoryEmpty: 'Nothing in this category yet.',
 
+  // Chat assistant
+  assistantAsk: 'Ask Bazar Buddy',
+  assistantTitle: 'Bazar Buddy assistant',
+  assistantTagline: 'Markets, prices and shortcuts',
+  assistantWelcome: 'Ask me where to buy, which markets are open, today’s prices, or how to do something in the app.',
+  suggestOpenNow: 'Which markets near me are open now?',
+  suggestTomatoes: 'Where can I buy tomatoes nearby?',
+  suggestPrices: 'What is today’s onion price in my area?',
+  suggestTrack: 'How do I track my order?',
+  assistantShareLocation: 'Share my location for nearby answers',
+  assistantLocationShared: 'Using your location: {place}',
+  assistantPlaceholder: 'Ask about markets, prices, orders…',
+  assistantInputLabel: 'Your question',
+  assistantSend: 'Send',
+  assistantNewChat: 'New chat',
+  assistantThinking: 'Assistant is typing',
+  assistantNotSetUp: 'The assistant isn’t switched on yet. Please check back soon.',
+  assistantBusy: 'The assistant is busy right now. Please try again in a minute.',
+  assistantError: 'Something went wrong. Please try again.',
+
   // Local markets
   marketsTitle: 'Local markets',
   marketsSubtitle: 'Vegetable markets, mandis and greengrocers close to you, measured from your exact location.',

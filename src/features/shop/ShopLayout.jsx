@@ -9,11 +9,13 @@ import DesktopTopBar from './DesktopTopBar';
 import SideNav from './SideNav';
 import BottomNav from './BottomNav';
 import CartBar from './CartBar';
+import AssistantChat from '../assistant/AssistantChat';
 import './shop.css';
 import './layout.css';
 
 // Desktop: fixed side navbar on the left, top bar with search and cart on the right.
 // Phones: header with a menu button (side drawer), floating cart bar and bottom tab bar.
+// Both: the floating chat assistant.
 const ShopLayout = () => {
   const location = useLocation();
   const outlet = useOutlet();
@@ -52,6 +54,7 @@ const ShopLayout = () => {
           <DesktopTopBar />
           {page}
         </div>
+        <AssistantChat />
       </div>
     );
   }
@@ -62,6 +65,7 @@ const ShopLayout = () => {
       {page}
       <CartBar />
       <BottomNav />
+      <AssistantChat />
     </div>
   );
 };

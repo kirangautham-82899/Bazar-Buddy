@@ -46,7 +46,7 @@ describe('askAssistant', () => {
     expect(params.tools.map((t) => t.name)).toEqual(['find_place', 'find_nearby_markets', 'get_mandi_prices']);
     const last = params.messages.at(-1);
     expect(last.role).toBe('system');
-    expect(last.content).toContain('lat 10.78000, lng 76.65000 (Palakkad)');
+    expect(last.content).toContain('lat 10.780, lng 76.650 (Palakkad)');
     expect(last.content).toMatch(/Current time in India/);
     expect(params.system).not.toMatch(/Current time/); // keeps the cached prefix stable
   });

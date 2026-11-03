@@ -156,11 +156,12 @@ export const cleanHistory = (messages) => {
 };
 
 // Volatile context goes in a trailing system message, after the cached prefix.
+// The location is rounded to ~110 m: enough to find nearby markets, not a doorstep.
 const contextNote = (location, now) => {
   const time = now.toLocaleString('en-IN', { weekday: 'long', hour: 'numeric', minute: '2-digit', hour12: true });
   const where =
     location && Number.isFinite(Number(location.lat)) && Number.isFinite(Number(location.lng))
-      ? `The shopper shared their location: lat ${Number(location.lat).toFixed(5)}, lng ${Number(location.lng).toFixed(5)}${location.label ? ` (${String(location.label).slice(0, 80)})` : ''}.`
+      ? `The shopper shared their location: lat ${Number(location.lat).toFixed(3)}, lng ${Number(location.lng).toFixed(3)}${location.label ? ` (${String(location.label).slice(0, 80)})` : ''}.`
       : 'The shopper has not shared a location.';
   return `Current time in India: ${time}. ${where}`;
 };

@@ -95,9 +95,11 @@ describe('findPlace', () => {
     await expect(findPlace({ q: 'Chickpet, Bengaluru' }, fetchImpl)).resolves.toMatchObject({ label: 'Chickpet, Bengaluru', state: 'Karnataka', precision: 'address' });
   });
 
-  it('names GPS coordinates but keeps the exact point', async () => {
+  it('names GPS coordinates from a rounded point', async () => {
     const fetchImpl = vi.fn(async () => jsonResponse(hit));
-    await expect(findPlace({ lat: '12.971601', lng: '77.594602' }, fetchImpl)).resolves.toMatchObject({ lat: 12.971601, lng: 77.594602, label: 'Chickpet, Bengaluru', precision: 'gps' });
+    await expect(findPlace({ lat: '12.971601', lng: '77.594602' }, fetchImpl)).resolves.toMatchObject({ lat: 12.9716, lng: 77.5946, label: 'Chickpet, Bengaluru', precision: 'gps' });
+    // Only the rounded point reaches the geocoder.
+    expect(new URL(fetchImpl.mock.calls[0][0]).searchParams.get('lat')).toBe('12.9716');
     expect(new URL(fetchImpl.mock.calls[0][0]).pathname).toBe('/reverse');
   });
 

@@ -54,9 +54,11 @@ const placeForPin = async (pin, fetchImpl) => {
 export const findPlace = async ({ q, lat, lng } = {}, fetchImpl = fetch) => {
   if (lat !== undefined || lng !== undefined) {
     if (!COORD_RE.test(String(lat)) || !COORD_RE.test(String(lng))) throw new HttpError(400, 'Invalid coordinates');
-    const r = await nominatim('reverse', { lat: String(lat), lon: String(lng), zoom: '16' }, fetchImpl);
+    // Only ~11 m precision goes to the geocoder, whatever the caller sent.
+    const point = { lat: Number(Number(lat).toFixed(4)), lng: Number(Number(lng).toFixed(4)) };
+    const r = await nominatim('reverse', { lat: String(point.lat), lon: String(point.lng), zoom: '16' }, fetchImpl);
     if (!r || r.error) throw new HttpError(404, 'Location not found');
-    return { ...fromResult(r), lat: Number(lat), lng: Number(lng), precision: 'gps' };
+    return { ...fromResult(r), ...point, precision: 'gps' };
   }
   const text = String(q || '').trim();
   if (PIN_RE.test(text)) return placeForPin(text, fetchImpl);

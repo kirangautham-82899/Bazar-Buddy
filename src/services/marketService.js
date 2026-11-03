@@ -10,9 +10,11 @@ const getJson = async (url) => {
   return body;
 };
 
-// A PIN code or typed address, or exact coordinates -> { lat, lng, label, district, state, precision }.
+// A PIN code or typed address, or coordinates -> { lat, lng, label, district, state, precision }.
+// Naming the area needs only ~11 m, so GPS is rounded before it leaves the device;
+// distances on the page still use the exact point.
 export const findPlace = ({ q, lat, lng }) =>
-  getJson(`/api/place?${new URLSearchParams(q !== undefined ? { q } : { lat: lat.toFixed(6), lng: lng.toFixed(6) })}`);
+  getJson(`/api/place?${new URLSearchParams(q !== undefined ? { q } : { lat: lat.toFixed(4), lng: lng.toFixed(4) })}`);
 
 // Rounded to ~100 m so nearby users share the cached answer; distances are
 // still measured from the exact point on the page.

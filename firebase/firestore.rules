@@ -1,5 +1,6 @@
 rules_version = '2';
 
+// Every collection not matched below is closed to the app.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -8,6 +9,35 @@ service cloud.firestore {
     // Team members: create admins/{uid} by hand in the Firebase console.
     function isAdmin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
     function onlyChanges(keys) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys); }
+    function shortString(v, max) { return v is string && v.size() <= max; }
+    function optionalString(d, key, max) { return !(key in d) || shortString(d[key], max); }
+
+    // Delivery address, as saved from the cart (userService.saveAddress).
+    function validAddress(a) {
+      return a is map
+        && a.keys().hasOnly(['name', 'phone', 'line1', 'area', 'city', 'pincode'])
+        && shortString(a.get('name', ''), 80)
+        && shortString(a.get('phone', ''), 20)
+        && shortString(a.get('line1', ''), 160)
+        && shortString(a.get('area', ''), 120)
+        && shortString(a.get('city', ''), 80)
+        && a.get('pincode', '').matches('^[1-9][0-9]{5}$');
+    }
+
+    // Only the fields the app stores about a vendor, at sensible sizes.
+    function validProfile(d) {
+      return d.keys().hasOnly(['name', 'phone', 'email', 'address', 'createdAt', 'updatedAt'])
+        && optionalString(d, 'name', 80)
+        && optionalString(d, 'phone', 20)
+        && optionalString(d, 'email', 254)
+        && (!('address' in d) || d.address == null || validAddress(d.address));
+    }
+
+    function validCart(d) {
+      return (!('items' in d) || (d.items is list && d.items.size() <= 100))
+        && (!('speed' in d) || d.speed in ['express', 'scheduled', 'saver'])
+        && (!('payment' in d) || d.payment in ['upi', 'cod']);
+    }
 
     // Nobody can make themselves an admin from the app.
     match /admins/{uid} {
@@ -28,30 +58,59 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // A vendor's own profile. The email can only be their sign-in email, and
+    // it and the creation time can't be changed afterwards.
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
-      allow create, update: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && validProfile(request.resource.data)
+        && request.resource.data.get('email', '') in ['', request.auth.token.get('email', '')];
+      // Updates are checked on the fields they change, so profiles saved by
+      // earlier versions of the app keep working.
+      allow update: if isOwner(uid)
+        && onlyChanges(['name', 'phone', 'address', 'updatedAt'])
+        && optionalString(request.resource.data, 'name', 80)
+        && optionalString(request.resource.data, 'phone', 20)
+        && (!('address' in request.resource.data) || request.resource.data.address == null || validAddress(request.resource.data.address));
+      allow delete: if false;
     }
 
-    // One cart per vendor: product ids and quantities only.
+    // One cart per vendor: product ids and quantities, plus delivery and payment choices.
     match /carts/{uid} {
       allow read, delete: if isOwner(uid);
-      allow create, update: if isOwner(uid)
-        && request.resource.data.items is list
-        && request.resource.data.items.size() <= 100;
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['items', 'speed', 'payment', 'updatedAt'])
+        && validCart(request.resource.data);
+      allow update: if isOwner(uid)
+        && onlyChanges(['items', 'speed', 'payment', 'updatedAt'])
+        && validCart(request.resource.data);
     }
 
     match /orders/{orderId} {
       allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
 
+      // Exactly the shape placeOrder() writes, stamped with the server's time.
       allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'customer', 'address', 'items', 'itemTotal', 'deliveryFee', 'total', 'speed', 'payment', 'status', 'statusHistory', 'createdAt', 'updatedAt'])
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.status == 'placed'
+        && request.resource.data.statusHistory is list
+        && request.resource.data.statusHistory.size() == 1
         && request.resource.data.items is list
         && request.resource.data.items.size() > 0
         && request.resource.data.items.size() <= 100
+        && request.resource.data.itemTotal is number
+        && request.resource.data.deliveryFee is number
+        && request.resource.data.deliveryFee >= 0
         && request.resource.data.total is number
-        && request.resource.data.total > 0;
+        && request.resource.data.total > 0
+        && request.resource.data.total == request.resource.data.itemTotal + request.resource.data.deliveryFee
+        && request.resource.data.speed in ['express', 'scheduled', 'saver']
+        && request.resource.data.payment in ['upi', 'cod']
+        && validAddress(request.resource.data.address)
+        && request.resource.data.customer is map
+        && request.resource.data.customer.keys().hasOnly(['name', 'phone'])
+        && request.resource.data.createdAt == request.time;
 
       // Customers may only cancel, and only before packing.
       allow update: if signedIn()
@@ -64,6 +123,8 @@ service cloud.firestore {
       allow update: if isAdmin()
         && request.resource.data.status in ['placed', 'confirmed', 'packed', 'outForDelivery', 'delivered', 'cancelled']
         && onlyChanges(['status', 'statusHistory', 'updatedAt']);
+
+      allow delete: if false;
     }
   }
 }

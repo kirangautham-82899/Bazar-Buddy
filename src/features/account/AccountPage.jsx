@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { signOut, updateProfile } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
 import { FaChevronDown, FaChevronRight, FaEnvelope, FaHeadset, FaMapMarkerAlt, FaPen, FaPhone, FaSignOutAlt, FaUser, FaUserShield } from 'react-icons/fa';
-import { auth } from '../../config/firebase';
 import { t } from '../../content/strings';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import { updateUserProfile } from '../../services/userService';
+import { signOutAndForget } from '../../services/signOut';
 import { SUPPORT_PHONE, TOLL_FREE } from '../../config/app';
 import { formatAddress } from '../../utils/format';
 import { normalizePhone, validateProfileFields } from '../../utils/validation';
@@ -129,7 +129,7 @@ const AccountPage = () => {
         ))}
       </section>
 
-      <button type="button" className="btn btn-danger btn-block" onClick={() => signOut(auth)}>
+      <button type="button" className="btn btn-danger btn-block" onClick={signOutAndForget}>
         <FaSignOutAlt aria-hidden="true" /> {t('logout')}
       </button>
 

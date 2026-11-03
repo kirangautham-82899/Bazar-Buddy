@@ -194,11 +194,23 @@ describe('shop (guest)', () => {
     expect(await screen.findByRole('button', { name: 'Ask Bazar Buddy' })).toBeInTheDocument();
   });
 
+  it('opens the assistant from the side navbar on desktop', async () => {
+    window.__desktop = true;
+    renderAt('/shop');
+    expect(await screen.findByRole('link', { name: /^Cart:/ }, WAIT)).toBeInTheDocument();
+    expect(document.querySelector('.assistant-fab')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Ask Bazar Buddy/ }));
+    expect(await screen.findByRole('dialog', { name: 'Bazar Buddy assistant' })).toBeInTheDocument();
+  });
+
   it('opens the side menu on phones', async () => {
     renderAt('/shop');
     fireEvent.click(await screen.findByRole('button', { name: 'Menu' }, WAIT));
     const drawer = await screen.findByRole('dialog', { name: 'Menu' });
     expect(within(drawer).getByRole('link', { name: /Markets/ })).toHaveAttribute('href', '/markets');
+    // The menu also opens the assistant, closing itself first.
+    fireEvent.click(within(drawer).getByRole('button', { name: /Ask Bazar Buddy/ }));
+    expect(await screen.findByRole('dialog', { name: 'Bazar Buddy assistant' })).toBeInTheDocument();
   });
 
   it('shows a friendly message while the catalog is empty', async () => {

@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaCommentDots, FaCrosshairs, FaPaperPlane, FaRedo, FaTimes } from 'react-icons/fa';
+import { FaCrosshairs, FaPaperPlane, FaRedo, FaTimes } from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi2';
 import { t } from '../../content/strings';
 import { askAssistant } from '../../services/assistantService';
+import { useIsDesktop } from '../../hooks/useMediaQuery';
 import { currentPosition, findPlace } from '../../services/marketService';
 import ChatText from './ChatText';
+import { OPEN_ASSISTANT_EVENT } from './openAssistant';
 import './assistant.css';
 
 const STORAGE_KEY = 'bazarBuddy.assistant';
@@ -34,8 +37,10 @@ const errorText = (err) => {
   return t('assistantError');
 };
 
-// Floating "Ask Bazar Buddy" button and chat panel, on every shop screen.
+// Chat panel on every shop screen. Opened from the side navbar (desktop and the
+// phone menu) or, on phones, a floating button.
 const AssistantChat = () => {
+  const isDesktop = useIsDesktop();
   const [open, setOpen] = useState(false);
   const [{ messages, location }, setState] = useState(load);
   const [draft, setDraft] = useState('');
@@ -46,6 +51,13 @@ const AssistantChat = () => {
   const endRef = useRef(null);
 
   useEffect(() => save({ messages, location }), [messages, location]);
+
+  // Opened from the side navbar or the phone menu.
+  useEffect(() => {
+    const show = () => setOpen(true);
+    window.addEventListener(OPEN_ASSISTANT_EVENT, show);
+    return () => window.removeEventListener(OPEN_ASSISTANT_EVENT, show);
+  }, []);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -110,7 +122,7 @@ const AssistantChat = () => {
           transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
           <header className="assistant-head">
-            <span className="assistant-avatar" aria-hidden="true"><FaCommentDots /></span>
+            <span className="assistant-avatar" aria-hidden="true"><HiSparkles /></span>
             <div>
               <h2>{t('assistantTitle')}</h2>
               <p className="small">{t('assistantTagline')}</p>
@@ -187,17 +199,18 @@ const AssistantChat = () => {
 
   return (
     <>
-      {!open && (
+      {!open && !isDesktop && (
         <motion.button
           type="button"
           className="assistant-fab"
+          aria-label={t('assistantAsk')}
           onClick={() => setOpen(true)}
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <FaCommentDots aria-hidden="true" /> <span>{t('assistantAsk')}</span>
+          <HiSparkles aria-hidden="true" /> <span>{t('assistantAsk')}</span>
         </motion.button>
       )}
       {createPortal(panel, document.body)}

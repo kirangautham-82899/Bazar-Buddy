@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaBoxOpen, FaHeadset, FaHome, FaMapMarkedAlt, FaShoppingBasket, FaUser, FaUserShield } from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi2';
 import { t } from '../../content/strings';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -10,6 +11,7 @@ import { SUPPORT_PHONE } from '../../config/app';
 import BrandMark from '../../components/common/BrandMark';
 import ProductIcon from '../../components/common/ProductIcon';
 import DeliveryChip from './DeliveryChip';
+import { openAssistant } from '../assistant/openAssistant';
 
 const MAIN_LINKS = [
   { to: '/shop', end: true, icon: FaHome, label: 'navHome' },
@@ -19,7 +21,7 @@ const MAIN_LINKS = [
   { to: '/account', icon: FaUser, label: 'navAccount' },
 ];
 
-// Brand, delivery address, main sections and every category. Used as the fixed
+// Brand, delivery address, main sections, the AI assistant and every category. Used as the fixed
 // sidebar on desktop and inside the slide-out drawer on phones.
 const SideNav = ({ onNavigate, idPrefix = 'side' }) => {
   const { isAdmin } = useAuth();
@@ -51,6 +53,21 @@ const SideNav = ({ onNavigate, idPrefix = 'side' }) => {
         {MAIN_LINKS.map(({ to, icon, label, end, badge }) => item(to, icon, t(label), { end, badge }))}
         {isAdmin && item('/admin', FaUserShield, t('adminPanel'))}
       </nav>
+
+      <button
+        type="button"
+        className="side-ai"
+        onClick={() => {
+          onNavigate?.();
+          openAssistant();
+        }}
+      >
+        <span className="side-ai-icon" aria-hidden="true"><HiSparkles /></span>
+        <span className="side-ai-text">
+          <strong>{t('assistantAsk')}</strong>
+          <small>{t('assistantTagline')}</small>
+        </span>
+      </button>
 
       <nav className="side-section" aria-labelledby={`${idPrefix}-categories`}>
         <p id={`${idPrefix}-categories`} className="side-heading">{t('categoriesLabel')}</p>

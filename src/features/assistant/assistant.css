@@ -1,4 +1,4 @@
-/* Floating button: above the cart bar and tab bar on phones, bottom-right on desktop */
+/* Floating button (phones only): above the cart bar and tab bar */
 .assistant-fab {
   position: fixed;
   right: var(--space-4);
@@ -18,13 +18,12 @@
   cursor: pointer;
 }
 
-.shop-mobile .assistant-fab span {
-  display: none; /* icon only on phones */
+.assistant-fab span {
+  display: none; /* icon only */
 }
 
-.shop-desktop .assistant-fab {
-  right: var(--space-8);
-  bottom: var(--space-8);
+.assistant-fab svg {
+  font-size: 1.3rem;
 }
 
 /* Panel: full screen on phones, a card on desktop */

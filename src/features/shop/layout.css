@@ -87,6 +87,57 @@
   white-space: nowrap;
 }
 
+/* AI assistant entry */
+.side-ai {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid #b9e3c4;
+  border-radius: 14px;
+  background: var(--gradient-soft);
+  color: var(--color-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.side-ai:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.side-ai-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--gradient-brand);
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.side-ai-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.side-ai-text strong {
+  font-size: 0.92rem;
+}
+
+.side-ai-text small {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+}
+
 .side-badge {
   min-width: 22px;
   padding: 0 6px;

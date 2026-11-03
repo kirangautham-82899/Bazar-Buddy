@@ -122,7 +122,7 @@ describe('fetchNearbyMarkets', () => {
   });
 
   it('keeps food places and drops other marketplaces', () => {
-    expect(normalizeElement({ type: 'node', id: 1, lat: 1, lon: 2, tags: { shop: 'greengrocer', name: 'HOPCOMS', opening_hours: 'Mo-Su 07:00-21:00' } })).toEqual({
+    expect(normalizeElement({ type: 'node', id: 1, lat: 1, lon: 2, tags: { shop: 'greengrocer', name: 'HOPCOMS', opening_hours: 'Mo-Su 07:00-21:00', phone: '+91 80 1234 5678;+91 80 1111 2222' } })).toEqual({
       id: 'osm-node-1',
       name: 'HOPCOMS',
       kind: 'greengrocer',
@@ -130,6 +130,8 @@ describe('fetchNearbyMarkets', () => {
       lng: 2,
       area: '',
       hours: 'Mo-Su 07:00-21:00',
+      schedule: Array.from({ length: 7 }, () => [[420, 1260]]),
+      phone: '+91 80 1234 5678',
     });
     expect(normalizeElement({ type: 'way', id: 2, center: { lat: 1, lon: 2 }, tags: { amenity: 'marketplace', name: 'Russell Market' } })).toMatchObject({ kind: 'market', lat: 1 });
     expect(normalizeElement({ type: 'node', id: 3, lat: 1, lon: 2, tags: { amenity: 'marketplace', name: 'Infantry Road Furniture Market' } })).toBeNull();
@@ -150,7 +152,7 @@ describe('fetchNearbyMarkets', () => {
   });
 
   it('still finds markets through Nominatim when Overpass is down, merged without duplicates', async () => {
-    const valiyaAngadi = { osm_type: 'node', osm_id: 1, category: 'amenity', type: 'marketplace', name: 'Valiya Angadi', lat: '10.7736', lon: '76.6453', address: { road: 'Market Road', city: 'Palakkad' } };
+    const valiyaAngadi = { osm_type: 'node', osm_id: 1, category: 'amenity', type: 'marketplace', name: 'Valiya Angadi', lat: '10.7736', lon: '76.6453', address: { road: 'Market Road', city: 'Palakkad' }, extratags: { opening_hours: 'Mo-Sa 05:00-20:00' } };
     const fishMarket = { osm_type: 'node', osm_id: 2, category: 'amenity', type: 'marketplace', name: 'Fish Market', lat: '10.77', lon: '76.65' };
     const veg = { osm_type: 'node', osm_id: 3, category: 'shop', type: 'greengrocer', name: 'Vegetable Store', lat: '10.72', lon: '76.67' };
     const fetchImpl = vi.fn(async (url) => {
@@ -161,7 +163,9 @@ describe('fetchNearbyMarkets', () => {
     });
     const { markets } = await fetchNearbyMarkets({ lat: 10.78, lng: 76.65, radiusKm: 10 }, { fetchImpl, ...OPTS });
     expect(markets.map((m) => m.name)).toEqual(['Valiya Angadi', 'Vegetable Store']);
-    expect(markets[0]).toMatchObject({ id: 'osm-node-1', kind: 'market', lat: 10.7736, area: 'Market Road, Palakkad' });
+    expect(markets[0]).toMatchObject({ id: 'osm-node-1', kind: 'market', lat: 10.7736, area: 'Market Road, Palakkad', hours: 'Mo-Sa 05:00-20:00' });
+    expect(markets[0].schedule[1]).toEqual([[300, 1200]]);
+    expect(fetchImpl.mock.calls.some(([url]) => new URL(url).searchParams.get('extratags') === '1')).toBe(true);
   });
 
   it('reports the map as unavailable only when every source fails', async () => {
@@ -210,6 +214,13 @@ describe('Google Places', () => {
   it('maps place types and skips closed places', () => {
     expect(normalizePlace(place('x', 'grocery_store'))).toMatchObject({ id: 'g-x', placeId: 'x', kind: 'grocery', area: 'Avenue Road, Bengaluru' });
     expect(normalizePlace(place('y', 'market'))).toMatchObject({ kind: 'market' });
+    const withHours = normalizePlace({
+      ...place('h', 'market'),
+      internationalPhoneNumber: '+91 491 250 0000',
+      regularOpeningHours: { weekdayDescriptions: ['Monday: 6:00 AM – 9:00 PM'], periods: [{ open: { day: 1, hour: 6, minute: 0 }, close: { day: 1, hour: 21, minute: 0 } }] },
+    });
+    expect(withHours).toMatchObject({ phone: '+91 491 250 0000', hours: 'Monday: 6:00 AM – 9:00 PM' });
+    expect(withHours.schedule[1]).toEqual([[360, 1260]]);
     expect(normalizePlace({ ...place('z', 'market'), businessStatus: 'CLOSED_PERMANENTLY' })).toBeNull();
   });
 });

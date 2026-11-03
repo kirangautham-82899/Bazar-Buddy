@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaClock, FaCrosshairs, FaDirections, FaMapMarkerAlt, FaSearchLocation, FaStore } from 'react-icons/fa';
+import { FaCrosshairs, FaDirections, FaMapMarkerAlt, FaPhoneAlt, FaSearchLocation, FaStore } from 'react-icons/fa';
 import { t } from '../../content/strings';
 import { useAuth } from '../../context/AuthContext';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import mandis, { MARKET_ITEMS } from '../../data/mandis';
 import { currentPosition, fetchMandiPrices, fetchNearbyMarkets, findPlace } from '../../services/marketService';
 import { directionsUrl, formatDistance, isKnownFor, marketsWithin } from '../../utils/markets';
+import { openStatus } from '../../utils/openingHours';
 import PageHead from '../../components/common/PageHead';
 import { Skeleton, Stagger, staggerItem } from '../../components/motion';
 import LivePrices from './LivePrices';
+import MarketHours from './MarketHours';
 import './markets.css';
 
 const RADII_KM = [2, 5, 10, 20];
@@ -27,7 +29,7 @@ const KIND_LABEL = {
 // Directory mandis only have city-level positions, so their distance is approximate.
 const DIRECTORY = mandis.map((m) => ({ ...m, kind: 'mandi', precise: false }));
 
-const MarketCard = ({ market, item }) => {
+const MarketCard = ({ market, item, now }) => {
   const kind = t(KIND_LABEL[market.kind]);
   return (
     <motion.li variants={staggerItem} className="market-card">
@@ -42,9 +44,7 @@ const MarketCard = ({ market, item }) => {
         </div>
       </div>
       {(market.area || market.city) && <p className="market-area small muted">{market.area || `${market.city}, ${market.state}`}</p>}
-      {market.hours && (
-        <p className="market-hours small muted"><FaClock aria-hidden="true" /> {market.hours}</p>
-      )}
+      <MarketHours market={market} now={now} />
       {market.known?.length > 0 && (
         <div className="market-known">
           <span className="small muted">{t('knownFor')}</span>
@@ -55,9 +55,16 @@ const MarketCard = ({ market, item }) => {
           </ul>
         </div>
       )}
-      <a className="btn btn-sm btn-outline market-directions" href={directionsUrl(market)} target="_blank" rel="noopener noreferrer">
-        <FaDirections aria-hidden="true" /> {t('directions')}
-      </a>
+      <div className="market-actions">
+        <a className="btn btn-sm btn-outline" href={directionsUrl(market)} target="_blank" rel="noopener noreferrer">
+          <FaDirections aria-hidden="true" /> {t('directions')}
+        </a>
+        {market.phone && (
+          <a className="btn btn-sm btn-ghost" href={`tel:${market.phone.replace(/[^\d+]/g, '')}`}>
+            <FaPhoneAlt aria-hidden="true" /> {t('call')}
+          </a>
+        )}
+      </div>
     </motion.li>
   );
 };
@@ -73,13 +80,21 @@ const MarketsPage = () => {
   const { profile } = useAuth();
   const [params, setParams] = useSearchParams();
   const item = params.get('item') || '';
+  const openOnly = params.get('open') === '1';
   const radiusKm = RADII_KM.includes(Number(params.get('km'))) ? Number(params.get('km')) : DEFAULT_RADIUS_KM;
   const [query, setQuery] = useState(params.get('q') || profile?.address?.pincode || '');
   const [place, setPlace] = useState(null); // { lat, lng, label, district, state, precision, accuracy? }
   const [status, setStatus] = useState('idle'); // idle | locating | loading | done | error
   const [error, setError] = useState('');
   const [nearby, setNearby] = useState({ status: 'idle', source: null, markets: [] }); // loading | done | failed
+  const [now, setNow] = useState(() => new Date());
   useDocumentMeta({ title: `${t('marketsTitle')} – ${t('appName')}` });
+
+  // Keep "Open now" right while the page stays open.
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
 
   const setParam = (key, value) => {
     const next = new URLSearchParams(params);
@@ -145,8 +160,9 @@ const MarketsPage = () => {
   const results = useMemo(() => {
     if (!place || nearby.status === 'loading') return [];
     const mapped = nearby.markets.map((m) => ({ ...m, precise: true }));
-    return marketsWithin(place, [...mapped, ...DIRECTORY], radiusKm);
-  }, [place, nearby, radiusKm]);
+    const all = marketsWithin(place, [...mapped, ...DIRECTORY], radiusKm);
+    return openOnly ? all.filter((m) => openStatus(m.schedule, now)?.open) : all;
+  }, [place, nearby, radiusKm, openOnly, now]);
 
   const nextRadius = RADII_KM.find((r) => r > radiusKm);
   const apiItem = MARKET_ITEMS.find((i) => i.label === item)?.api;
@@ -201,6 +217,14 @@ const MarketsPage = () => {
                 <span className="chip-label">{t('withinKm', { km })}</span>
               </button>
             ))}
+            <button
+              type="button"
+              className={`chip chip-toggle ${openOnly ? 'active' : ''}`}
+              aria-pressed={openOnly}
+              onClick={() => setParam('open', openOnly ? '' : '1')}
+            >
+              <span className="chip-label">{t('openNowOnly')}</span>
+            </button>
           </div>
           <div className="chip-row" role="group" aria-label={t('marketItemLabel')}>
             {['', ...MARKET_ITEMS.map((i) => i.label)].map((label) => (
@@ -244,7 +268,7 @@ const MarketsPage = () => {
           <section aria-labelledby="near-title">
             <div className="markets-results-head">
               <h2 id="near-title" className="shop-section-title">{t('marketsNear', { place: place.label })}</h2>
-              {nearby.status !== 'loading' && <p className="muted small">{t('marketsCount', { n: results.length, km: radiusKm })}</p>}
+              {nearby.status !== 'loading' && <p className="muted small">{t(openOnly ? 'openMarketsCount' : 'marketsCount', { n: results.length, km: radiusKm })}</p>}
             </div>
             <p className="markets-precision small muted">
               <FaCrosshairs aria-hidden="true" /> {precisionNote(place)}
@@ -255,13 +279,17 @@ const MarketsPage = () => {
             ) : results.length ? (
               <Stagger as="ul" className="market-grid" stagger={0.03}>
                 {results.map((market) => (
-                  <MarketCard key={market.id} market={market} item={item && isKnownFor(market, item) ? item : ''} />
+                  <MarketCard key={market.id} market={market} item={item && isKnownFor(market, item) ? item : ''} now={now} />
                 ))}
               </Stagger>
             ) : (
               <div className="empty-state">
-                <p>{t('noMarketsNearby', { km: radiusKm })}</p>
-                {nextRadius && (
+                <p>{t(openOnly ? 'noOpenMarketsNearby' : 'noMarketsNearby', { km: radiusKm })}</p>
+                {openOnly ? (
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => setParam('open', '')}>
+                    {t('showAllMarkets')}
+                  </button>
+                ) : nextRadius && (
                   <button type="button" className="btn btn-outline btn-sm" onClick={() => setParam('km', String(nextRadius))}>
                     {t('widenSearch', { km: nextRadius })}
                   </button>

@@ -53,7 +53,17 @@ vi.mock('../services/marketService', () => ({
   findPlace: vi.fn(async () => ({ lat: 12.9627, lng: 77.5806, label: 'Bangalore City, Bangalore', district: 'Bangalore', state: 'Karnataka', precision: 'pin' })),
   fetchNearbyMarkets: vi.fn(async () => ({
     markets: [
-      { id: 'osm-node-1', name: 'HOPCOMS', kind: 'greengrocer', lat: 12.9651, lng: 77.5812, area: '', hours: '' },
+      {
+        id: 'osm-node-1',
+        name: 'HOPCOMS',
+        kind: 'greengrocer',
+        lat: 12.9651,
+        lng: 77.5812,
+        area: '',
+        hours: '24/7',
+        schedule: Array.from({ length: 7 }, () => [[0, 1440]]),
+        phone: '+91 80 2222 3333',
+      },
       { id: 'osm-node-2', name: 'Far Away Market', kind: 'market', lat: 13.2, lng: 77.58, area: '', hours: '' },
     ],
   })),
@@ -156,6 +166,15 @@ describe('shop (guest)', () => {
     expect(screen.getByText('K.R. Market')).toBeInTheDocument(); // directory mandi, ~0.4 km away
     expect(screen.queryByText('Far Away Market')).not.toBeInTheDocument(); // ~26 km, outside the 5 km default
     expect(screen.getByText(/centre of the PIN code area/)).toBeInTheDocument();
+    // Timings and contact for mapped shops; directory mandis have none listed.
+    const hopcoms = screen.getByText('HOPCOMS').closest('li');
+    expect(hopcoms.querySelector('.market-status')).toHaveTextContent('Open 24 hours');
+    expect(within(hopcoms).getByRole('link', { name: 'Call' })).toHaveAttribute('href', 'tel:+918022223333');
+    expect(within(screen.getByText('K.R. Market').closest('li')).getByText('Timings not listed')).toBeInTheDocument();
+    // Open now keeps only markets known to be open.
+    fireEvent.click(screen.getByRole('button', { name: 'Open now' }));
+    expect(await screen.findByText('1 open now within 5 km')).toBeInTheDocument();
+    expect(screen.queryByText('K.R. Market')).not.toBeInTheDocument();
     expect(await screen.findByText(/Live daily mandi prices will appear here/)).toBeInTheDocument();
   });
 

@@ -215,9 +215,64 @@
   color: #fff;
 }
 
-.market-directions {
-  align-self: flex-start;
+.market-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
   margin-top: auto;
+}
+
+/* Timings */
+.market-hours-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.market-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-weight: 700;
+}
+
+.market-status.is-open {
+  color: var(--color-brand);
+}
+
+.market-status.is-closed {
+  color: var(--color-accent);
+}
+
+.market-week summary {
+  width: fit-content;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.market-week dl {
+  display: grid;
+  gap: 2px;
+  margin: var(--space-2) 0 0;
+}
+
+.market-week dl > div {
+  display: grid;
+  grid-template-columns: 3.5em 1fr;
+  gap: var(--space-2);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.market-week dl > div.today {
+  background: var(--color-brand-soft);
+  font-weight: 700;
+}
+
+.market-week dt,
+.market-week dd {
+  margin: 0;
 }
 
 /* Notes (map fallback, live prices) */

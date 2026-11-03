@@ -5,6 +5,7 @@
 import { HttpError } from './http.js';
 import { fetchGooglePlaces } from './googlePlaces.js';
 import { USER_AGENT, nominatim } from './place.js';
+import { parseOsmHours } from './openingHours.js';
 
 const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
 export const MAX_RADIUS_KM = 20;
@@ -31,6 +32,13 @@ export const buildQuery = ({ lat, lng, radiusKm }) => {
 
 const kindOf = (tags) => (tags.amenity === 'marketplace' ? 'market' : tags.shop === 'wholesale' ? 'wholesale' : 'greengrocer');
 
+// Timings and phone from OpenStreetMap tags.
+const hoursAndPhone = (tags) => ({
+  hours: tags.opening_hours || '',
+  schedule: parseOsmHours(tags.opening_hours),
+  phone: (tags.phone || tags['contact:phone'] || tags['contact:mobile'] || '').split(';')[0].trim(),
+});
+
 const isProduce = (kind, name) => kind !== 'market' || !NOT_PRODUCE.test(name);
 
 export const normalizeElement = (el) => {
@@ -48,7 +56,7 @@ export const normalizeElement = (el) => {
     lat,
     lng,
     area: [tags['addr:street'], tags['addr:suburb'] || tags['addr:neighbourhood'], tags['addr:city']].filter(Boolean).join(', '),
-    hours: tags.opening_hours || '',
+    ...hoursAndPhone(tags),
   };
 };
 
@@ -64,7 +72,7 @@ export const normalizeNominatim = (r) => {
     lat: Number(r.lat),
     lng: Number(r.lon),
     area: [a.road, a.neighbourhood || a.suburb || a.village, a.city || a.town].filter(Boolean).join(', '),
-    hours: '',
+    ...hoursAndPhone(r.extratags || {}),
   };
 };
 
@@ -100,7 +108,7 @@ const fetchNominatim = async (point, radius, fetchImpl, gapMs) => {
   const found = [];
   for (const [i, phrase] of NOMINATIM_PHRASES.entries()) {
     if (i && gapMs) await new Promise((resolve) => setTimeout(resolve, gapMs));
-    const results = await nominatim('search', { q: phrase, viewbox: box, bounded: '1', limit: '40' }, fetchImpl);
+    const results = await nominatim('search', { q: phrase, viewbox: box, bounded: '1', limit: '40', extratags: '1' }, fetchImpl);
     found.push(...results.map(normalizeNominatim).filter(Boolean));
   }
   return found;

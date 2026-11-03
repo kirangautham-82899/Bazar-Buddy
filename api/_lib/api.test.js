@@ -3,6 +3,7 @@ import { lookupPincode } from './pincode.js';
 import { fetchMandiPrices, normalizeRecord } from './mandiPrices.js';
 import { findPlace } from './place.js';
 import { buildQuery, fetchNearbyMarkets, normalizeElement } from './nearbyMarkets.js';
+import { normalizePlace } from './googlePlaces.js';
 
 const jsonResponse = (body, ok = true, status = 200) => ({ ok, status, json: async () => body });
 
@@ -139,12 +140,53 @@ describe('fetchNearbyMarkets', () => {
       .fn()
       .mockResolvedValueOnce(jsonResponse({}, false, 504))
       .mockResolvedValueOnce(jsonResponse({ elements: [{ type: 'node', id: 9, lat: 12.96, lon: 77.58, tags: { shop: 'greengrocer' } }] }));
-    const { markets } = await fetchNearbyMarkets({ lat: '12.96', lng: '77.58', radiusKm: '5' }, fetchImpl);
+    const { source, markets } = await fetchNearbyMarkets({ lat: '12.96', lng: '77.58', radiusKm: '5' }, { fetchImpl });
+    expect(source).toBe('osm');
     expect(markets).toHaveLength(1);
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
   it('refuses radii beyond the nearby limit', async () => {
-    await expect(fetchNearbyMarkets({ lat: 12.96, lng: 77.58, radiusKm: 500 }, vi.fn())).rejects.toMatchObject({ status: 400 });
+    await expect(fetchNearbyMarkets({ lat: 12.96, lng: 77.58, radiusKm: 500 }, { fetchImpl: vi.fn() })).rejects.toMatchObject({ status: 400 });
+  });
+});
+
+describe('Google Places', () => {
+  const place = (id, primaryType, latitude = 12.964) => ({
+    id,
+    displayName: { text: `Place ${id}` },
+    location: { latitude, longitude: 77.581 },
+    shortFormattedAddress: 'Avenue Road, Bengaluru',
+    primaryType,
+  });
+
+  it('searches by type and by text around the point, with the key in a header', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ places: [place('a', 'market'), place('b', 'grocery_store')] }))
+      .mockResolvedValueOnce(jsonResponse({ places: [place('a', 'market'), place('c', 'market')] }));
+    const { source, markets } = await fetchNearbyMarkets({ lat: 12.96, lng: 77.58, radiusKm: 2 }, { googleKey: 'test-key', fetchImpl });
+    expect(source).toBe('google');
+    expect(markets.map((m) => m.id).sort()).toEqual(['g-a', 'g-b', 'g-c']); // duplicates merged
+    const [url, init] = fetchImpl.mock.calls[0];
+    expect(url).toBe('https://places.googleapis.com/v1/places:searchNearby');
+    expect(url).not.toContain('test-key');
+    expect(init.headers['X-Goog-Api-Key']).toBe('test-key');
+    expect(JSON.parse(init.body).locationRestriction.circle).toEqual({ center: { latitude: 12.96, longitude: 77.58 }, radius: 2000 });
+    expect(fetchImpl.mock.calls[1][0]).toBe('https://places.googleapis.com/v1/places:searchText');
+  });
+
+  it('falls back to OpenStreetMap when Google fails', async () => {
+    const fetchImpl = vi.fn(async (url) =>
+      url.includes('googleapis') ? jsonResponse({}, false, 403) : jsonResponse({ elements: [{ type: 'node', id: 1, lat: 12.96, lon: 77.58, tags: { shop: 'greengrocer' } }] })
+    );
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    await expect(fetchNearbyMarkets({ lat: 12.96, lng: 77.58, radiusKm: 2 }, { googleKey: 'k', fetchImpl })).resolves.toMatchObject({ source: 'osm' });
+  });
+
+  it('maps place types and skips closed places', () => {
+    expect(normalizePlace(place('x', 'grocery_store'))).toMatchObject({ id: 'g-x', placeId: 'x', kind: 'grocery', area: 'Avenue Road, Bengaluru' });
+    expect(normalizePlace(place('y', 'market'))).toMatchObject({ kind: 'market' });
+    expect(normalizePlace({ ...place('z', 'market'), businessStatus: 'CLOSED_PERMANENTLY' })).toBeNull();
   });
 });

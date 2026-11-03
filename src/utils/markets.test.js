@@ -68,6 +68,10 @@ describe('directionsUrl', () => {
     expect(directionsUrl({ precise: true, lat: 12.96, lng: 77.58 })).toBe('https://www.google.com/maps/dir/?api=1&destination=12.96,77.58');
   });
 
+  it('uses the Google place when known', () => {
+    expect(directionsUrl({ precise: true, lat: 1, lng: 2, placeId: 'ChIJ1' })).toBe('https://www.google.com/maps/dir/?api=1&destination=1,2&destination_place_id=ChIJ1');
+  });
+
   it('searches directory mandis by name', () => {
     const url = new URL(directionsUrl({ name: 'K.R. Market', city: 'Bengaluru', state: 'Karnataka' }));
     expect(url.searchParams.get('query')).toBe('K.R. Market, Bengaluru, Karnataka');

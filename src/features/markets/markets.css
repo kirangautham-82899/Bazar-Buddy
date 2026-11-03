@@ -164,7 +164,8 @@
   color: var(--color-brand);
 }
 
-.market-icon.kind-greengrocer {
+.market-icon.kind-greengrocer,
+.market-icon.kind-grocery {
   background: var(--color-turmeric-soft);
   color: #8a5a00;
 }
@@ -172,6 +173,10 @@
 .market-icon.kind-mandi {
   background: var(--color-accent-soft);
   color: var(--color-accent);
+}
+
+.markets-source {
+  margin: var(--space-4) 0 0;
 }
 
 .market-area,

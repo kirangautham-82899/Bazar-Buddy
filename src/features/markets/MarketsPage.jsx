@@ -20,6 +20,7 @@ const KIND_LABEL = {
   market: 'marketKindMarket',
   greengrocer: 'marketKindGreengrocer',
   wholesale: 'marketKindWholesale',
+  grocery: 'marketKindGrocery',
   mandi: 'marketKindMandi',
 };
 
@@ -77,7 +78,7 @@ const MarketsPage = () => {
   const [place, setPlace] = useState(null); // { lat, lng, label, district, state, precision, accuracy? }
   const [status, setStatus] = useState('idle'); // idle | locating | loading | done | error
   const [error, setError] = useState('');
-  const [nearby, setNearby] = useState({ status: 'idle', markets: [] }); // loading | done | failed
+  const [nearby, setNearby] = useState({ status: 'idle', source: null, markets: [] }); // loading | done | failed
   useDocumentMeta({ title: `${t('marketsTitle')} – ${t('appName')}` });
 
   const setParam = (key, value) => {
@@ -132,10 +133,10 @@ const MarketsPage = () => {
   useEffect(() => {
     if (!place) return undefined;
     let active = true;
-    setNearby({ status: 'loading', markets: [] });
+    setNearby({ status: 'loading', source: null, markets: [] });
     fetchNearbyMarkets(place, radiusKm)
-      .then(({ markets }) => active && setNearby({ status: 'done', markets }))
-      .catch(() => active && setNearby({ status: 'failed', markets: [] }));
+      .then(({ source, markets }) => active && setNearby({ status: 'done', source, markets }))
+      .catch(() => active && setNearby({ status: 'failed', source: null, markets: [] }));
     return () => {
       active = false;
     };
@@ -267,6 +268,7 @@ const MarketsPage = () => {
                 )}
               </div>
             )}
+            {nearby.source && <p className="markets-source small muted">{t(nearby.source === 'google' ? 'placesByGoogle' : 'placesByOsm')}</p>}
           </section>
 
           {place.state && <LivePrices area={place} commodity={apiItem} itemLabel={item} fetchPrices={fetchMandiPrices} />}

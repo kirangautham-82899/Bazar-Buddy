@@ -32,5 +32,5 @@ export const formatDistance = (km) => {
 // positions) are searched by name so Maps finds the actual yard.
 export const directionsUrl = (market) =>
   market.precise
-    ? `https://www.google.com/maps/dir/?api=1&destination=${market.lat},${market.lng}`
+    ? `https://www.google.com/maps/dir/?api=1&destination=${market.lat},${market.lng}${market.placeId ? `&destination_place_id=${encodeURIComponent(market.placeId)}` : ''}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${market.name}, ${market.city}, ${market.state}`)}`;

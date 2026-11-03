@@ -1,6 +1,8 @@
-// Real vegetable markets, mandis and greengrocers around a point, from
-// OpenStreetMap via the Overpass API. Two public servers, tried in order.
+// Real vegetable markets, mandis and greengrocers around a point: Google Places
+// (see googlePlaces.js) or OpenStreetMap via the Overpass API, whose two public
+// servers are tried in order.
 import { HttpError } from './http.js';
+import { fetchGooglePlaces } from './googlePlaces.js';
 import { USER_AGENT } from './place.js';
 
 const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
@@ -42,13 +44,7 @@ export const normalizeElement = (el) => {
   };
 };
 
-export const fetchNearbyMarkets = async ({ lat, lng, radiusKm }, fetchImpl = fetch) => {
-  const point = { lat: Number(lat), lng: Number(lng) };
-  const radius = Number(radiusKm);
-  if (!Number.isFinite(point.lat) || !Number.isFinite(point.lng) || Math.abs(point.lat) > 90 || Math.abs(point.lng) > 180) {
-    throw new HttpError(400, 'Invalid coordinates');
-  }
-  if (!(radius > 0 && radius <= MAX_RADIUS_KM)) throw new HttpError(400, `Radius must be up to ${MAX_RADIUS_KM} km`);
+const fetchOsm = async (point, radius, fetchImpl) => {
   const body = new URLSearchParams({ data: buildQuery({ ...point, radiusKm: radius }) }).toString();
   for (const url of OVERPASS) {
     try {
@@ -60,10 +56,29 @@ export const fetchNearbyMarkets = async ({ lat, lng, radiusKm }, fetchImpl = fet
       });
       if (!res.ok) continue;
       const { elements = [] } = await res.json();
-      return { markets: elements.map(normalizeElement).filter(Boolean).slice(0, MAX_RESULTS) };
+      return elements.map(normalizeElement).filter(Boolean).slice(0, MAX_RESULTS);
     } catch {
       // Try the next server.
     }
   }
   throw new HttpError(502, 'Market map is unavailable');
+};
+
+// Google Places when a key is configured (falling back to OpenStreetMap if
+// Google fails), OpenStreetMap otherwise.
+export const fetchNearbyMarkets = async ({ lat, lng, radiusKm }, { googleKey, fetchImpl = fetch } = {}) => {
+  const point = { lat: Number(lat), lng: Number(lng) };
+  const radius = Number(radiusKm);
+  if (!Number.isFinite(point.lat) || !Number.isFinite(point.lng) || Math.abs(point.lat) > 90 || Math.abs(point.lng) > 180) {
+    throw new HttpError(400, 'Invalid coordinates');
+  }
+  if (!(radius > 0 && radius <= MAX_RADIUS_KM)) throw new HttpError(400, `Radius must be up to ${MAX_RADIUS_KM} km`);
+  if (googleKey) {
+    try {
+      return { source: 'google', markets: await fetchGooglePlaces({ ...point, radiusKm: radius }, { apiKey: googleKey, fetchImpl }) };
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  return { source: 'osm', markets: await fetchOsm(point, radius, fetchImpl) };
 };

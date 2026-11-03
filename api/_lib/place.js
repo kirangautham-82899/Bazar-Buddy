@@ -10,7 +10,7 @@ export const USER_AGENT = 'BazarBuddy/1.0 (https://bazar-buddy-neon.vercel.app)'
 
 const COORD_RE = /^-?\d{1,3}(\.\d+)?$/;
 
-const nominatim = async (path, params, fetchImpl) => {
+export const nominatim = async (path, params, fetchImpl) => {
   const query = new URLSearchParams({ format: 'jsonv2', addressdetails: '1', 'accept-language': 'en', ...params });
   const res = await fetchImpl(`${NOMINATIM}/${path}?${query}`, { headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(8000) });
   if (!res.ok) throw new HttpError(502, 'Location service is unavailable');

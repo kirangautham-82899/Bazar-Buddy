@@ -135,15 +135,38 @@ describe('fetchNearbyMarkets', () => {
     expect(normalizeElement({ type: 'node', id: 3, lat: 1, lon: 2, tags: { amenity: 'marketplace', name: 'Infantry Road Furniture Market' } })).toBeNull();
   });
 
-  it('falls back to the second server', async () => {
-    const fetchImpl = vi
-      .fn()
-      .mockResolvedValueOnce(jsonResponse({}, false, 504))
-      .mockResolvedValueOnce(jsonResponse({ elements: [{ type: 'node', id: 9, lat: 12.96, lon: 77.58, tags: { shop: 'greengrocer' } }] }));
-    const { source, markets } = await fetchNearbyMarkets({ lat: '12.96', lng: '77.58', radiusKm: '5' }, { fetchImpl });
+  const greengrocer = { type: 'node', id: 9, lat: 12.96, lon: 77.58, tags: { shop: 'greengrocer' } };
+  const OPTS = { nominatimGapMs: 0 };
+
+  it('falls back to the second Overpass server', async () => {
+    const fetchImpl = vi.fn(async (url) => {
+      if (url.includes('overpass-api.de')) return jsonResponse({}, false, 504);
+      if (url.includes('overpass')) return jsonResponse({ elements: [greengrocer] });
+      return jsonResponse([]);
+    });
+    const { source, markets } = await fetchNearbyMarkets({ lat: '12.96', lng: '77.58', radiusKm: '5' }, { fetchImpl, ...OPTS });
     expect(source).toBe('osm');
     expect(markets).toHaveLength(1);
-    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it('still finds markets through Nominatim when Overpass is down, merged without duplicates', async () => {
+    const valiyaAngadi = { osm_type: 'node', osm_id: 1, category: 'amenity', type: 'marketplace', name: 'Valiya Angadi', lat: '10.7736', lon: '76.6453', address: { road: 'Market Road', city: 'Palakkad' } };
+    const fishMarket = { osm_type: 'node', osm_id: 2, category: 'amenity', type: 'marketplace', name: 'Fish Market', lat: '10.77', lon: '76.65' };
+    const veg = { osm_type: 'node', osm_id: 3, category: 'shop', type: 'greengrocer', name: 'Vegetable Store', lat: '10.72', lon: '76.67' };
+    const fetchImpl = vi.fn(async (url) => {
+      if (url.includes('overpass')) throw new TypeError('fetch failed');
+      const { searchParams } = new URL(url);
+      expect(searchParams.get('bounded')).toBe('1');
+      return jsonResponse(searchParams.get('q') === 'marketplace' ? [valiyaAngadi, fishMarket] : [veg, veg]);
+    });
+    const { markets } = await fetchNearbyMarkets({ lat: 10.78, lng: 76.65, radiusKm: 10 }, { fetchImpl, ...OPTS });
+    expect(markets.map((m) => m.name)).toEqual(['Valiya Angadi', 'Vegetable Store']);
+    expect(markets[0]).toMatchObject({ id: 'osm-node-1', kind: 'market', lat: 10.7736, area: 'Market Road, Palakkad' });
+  });
+
+  it('reports the map as unavailable only when every source fails', async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse({}, false, 503));
+    await expect(fetchNearbyMarkets({ lat: 12.96, lng: 77.58, radiusKm: 5 }, { fetchImpl, ...OPTS })).rejects.toMatchObject({ status: 502 });
   });
 
   it('refuses radii beyond the nearby limit', async () => {
@@ -178,10 +201,10 @@ describe('Google Places', () => {
 
   it('falls back to OpenStreetMap when Google fails', async () => {
     const fetchImpl = vi.fn(async (url) =>
-      url.includes('googleapis') ? jsonResponse({}, false, 403) : jsonResponse({ elements: [{ type: 'node', id: 1, lat: 12.96, lon: 77.58, tags: { shop: 'greengrocer' } }] })
+      url.includes('googleapis') ? jsonResponse({}, false, 403) : url.includes('overpass') ? jsonResponse({ elements: [{ type: 'node', id: 1, lat: 12.96, lon: 77.58, tags: { shop: 'greengrocer' } }] }) : jsonResponse([])
     );
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    await expect(fetchNearbyMarkets({ lat: 12.96, lng: 77.58, radiusKm: 2 }, { googleKey: 'k', fetchImpl })).resolves.toMatchObject({ source: 'osm' });
+    await expect(fetchNearbyMarkets({ lat: 12.96, lng: 77.58, radiusKm: 2 }, { googleKey: 'k', fetchImpl, nominatimGapMs: 0 })).resolves.toMatchObject({ source: 'osm' });
   });
 
   it('maps place types and skips closed places', () => {

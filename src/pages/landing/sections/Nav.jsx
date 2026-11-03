@@ -6,9 +6,9 @@ import { NAV_LINKS } from '../content';
 import { warmAuthProps } from '../warmAuth';
 import './Nav.css';
 
-const Nav = () => (
-  <header className="landing-nav">
-    <div className="landing-nav-inner">
+const Nav = () => {
+  return (
+    <header className="landing-nav">
       <Link to="/" className="landing-brand" aria-label={t('appName')}>
         <BrandMark />
       </Link>
@@ -18,15 +18,13 @@ const Nav = () => (
         ))}
       </nav>
       <div className="landing-nav-actions">
-        <Link to="/auth" className="btn btn-sm btn-ghost" {...warmAuthProps}>
+        <Link to="/shop" className="text-link nav-shop-link">{t('startShopping')}</Link>
+        <Link to="/auth" className="btn btn-sm" {...warmAuthProps}>
           {t('navLogin')}
         </Link>
-        <Link to="/shop" className="btn btn-sm" {...warmAuthProps}>
-          {t('startShopping')}
-        </Link>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
+};
 
 export default Nav;

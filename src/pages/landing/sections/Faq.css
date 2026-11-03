@@ -1,21 +1,22 @@
+/* FAQ */
 .faq-list {
-  border-top: 1px solid var(--color-line-strong);
+  border-top: 1px solid var(--color-line);
 }
 
 .faq {
-  border-bottom: 1px solid var(--color-line-strong);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .faq summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-5) 0;
-  font-size: 1rem;
-  font-weight: 600;
-  list-style: none;
+  gap: 16px;
+  padding: 20px 0;
+  font-weight: 700;
+  font-size: 1.05rem;
   cursor: pointer;
+  list-style: none;
 }
 
 .faq summary::-webkit-details-marker {
@@ -23,23 +24,26 @@
 }
 
 .faq summary:hover {
-  color: var(--color-brand);
+  color: var(--color-brand-dark);
 }
 
 .faq-chevron {
   flex-shrink: 0;
-  color: var(--color-subtle);
-  font-size: 0.8rem;
-  transition: transform 0.2s var(--ease-out);
+  color: var(--color-accent);
+  transition: transform 0.3s var(--ease-out);
 }
 
 .faq[open] .faq-chevron {
-  transform: rotate(45deg);
+  transform: rotate(180deg);
 }
 
 .faq p {
-  max-width: 600px;
-  margin: 0;
-  padding: 0 0 var(--space-5);
+  margin: 0 0 20px;
+  max-width: 620px;
   color: var(--color-muted);
+  animation: faq-in 0.35s var(--ease-out);
+}
+
+@keyframes faq-in {
+  from { opacity: 0; transform: translateY(-6px); }
 }

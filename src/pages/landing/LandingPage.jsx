@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { loadAppShell, loadAuthPage, loadShopHome, loadShopLayout, prefetchWhenIdle } from '../../routes/lazy';
 import { onSignedIn } from '../../routes/sessionCheck';
 import Nav from './sections/Nav';
@@ -12,9 +13,11 @@ import FinalCta from './sections/FinalCta';
 import Footer from './sections/Footer';
 import './LandingPage.css';
 
-// Page shell: section order, and background work after first paint.
+// Page shell: section order, scroll progress bar, and background work after first paint.
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { scrollYProgress } = useScroll();
+  const bar = useSpring(scrollYProgress, { stiffness: 140, damping: 30 });
 
   // Prefetch the shop, and send vendors who are already signed in straight to it.
   useEffect(() => {
@@ -36,6 +39,7 @@ const LandingPage = () => {
 
   return (
     <div className="landing">
+      <motion.div className="scroll-progress" style={{ scaleX: bar }} aria-hidden="true" />
       <Nav />
       <main>
         <Hero />

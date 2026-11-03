@@ -15,12 +15,12 @@
   padding: var(--space-5);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background: #fff;
 }
 
 .order-card.live {
-  border-color: var(--color-brand);
-  box-shadow: inset 3px 0 0 var(--color-brand);
+  border-color: #b9e3c4;
+  background: linear-gradient(180deg, #f3fbf5, #fff 60%);
 }
 
 .order-card-head {
@@ -120,7 +120,7 @@
   height: 18px;
   border-radius: 50%;
   border: 3px solid var(--color-line);
-  background: var(--color-surface);
+  background: #fff;
   transition: border-color 0.4s ease, background 0.4s ease;
 }
 

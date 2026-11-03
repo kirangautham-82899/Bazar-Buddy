@@ -1,11 +1,10 @@
 /* Footer */
 .landing-footer {
   display: grid;
-  gap: var(--space-8);
+  gap: 32px;
   max-width: var(--content-width);
-  margin: 128px auto 0;
-  padding: var(--space-12) var(--space-4) var(--space-8);
-  border-top: 1px solid var(--color-line);
+  margin: 0 auto;
+  padding: 64px 16px 36px;
 }
 
 @media (min-width: 760px) {
@@ -16,33 +15,31 @@
 
 .footer-brand p {
   max-width: 320px;
-  margin-top: var(--space-3);
-  font-size: 0.9rem;
+  margin-top: 12px;
   color: var(--color-muted);
 }
 
 .footer-col {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 10px;
 }
 
 .footer-col h2 {
-  margin: 0 0 var(--space-1);
-  color: var(--color-subtle);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--color-muted);
 }
 
 .footer-col a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--color-muted);
-  font-size: 0.9rem;
+  font-weight: 600;
   text-decoration: none;
+  color: var(--color-ink);
 }
 
 .footer-col a:hover {
@@ -54,6 +51,6 @@
   margin: 0;
   padding-top: 24px;
   border-top: 1px solid var(--color-line);
-  color: var(--color-subtle);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
+  color: var(--color-muted);
 }

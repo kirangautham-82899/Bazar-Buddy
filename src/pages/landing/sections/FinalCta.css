@@ -1,41 +1,44 @@
+/* Full-bleed CTA band */
 .cta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-  padding: var(--space-10) var(--space-8);
-  border-radius: var(--radius-xl);
-  background: var(--color-brand-dark);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: 104px;
+  padding: 88px 16px;
+  text-align: center;
   color: #fff;
 }
 
-@media (min-width: 960px) {
-  .cta {
-    padding: var(--space-12) var(--space-16);
-  }
+.cta .aurora {
+  z-index: -1;
 }
 
-.cta h2 {
-  max-width: 520px;
-  margin: 0 0 var(--space-2);
-  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.15;
+.cta-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 680px;
+  margin: 0 auto;
 }
 
-.cta p {
-  max-width: 520px;
+.cta-content h2 {
   margin: 0;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: clamp(2rem, 5.4vw, 3.2rem);
+  font-weight: 800;
+}
+
+.cta-content p {
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 12px;
 }
 
 .cta-btn {
-  background: #fff;
-  color: var(--color-brand-dark);
+  background: var(--color-turmeric);
+  color: var(--color-ink);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5);
 }
 
 .cta-btn:hover {
-  background: var(--color-brand-soft);
+  box-shadow: 0 20px 44px -12px rgba(0, 0, 0, 0.6);
 }

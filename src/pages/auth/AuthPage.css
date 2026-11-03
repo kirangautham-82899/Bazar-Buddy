@@ -10,13 +10,12 @@
   }
 }
 
-/* Brand panel (desktop): a quiet, solid green column with one message. */
+/* Brand panel (desktop) */
 .auth-panel {
   position: relative;
   isolation: isolate;
   display: none;
   overflow: hidden;
-  background: var(--color-brand-dark);
   color: #fff;
 }
 
@@ -29,51 +28,97 @@
   }
 }
 
+.auth-panel .aurora {
+  z-index: -1;
+}
+
 .auth-panel-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: 100%;
-  padding: var(--space-10) var(--space-12);
+  padding: 36px 48px;
 }
 
 .auth-panel-brand {
-  align-self: flex-start;
   text-decoration: none;
+  align-self: flex-start;
+}
+
+.auth-orbit {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: auto auto 32px;
+}
+
+.orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+}
+
+.orbit-ring-2 {
+  inset: 70px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: radial-gradient(circle, rgba(47, 179, 106, 0.35), transparent 70%);
+}
+
+/* Items ride a rotating ring; the inner wrapper counter-rotates to stay upright. */
+.orbit-item {
+  position: absolute;
+  inset: 0;
+  animation: orbit 24s linear infinite;
+  animation-delay: calc(var(--i) * -24s / var(--n));
+}
+
+.orbit-counter {
+  position: absolute;
+  top: -26px;
+  left: calc(50% - 26px);
+  animation: orbit 24s linear infinite reverse;
+  animation-delay: calc(var(--i) * -24s / var(--n));
+}
+
+.orbit-counter .product-icon {
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes orbit {
+  to { transform: rotate(360deg); }
 }
 
 .auth-panel-title {
+  font-size: 2.2rem;
+  font-weight: 800;
   max-width: 420px;
-  margin: auto 0 var(--space-3);
-  font-size: 2.4rem;
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
+  margin-bottom: 10px;
 }
 
 .auth-benefit {
   min-height: 3.2em;
-  max-width: 400px;
-  color: rgba(255, 255, 255, 0.75);
+  max-width: 420px;
   font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .auth-dots {
   display: flex;
   gap: 6px;
-  margin-top: var(--space-2);
+  margin-top: 8px;
 }
 
 .auth-dots span {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.3);
   transition: width 0.4s var(--ease-out), background 0.4s ease;
 }
 
 .auth-dots span.active {
-  width: 20px;
+  width: 24px;
   background: #fff;
 }
 
@@ -82,26 +127,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-4) var(--space-4) var(--space-10);
+  padding: 16px 16px 40px;
+  background:
+    radial-gradient(600px 300px at 100% 0%, rgba(111, 208, 143, 0.18), transparent 70%),
+    radial-gradient(500px 300px at 0% 100%, rgba(246, 181, 46, 0.18), transparent 70%);
 }
 
 .auth-topbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
-  max-width: 420px;
-  margin-bottom: var(--space-4);
+  max-width: 440px;
+  margin-bottom: 16px;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   margin: auto 0;
-  padding: var(--space-8) var(--space-6);
-  border: 1px solid var(--color-line);
+  padding: 28px 24px;
   border-radius: var(--radius-xl);
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-lg);
 }
 
 .auth-mobile-brand {
@@ -115,20 +165,19 @@
 }
 
 .auth-title {
+  font-size: 1.8rem;
+  font-weight: 800;
   margin: 0;
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
 }
 
 .auth-subtitle {
-  margin: var(--space-1) 0 var(--space-6);
+  margin: 6px 0 18px;
 }
 
 .auth-tabs {
   display: grid;
   width: 100%;
-  margin-bottom: var(--space-6);
+  margin-bottom: 20px;
 }
 
 .input-with-icon {
@@ -171,8 +220,8 @@
 }
 
 .input-trailing:hover {
-  background: var(--color-hover);
-  color: var(--color-ink);
+  color: var(--color-brand);
+  background: var(--color-brand-soft);
 }
 
 .input-with-icon:has(.input-trailing) .input {

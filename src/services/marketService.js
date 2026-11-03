@@ -1,4 +1,4 @@
-// Calls our own /api functions (see /api): PIN code lookup and live mandi prices.
+// Calls our own /api functions (see /api): places, nearby markets and live mandi prices.
 const getJson = async (url) => {
   const res = await fetch(url);
   const body = await res.json().catch(() => ({}));
@@ -10,7 +10,14 @@ const getJson = async (url) => {
   return body;
 };
 
-export const lookupPincode = (pin) => getJson(`/api/pincode?pin=${encodeURIComponent(pin)}`);
+// A PIN code or typed address, or exact coordinates -> { lat, lng, label, district, state, precision }.
+export const findPlace = ({ q, lat, lng }) =>
+  getJson(`/api/place?${new URLSearchParams(q !== undefined ? { q } : { lat: lat.toFixed(6), lng: lng.toFixed(6) })}`);
+
+// Rounded to ~100 m so nearby users share the cached answer; distances are
+// still measured from the exact point on the page.
+export const fetchNearbyMarkets = ({ lat, lng }, radiusKm) =>
+  getJson(`/api/nearby-markets?${new URLSearchParams({ lat: lat.toFixed(3), lng: lng.toFixed(3), radius: String(radiusKm) })}`);
 
 export const fetchMandiPrices = ({ state, district, commodity }) => {
   const params = new URLSearchParams({ state });
@@ -19,7 +26,8 @@ export const fetchMandiPrices = ({ state, district, commodity }) => {
   return getJson(`/api/mandi-prices?${params}`);
 };
 
-// Browser GPS, wrapped in a promise. Rejects with 'denied' or 'unavailable'.
+// A fresh, high-accuracy GPS fix (no cached position). Resolves
+// { lat, lng, accuracy } with accuracy in metres; rejects 'denied' or 'unavailable'.
 export const currentPosition = () =>
   new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -27,8 +35,8 @@ export const currentPosition = () =>
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
       (err) => reject(new Error(err.code === 1 ? 'denied' : 'unavailable')),
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 10 * 60 * 1000 }
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
     );
   });

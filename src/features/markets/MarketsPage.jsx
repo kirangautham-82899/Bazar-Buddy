@@ -1,55 +1,83 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaCrosshairs, FaDirections, FaMapMarkerAlt, FaSearchLocation, FaStore } from 'react-icons/fa';
+import { FaClock, FaCrosshairs, FaDirections, FaMapMarkerAlt, FaSearchLocation, FaStore } from 'react-icons/fa';
 import { t } from '../../content/strings';
 import { useAuth } from '../../context/AuthContext';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import mandis, { MARKET_ITEMS } from '../../data/mandis';
-import { currentPosition, fetchMandiPrices, lookupPincode } from '../../services/marketService';
-import { directionsUrl, formatDistance, isKnownFor, marketsForPlace, nearestMarkets } from '../../utils/markets';
+import { currentPosition, fetchMandiPrices, fetchNearbyMarkets, findPlace } from '../../services/marketService';
+import { directionsUrl, formatDistance, isKnownFor, marketsWithin } from '../../utils/markets';
 import PageHead from '../../components/common/PageHead';
 import { Skeleton, Stagger, staggerItem } from '../../components/motion';
 import LivePrices from './LivePrices';
 import './markets.css';
 
-const PIN_RE = /^[1-9]\d{5}$/;
+const RADII_KM = [2, 5, 10, 20];
+const DEFAULT_RADIUS_KM = 5;
 
-const MarketCard = ({ market, item }) => (
-  <motion.li variants={staggerItem} className="market-card">
-    <div className="market-card-head">
-      <span className="market-icon" aria-hidden="true"><FaStore /></span>
-      <div className="market-title">
-        <h3>{market.name}</h3>
-        <p className="muted small">
-          {market.city}, {market.state}
-          {market.distanceKm !== undefined && <> · {formatDistance(market.distanceKm)}</>}
-        </p>
+const KIND_LABEL = {
+  market: 'marketKindMarket',
+  greengrocer: 'marketKindGreengrocer',
+  wholesale: 'marketKindWholesale',
+  mandi: 'marketKindMandi',
+};
+
+// Directory mandis only have city-level positions, so their distance is approximate.
+const DIRECTORY = mandis.map((m) => ({ ...m, kind: 'mandi', precise: false }));
+
+const MarketCard = ({ market, item }) => {
+  const kind = t(KIND_LABEL[market.kind]);
+  return (
+    <motion.li variants={staggerItem} className="market-card">
+      <div className="market-card-head">
+        <span className={`market-icon kind-${market.kind}`} aria-hidden="true"><FaStore /></span>
+        <div className="market-title">
+          <h3>{market.name || kind}</h3>
+          <p className="muted small">
+            {market.name ? `${kind} · ` : ''}
+            <strong className="market-distance">{market.precise ? '' : '~'}{formatDistance(market.distanceKm)}</strong>
+          </p>
+        </div>
       </div>
-    </div>
-    <div className="market-known">
-      <span className="small muted">{t('knownFor')}</span>
-      <ul>
-        {market.known.map((k) => (
-          <li key={k} className={item && k.toLowerCase() === item.toLowerCase() ? 'match' : ''}>{k}</li>
-        ))}
-      </ul>
-    </div>
-    <a className="btn btn-sm btn-outline market-directions" href={directionsUrl(market)} target="_blank" rel="noopener noreferrer">
-      <FaDirections aria-hidden="true" /> {t('directions')}
-    </a>
-  </motion.li>
-);
+      {(market.area || market.city) && <p className="market-area small muted">{market.area || `${market.city}, ${market.state}`}</p>}
+      {market.hours && (
+        <p className="market-hours small muted"><FaClock aria-hidden="true" /> {market.hours}</p>
+      )}
+      {market.known?.length > 0 && (
+        <div className="market-known">
+          <span className="small muted">{t('knownFor')}</span>
+          <ul>
+            {market.known.map((k) => (
+              <li key={k} className={item && k.toLowerCase() === item.toLowerCase() ? 'match' : ''}>{k}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <a className="btn btn-sm btn-outline market-directions" href={directionsUrl(market)} target="_blank" rel="noopener noreferrer">
+        <FaDirections aria-hidden="true" /> {t('directions')}
+      </a>
+    </motion.li>
+  );
+};
 
-// Enter a PIN code (or use GPS) to see nearby mandis and what they sell.
+const precisionNote = (place) => {
+  if (place.precision === 'gps') return place.accuracy ? t('precisionGps', { m: Math.max(5, Math.round(place.accuracy)) }) : '';
+  return t(place.precision === 'pin' ? 'precisionPin' : 'precisionAddress');
+};
+
+// Markets within a chosen distance of the user's exact spot: GPS first, or a
+// PIN code / typed area geocoded to a point. Nothing further away is shown.
 const MarketsPage = () => {
   const { profile } = useAuth();
   const [params, setParams] = useSearchParams();
   const item = params.get('item') || '';
-  const [pin, setPin] = useState(params.get('pin') || profile?.address?.pincode || '');
-  const [place, setPlace] = useState(null); // { label, state, district } or { label, point }
-  const [status, setStatus] = useState('idle'); // idle | loading | done | error
+  const radiusKm = RADII_KM.includes(Number(params.get('km'))) ? Number(params.get('km')) : DEFAULT_RADIUS_KM;
+  const [query, setQuery] = useState(params.get('q') || profile?.address?.pincode || '');
+  const [place, setPlace] = useState(null); // { lat, lng, label, district, state, precision, accuracy? }
+  const [status, setStatus] = useState('idle'); // idle | locating | loading | done | error
   const [error, setError] = useState('');
+  const [nearby, setNearby] = useState({ status: 'idle', markets: [] }); // loading | done | failed
   useDocumentMeta({ title: `${t('marketsTitle')} – ${t('appName')}` });
 
   const setParam = (key, value) => {
@@ -59,53 +87,70 @@ const MarketsPage = () => {
     setParams(next, { replace: true });
   };
 
-  const searchPin = useCallback(async (value) => {
-    if (!PIN_RE.test(value)) {
-      setError(t('errPincode'));
+  const searchText = useCallback(async (value) => {
+    const q = value.trim();
+    if (q.length < 3) {
+      setError(t('errPlaceNotFound'));
       setStatus('error');
       return;
     }
     setStatus('loading');
     setError('');
     try {
-      const found = await lookupPincode(value);
-      setPlace({ label: `${found.district}, ${found.state}`, state: found.state, district: found.district });
+      setPlace(await findPlace({ q }));
       setStatus('done');
     } catch (err) {
-      setError(err.status === 404 ? t('errPinNotFound') : t('errMarketsUnavailable'));
+      setError(err.status === 404 || err.status === 400 ? t('errPlaceNotFound') : t('errMarketsUnavailable'));
       setStatus('error');
     }
   }, []);
 
-  // Start from the PIN in the link or the saved delivery address.
+  // Start from the place in the link or the saved delivery PIN code.
   useEffect(() => {
-    if (PIN_RE.test(pin)) searchPin(pin);
+    if (query.trim().length >= 3) searchText(query);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only on first load
   }, []);
 
   const useMyLocation = async () => {
-    setStatus('loading');
+    setStatus('locating');
     setError('');
+    let point;
     try {
-      const point = await currentPosition();
-      setPlace({ label: t('yourLocation'), point });
-      setStatus('done');
+      point = await currentPosition();
     } catch (err) {
       setError(err.message === 'denied' ? t('errLocationDenied') : t('errLocationUnavailable'));
       setStatus('error');
+      return;
     }
+    // The area name and state (for prices) are nice to have; the point is what matters.
+    const area = await findPlace(point).catch(() => null);
+    setPlace({ ...area, label: area?.label || t('yourLocation'), lat: point.lat, lng: point.lng, accuracy: point.accuracy, precision: 'gps' });
+    setStatus('done');
   };
 
-  const results = useMemo(() => {
-    if (!place) return { markets: [], matched: null };
-    if (place.point) return { markets: nearestMarkets(place.point, mandis, { item }), matched: 'gps' };
-    return marketsForPlace(place, mandis, { item });
-  }, [place, item]);
+  // Mapped markets around the point, refetched when the point or distance changes.
+  useEffect(() => {
+    if (!place) return undefined;
+    let active = true;
+    setNearby({ status: 'loading', markets: [] });
+    fetchNearbyMarkets(place, radiusKm)
+      .then(({ markets }) => active && setNearby({ status: 'done', markets }))
+      .catch(() => active && setNearby({ status: 'failed', markets: [] }));
+    return () => {
+      active = false;
+    };
+  }, [place, radiusKm]);
 
-  // For GPS results, live prices use the state of the nearest market.
-  const priceArea = place?.point ? (results.markets[0] ? { state: results.markets[0].state, district: results.markets[0].district } : null) : place;
+  const results = useMemo(() => {
+    if (!place || nearby.status === 'loading') return [];
+    const mapped = nearby.markets.map((m) => ({ ...m, precise: true }));
+    return marketsWithin(place, [...mapped, ...DIRECTORY], radiusKm);
+  }, [place, nearby, radiusKm]);
+
+  const nextRadius = RADII_KM.find((r) => r > radiusKm);
   const apiItem = MARKET_ITEMS.find((i) => i.label === item)?.api;
-  const knownCount = item ? results.markets.filter((m) => isKnownFor(m, item)).length : 0;
+  const busy = status === 'loading' || status === 'locating';
+  const showResults = status === 'done' && place;
 
   return (
     <div className="page markets-page">
@@ -116,50 +161,67 @@ const MarketsPage = () => {
           className="markets-form"
           onSubmit={(e) => {
             e.preventDefault();
-            setParam('pin', pin);
-            searchPin(pin);
+            setParam('q', query.trim());
+            searchText(query);
           }}
         >
-          <label htmlFor="markets-pin" className="visually-hidden">{t('addressPincode')}</label>
+          <button type="button" className="btn markets-gps" onClick={useMyLocation} disabled={busy}>
+            <FaCrosshairs aria-hidden="true" /> {t('useMyLocation')}
+          </button>
+          <label htmlFor="markets-place" className="visually-hidden">{t('placeLabel')}</label>
           <div className="markets-input">
             <FaMapMarkerAlt aria-hidden="true" />
             <input
-              id="markets-pin"
+              id="markets-place"
               className="input"
-              inputMode="numeric"
-              maxLength={6}
+              autoComplete="postal-code"
+              maxLength={120}
               placeholder={t('pinPlaceholder')}
-              value={pin}
-              onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
           </div>
-          <button type="submit" className="btn" disabled={status === 'loading'}>
+          <button type="submit" className="btn btn-outline" disabled={busy}>
             <FaSearchLocation aria-hidden="true" /> {t('findMarkets')}
-          </button>
-          <button type="button" className="btn btn-outline" onClick={useMyLocation} disabled={status === 'loading'}>
-            <FaCrosshairs aria-hidden="true" /> {t('useMyLocation')}
           </button>
         </form>
 
-        <div className="chip-row" role="group" aria-label={t('marketItemLabel')}>
-          {['', ...MARKET_ITEMS.map((i) => i.label)].map((label) => (
-            <button
-              key={label || 'all'}
-              type="button"
-              className={`chip ${item === label ? 'active' : ''}`}
-              aria-pressed={item === label}
-              onClick={() => setParam('item', label)}
-            >
-              {item === label && <motion.span layoutId="market-item-pill" className="chip-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
-              <span className="chip-label">{label || t('allProduce')}</span>
-            </button>
-          ))}
+        <div className="markets-filters">
+          <div className="chip-row" role="group" aria-label={t('radiusLabel')}>
+            {RADII_KM.map((km) => (
+              <button
+                key={km}
+                type="button"
+                className={`chip ${radiusKm === km ? 'active' : ''}`}
+                aria-pressed={radiusKm === km}
+                onClick={() => setParam('km', km === DEFAULT_RADIUS_KM ? '' : String(km))}
+              >
+                {radiusKm === km && <motion.span layoutId="market-radius-pill" className="chip-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                <span className="chip-label">{t('withinKm', { km })}</span>
+              </button>
+            ))}
+          </div>
+          <div className="chip-row" role="group" aria-label={t('marketItemLabel')}>
+            {['', ...MARKET_ITEMS.map((i) => i.label)].map((label) => (
+              <button
+                key={label || 'all'}
+                type="button"
+                className={`chip ${item === label ? 'active' : ''}`}
+                aria-pressed={item === label}
+                onClick={() => setParam('item', label)}
+              >
+                {item === label && <motion.span layoutId="market-item-pill" className="chip-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                <span className="chip-label">{label || t('allProduce')}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
       <AnimatePresence mode="wait">
-        {status === 'loading' && (
+        {busy && (
           <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            {status === 'locating' && <p className="muted" role="status">{t('locating')}</p>}
             <Skeleton lines={4} />
           </motion.div>
         )}
@@ -176,25 +238,38 @@ const MarketsPage = () => {
         )}
       </AnimatePresence>
 
-      {status === 'done' && (
+      {showResults && (
         <div className="markets-results">
           <section aria-labelledby="near-title">
             <div className="markets-results-head">
               <h2 id="near-title" className="shop-section-title">{t('marketsNear', { place: place.label })}</h2>
-              {item && <p className="muted small">{t('knownForCount', { n: knownCount, item })}</p>}
+              {nearby.status !== 'loading' && <p className="muted small">{t('marketsCount', { n: results.length, km: radiusKm })}</p>}
             </div>
-            {results.markets.length ? (
-              <Stagger as="ul" className="market-grid" stagger={0.04}>
-                {results.markets.map((market) => (
-                  <MarketCard key={market.id} market={market} item={item} />
+            <p className="markets-precision small muted">
+              <FaCrosshairs aria-hidden="true" /> {precisionNote(place)}
+            </p>
+            {nearby.status === 'failed' && <p className="markets-note small">{t('mapUnavailable')}</p>}
+            {nearby.status === 'loading' ? (
+              <Skeleton lines={4} />
+            ) : results.length ? (
+              <Stagger as="ul" className="market-grid" stagger={0.03}>
+                {results.map((market) => (
+                  <MarketCard key={market.id} market={market} item={item && isKnownFor(market, item) ? item : ''} />
                 ))}
               </Stagger>
             ) : (
-              <p className="empty-state">{t('noMarketsFound')}</p>
+              <div className="empty-state">
+                <p>{t('noMarketsNearby', { km: radiusKm })}</p>
+                {nextRadius && (
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => setParam('km', String(nextRadius))}>
+                    {t('widenSearch', { km: nextRadius })}
+                  </button>
+                )}
+              </div>
             )}
           </section>
 
-          {priceArea && <LivePrices area={priceArea} commodity={apiItem} itemLabel={item} fetchPrices={fetchMandiPrices} />}
+          {place.state && <LivePrices area={place} commodity={apiItem} itemLabel={item} fetchPrices={fetchMandiPrices} />}
         </div>
       )}
     </div>

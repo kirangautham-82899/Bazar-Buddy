@@ -50,7 +50,13 @@ vi.mock('../services/cartService', async (importOriginal) => ({
   updateCartOptions: vi.fn(() => Promise.resolve()),
 }));
 vi.mock('../services/marketService', () => ({
-  lookupPincode: vi.fn(async () => ({ pin: '560002', district: 'Bengaluru Urban', state: 'Karnataka', places: [] })),
+  findPlace: vi.fn(async () => ({ lat: 12.9627, lng: 77.5806, label: 'Bangalore City, Bangalore', district: 'Bangalore', state: 'Karnataka', precision: 'pin' })),
+  fetchNearbyMarkets: vi.fn(async () => ({
+    markets: [
+      { id: 'osm-node-1', name: 'HOPCOMS', kind: 'greengrocer', lat: 12.9651, lng: 77.5812, area: '', hours: '' },
+      { id: 'osm-node-2', name: 'Far Away Market', kind: 'market', lat: 13.2, lng: 77.58, area: '', hours: '' },
+    ],
+  })),
   fetchMandiPrices: vi.fn(async () => ({ configured: false, scope: null, records: [] })),
   currentPosition: vi.fn(),
 }));
@@ -141,12 +147,15 @@ describe('shop (guest)', () => {
     expect(document.querySelector('.bottom-nav')).toBeNull();
   });
 
-  it('finds local markets for a PIN code', async () => {
+  it('finds only markets near a PIN code', async () => {
     renderAt('/markets?item=Tomato');
-    fireEvent.change(await screen.findByLabelText('PIN code', {}, WAIT), { target: { value: '560002' } });
+    fireEvent.change(await screen.findByLabelText('PIN code or area', {}, WAIT), { target: { value: '560002' } });
     fireEvent.click(screen.getByRole('button', { name: 'Find markets' }));
-    expect(await screen.findByRole('heading', { name: 'Markets near Bengaluru Urban, Karnataka' })).toBeInTheDocument();
-    expect(screen.getByText('K.R. Market')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Markets near Bangalore City, Bangalore' })).toBeInTheDocument();
+    expect(await screen.findByText('HOPCOMS')).toBeInTheDocument();
+    expect(screen.getByText('K.R. Market')).toBeInTheDocument(); // directory mandi, ~0.4 km away
+    expect(screen.queryByText('Far Away Market')).not.toBeInTheDocument(); // ~26 km, outside the 5 km default
+    expect(screen.getByText(/centre of the PIN code area/)).toBeInTheDocument();
     expect(await screen.findByText(/Live daily mandi prices will appear here/)).toBeInTheDocument();
   });
 

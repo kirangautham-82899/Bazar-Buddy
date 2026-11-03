@@ -1,13 +1,8 @@
 // PIN code -> district and state, via India Post's public API. Called from our
 // server because that API doesn't allow browser (CORS) requests.
-const PIN_RE = /^[1-9]\d{5}$/;
+import { HttpError } from './http.js';
 
-export class HttpError extends Error {
-  constructor(status, message) {
-    super(message);
-    this.status = status;
-  }
-}
+export const PIN_RE = /^[1-9]\d{5}$/;
 
 export const lookupPincode = async (pin, fetchImpl = fetch) => {
   if (!PIN_RE.test(String(pin || ''))) throw new HttpError(400, 'Enter a valid 6-digit PIN code');

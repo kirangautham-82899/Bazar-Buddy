@@ -1,5 +1,5 @@
 import mandis from '../data/mandis';
-import { distanceKm, marketsForPlace, nearestMarkets } from './markets';
+import { directionsUrl, distanceKm, formatDistance, marketsWithin } from './markets';
 
 const ALL_STATES_AND_UTS = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh',
@@ -34,42 +34,42 @@ describe('distanceKm', () => {
   });
 });
 
-describe('nearestMarkets', () => {
-  const nearKolar = { lat: 13.13, lng: 78.13 };
+describe('marketsWithin', () => {
+  const bengaluru = { lat: 12.9627, lng: 77.5806 };
 
-  it('orders markets by distance from a GPS point', () => {
-    const [first, second] = nearestMarkets(nearKolar, mandis);
-    expect(first.id).toBe('kolar');
-    expect(second.distanceKm).toBeGreaterThanOrEqual(first.distanceKm);
+  it('keeps only markets inside the radius, nearest first', () => {
+    const shops = [
+      { id: 'far', lat: 13.1, lng: 77.58 }, // ~15 km north
+      { id: 'near', lat: 12.965, lng: 77.581 }, // ~250 m
+      { id: 'mid', lat: 12.99, lng: 77.58 }, // ~3 km
+    ];
+    expect(marketsWithin(bengaluru, shops, 5).map((m) => m.id)).toEqual(['near', 'mid']);
+    expect(marketsWithin(bengaluru, shops, 1).map((m) => m.id)).toEqual(['near']);
   });
 
-  it('keeps results nearby and lists those known for the item first', () => {
-    const bengaluru = { lat: 12.97, lng: 77.59 };
-    const plain = nearestMarkets(bengaluru, mandis, { limit: 6 });
-    const tomato = nearestMarkets(bengaluru, mandis, { limit: 6, item: 'Tomato' });
-    // Same nearby markets, only reordered.
-    expect(tomato.map((m) => m.id).sort()).toEqual(plain.map((m) => m.id).sort());
-    const known = tomato.map((m) => m.known.includes('Tomato'));
-    expect(known).toEqual([...known].sort((a, b) => Number(b) - Number(a)));
-    expect(known[0]).toBe(true);
+  it('never pulls in mandis from other cities', () => {
+    const found = marketsWithin(bengaluru, mandis, 20);
+    expect(found.length).toBeGreaterThan(0);
+    expect(found.every((m) => m.state === 'Karnataka' && m.distanceKm <= 20)).toBe(true);
   });
 });
 
-describe('marketsForPlace', () => {
-  it('lists the same district first, then the rest of the state', () => {
-    const { markets, matched } = marketsForPlace({ state: 'Delhi', district: 'North West Delhi' }, mandis);
-    expect(matched).toBe('district');
-    expect(markets[0].id).toBe('azadpur');
-    expect(markets.slice(1, 3).every((m) => m.state === 'Delhi')).toBe(true);
+describe('formatDistance', () => {
+  it('is precise close by', () => {
+    expect(formatDistance(0.004)).toBe('10 m');
+    expect(formatDistance(0.347)).toBe('350 m');
+    expect(formatDistance(2.345)).toBe('2.3 km');
+    expect(formatDistance(14.6)).toBe('15 km');
+  });
+});
+
+describe('directionsUrl', () => {
+  it('routes to exact coordinates for mapped places', () => {
+    expect(directionsUrl({ precise: true, lat: 12.96, lng: 77.58 })).toBe('https://www.google.com/maps/dir/?api=1&destination=12.96,77.58');
   });
 
-  it('falls back to the state when the district has no listed market', () => {
-    const { markets, matched } = marketsForPlace({ state: 'Karnataka', district: 'Udupi' }, mandis);
-    expect(matched).toBe('state');
-    expect(markets[0].state).toBe('Karnataka');
-  });
-
-  it('returns nothing for an unknown state', () => {
-    expect(marketsForPlace({ state: 'Atlantis', district: 'X' }, mandis).markets).toEqual([]);
+  it('searches directory mandis by name', () => {
+    const url = new URL(directionsUrl({ name: 'K.R. Market', city: 'Bengaluru', state: 'Karnataka' }));
+    expect(url.searchParams.get('query')).toBe('K.R. Market, Bengaluru, Karnataka');
   });
 });

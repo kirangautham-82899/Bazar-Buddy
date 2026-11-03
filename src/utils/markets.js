@@ -1,5 +1,4 @@
-// Ranking markets by closeness, either from GPS coordinates or from a place
-// (state + district) looked up from a PIN code.
+// Distances and ranking for markets around the user's exact point.
 
 const EARTH_RADIUS_KM = 6371;
 const toRad = (deg) => (deg * Math.PI) / 180;
@@ -13,44 +12,25 @@ export const distanceKm = (a, b) => {
 
 const same = (a = '', b = '') => a.trim().toLowerCase() === b.trim().toLowerCase();
 
-// Within the nearby set (already cut to `limit` by closeness), markets known for
-// the item move up. Ranking by item first would pull in far-away markets.
-const itemFirst = (list, item) =>
-  item ? list.map((m, i) => ({ m, i })).sort((a, b) => (a.m.tier ?? 0) - (b.m.tier ?? 0) || Number(isKnownFor(b.m, item)) - Number(isKnownFor(a.m, item)) || a.i - b.i).map(({ m }) => m) : list;
+export const isKnownFor = (market, item) => (market.known || []).some((k) => same(k, item));
 
-export const isKnownFor = (market, item) => market.known.some((k) => same(k, item));
+// Markets within `radiusKm` of the point, nearest first. Nothing further away.
+export const marketsWithin = (point, markets, radiusKm) =>
+  markets
+    .map((m) => ({ ...m, distanceKm: distanceKm(point, m) }))
+    .filter((m) => m.distanceKm <= radiusKm)
+    .sort((a, b) => a.distanceKm - b.distanceKm);
 
-// Nearest markets to a point. With an item, nearby markets known for it come first.
-export const nearestMarkets = (point, markets, { limit = 12, item } = {}) =>
-  itemFirst(
-    markets
-      .map((m) => ({ ...m, distanceKm: distanceKm(point, m) }))
-      .sort((a, b) => a.distanceKm - b.distanceKm)
-      .slice(0, limit),
-    item
-  );
-
-// Average position of the markets in a state, used when we only know the state.
-const centreOf = (list) => ({
-  lat: list.reduce((s, m) => s + m.lat, 0) / list.length,
-  lng: list.reduce((s, m) => s + m.lng, 0) / list.length,
-});
-
-// Markets for a place from a PIN code: same district first, then the rest of the
-// state, then the nearest markets in neighbouring states.
-export const marketsForPlace = ({ state, district }, markets, { limit = 12, item } = {}) => {
-  const inState = markets.filter((m) => same(m.state, state));
-  const inDistrict = inState.filter((m) => same(m.district, district) || same(m.city, district));
-  const anchor = inDistrict.length ? centreOf(inDistrict) : inState.length ? centreOf(inState) : null;
-  if (!anchor) return { markets: [], matched: 'none' };
-  const ranked = markets
-    .map((m) => ({ ...m, distanceKm: distanceKm(anchor, m), tier: inDistrict.includes(m) ? 0 : same(m.state, state) ? 1 : 2 }))
-    .sort((a, b) => a.tier - b.tier || a.distanceKm - b.distanceKm)
-    .slice(0, limit);
-  return { markets: itemFirst(ranked, item), matched: inDistrict.length ? 'district' : 'state' };
+// Shown to the nearest 10 m close by, then to 0.1 km, then whole km.
+export const formatDistance = (km) => {
+  if (km < 1) return `${Math.max(10, Math.round((km * 1000) / 10) * 10)} m`;
+  if (km < 10) return `${km.toFixed(1)} km`;
+  return `${Math.round(km).toLocaleString('en-IN')} km`;
 };
 
-export const formatDistance = (km) => (km < 1 ? '< 1 km' : `${Math.round(km).toLocaleString('en-IN')} km`);
-
+// Mapped places go straight to their coordinates; directory mandis (city-level
+// positions) are searched by name so Maps finds the actual yard.
 export const directionsUrl = (market) =>
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${market.name}, ${market.city}, ${market.state}`)}`;
+  market.precise
+    ? `https://www.google.com/maps/dir/?api=1&destination=${market.lat},${market.lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${market.name}, ${market.city}, ${market.state}`)}`;

@@ -26,7 +26,7 @@
 
 @media (min-width: 640px) {
   .markets-form {
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
 }
 
@@ -45,7 +45,19 @@
 .markets-input .input {
   padding-left: 42px;
   font-size: 1.05rem;
-  letter-spacing: 0.08em;
+}
+
+.markets-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.markets-precision {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
 }
 
 .chip-row {
@@ -148,6 +160,31 @@
   margin: 0;
 }
 
+.market-distance {
+  color: var(--color-brand);
+}
+
+.market-icon.kind-greengrocer {
+  background: var(--color-turmeric-soft);
+  color: #8a5a00;
+}
+
+.market-icon.kind-mandi {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.market-area,
+.market-hours {
+  margin: 0;
+}
+
+.market-hours {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .market-known {
   display: flex;
   flex-direction: column;
@@ -178,7 +215,7 @@
   margin-top: auto;
 }
 
-/* Live prices */
+/* Notes (map fallback, live prices) */
 .markets-note {
   display: flex;
   align-items: flex-start;

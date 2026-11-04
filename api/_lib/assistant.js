@@ -182,7 +182,7 @@ const callGemini = async (body, { apiKey, model, fetchImpl }) => {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(25000),
+    signal: AbortSignal.timeout(45000),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -220,7 +220,8 @@ export const askAssistant = async ({ messages, location }, { env, deps = {} } = 
     systemInstruction: { parts: [{ text: SYSTEM }, { text: contextNote(location, indiaNow()) }] },
     contents,
     tools: [{ functionDeclarations: tools.map(({ name, description, parameters }) => ({ name, description, parameters })) }],
-    generationConfig: { maxOutputTokens: 4000 },
+    // Chat: quick, short answers, so only light thinking.
+    generationConfig: { maxOutputTokens: 4000, thinkingConfig: { thinkingLevel: 'low' } },
   };
 
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round += 1) {

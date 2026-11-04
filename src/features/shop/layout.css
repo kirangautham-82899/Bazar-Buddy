@@ -185,7 +185,8 @@
 
 /* ---------- Desktop: header, page frame, footer ---------- */
 .shop-desktop {
-  --desk-width: 1280px;
+  /* Side margins grow with the window; content uses everything in between. */
+  --gutter: clamp(24px, 3.5vw, 64px);
   /* Header height (72 px top row + 1 px rule + 44 px links), for sticky panels. */
   --desk-header-h: 117px;
   display: flex;
@@ -202,9 +203,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: var(--desk-width);
-  margin: 0 auto;
-  padding: 0 var(--space-8);
+  padding: 0 var(--gutter);
 }
 
 .dh {
@@ -439,33 +438,20 @@
   background: var(--color-bg);
 }
 
-/* Page frame: every desktop page sits in the same column with the same gutters. */
+/* Page frame: every desktop page fills the window between the same gutters. */
 .shop-desktop .page {
-  max-width: var(--desk-width);
-  margin: 0 auto;
-  padding: var(--space-8);
+  max-width: none;
+  margin: 0;
+  padding: var(--space-10) var(--gutter) var(--space-16);
 }
 
 .shop-desktop .page-head {
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-10);
 }
 
 .shop-desktop .page-title {
   font-size: 1.85rem;
   letter-spacing: -0.01em;
-}
-
-/* Page widths: lists and forms read best narrow; shopping pages use the full column. */
-.shop-desktop .page.orders-page {
-  max-width: 880px;
-}
-
-.shop-desktop .page.cart-page {
-  max-width: 1120px;
-}
-
-.shop-desktop .page.account-page {
-  max-width: 1080px;
 }
 
 /* Narrower desktops: keep the essentials on one line. */
@@ -478,7 +464,7 @@
 
 /* Footer */
 .df {
-  margin-top: var(--space-12);
+  margin-top: 0;
   border-top: 1px solid var(--color-line);
   background: var(--color-surface);
 }
@@ -488,8 +474,8 @@
   grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
   align-items: start;
   gap: var(--space-8);
-  padding-top: var(--space-10);
-  padding-bottom: var(--space-8);
+  padding-top: var(--space-12);
+  padding-bottom: var(--space-10);
 }
 
 .df-about p {
@@ -539,7 +525,7 @@
 
 .df-legal {
   margin: 0;
-  padding: var(--space-4) var(--space-8);
+  padding: var(--space-5) var(--gutter);
   border-top: 1px solid var(--color-line);
   color: var(--color-muted);
   font-size: 0.78rem;

@@ -2,9 +2,10 @@ import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ProductCard from './ProductCard';
 
-// Grid (wraps) or row (scrolls sideways). Cards reflow smoothly when the list changes.
-const ProductList = ({ products, layout = 'grid' }) => (
-  <motion.ul layout className={`product-${layout}`}>
+// Grid (wraps) or row (scrolls sideways). Products reflow smoothly when the list changes.
+// `columns` fixes the grid to one full row of that many products.
+const ProductList = ({ products, layout = 'grid', columns }) => (
+  <motion.ul layout className={`product-${layout}`} style={columns ? { '--cols': columns } : undefined}>
     <AnimatePresence mode="popLayout" initial={false}>
       {products.map((product, i) => (
         <motion.li

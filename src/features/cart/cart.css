@@ -2,11 +2,15 @@
   max-width: 640px;
 }
 
+/* Sections are separated by a rule and whitespace, not boxed. */
 .cart-block {
-  padding: var(--space-5);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  background: #fff;
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.cart-main > .cart-block:first-child {
+  padding-top: 0;
+  border-top: 0;
 }
 
 .cart-block h2,
@@ -294,4 +298,20 @@
 .shop-desktop .checkout-bar {
   position: static;
   padding-top: 0;
+}
+
+/* Desktop: the bill is a quiet column beside the order, divided by a rule. */
+.shop-desktop .cart-columns {
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: var(--space-16);
+}
+
+.shop-desktop .cart-summary {
+  padding-left: var(--space-10);
+  border-left: 1px solid var(--color-line);
+}
+
+.shop-desktop .cart-summary > .cart-block {
+  padding-top: 0;
+  border-top: 0;
 }

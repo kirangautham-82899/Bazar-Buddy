@@ -27,3 +27,18 @@ export const useMediaQuery = (queryText) => {
 export const DESKTOP_QUERY = '(min-width: 1024px)';
 
 export const useIsDesktop = () => useMediaQuery(DESKTOP_QUERY);
+
+const subscribeResize = (onChange) => {
+  window.addEventListener('resize', onChange);
+  return () => window.removeEventListener('resize', onChange);
+};
+
+// How many product columns fit across a full-width desktop page: the window minus
+// the side gutters (clamp(24px, 3.5vw, 64px)), at least 176 px a column, 20 px gaps.
+export const desktopColumns = (width) => {
+  const gutter = Math.min(64, Math.max(24, width * 0.035));
+  return Math.max(4, Math.min(10, Math.floor((width - 2 * gutter + 20) / (176 + 20))));
+};
+
+export const useDesktopColumns = () =>
+  useSyncExternalStore(subscribeResize, () => desktopColumns(window.innerWidth), () => 6);

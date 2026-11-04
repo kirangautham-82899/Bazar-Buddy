@@ -148,12 +148,7 @@
   width: 100%;
   max-width: 440px;
   margin: auto 0;
-  padding: 28px 24px;
-  border-radius: var(--radius-xl);
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: var(--shadow-lg);
+  padding: 28px 0;
 }
 
 .auth-mobile-brand {

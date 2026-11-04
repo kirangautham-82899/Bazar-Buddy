@@ -13,10 +13,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-5);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  background: #fff;
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .markets-form {
@@ -114,10 +112,7 @@
 
 /* Results table: one row per market. Phones stack each row into a card. */
 .market-table-wrap {
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  background: #fff;
-  overflow: hidden;
+  border-top: 1px solid var(--color-line);
 }
 
 .market-table {
@@ -336,9 +331,7 @@
 
 .price-table-wrap {
   overflow-x: auto;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  background: #fff;
+  border-top: 1px solid var(--color-line);
 }
 
 .price-table {
@@ -406,14 +399,11 @@
 
   .market-table tbody {
     display: grid;
-    gap: var(--space-3);
   }
 
   .market-table tbody tr {
-    padding: var(--space-4);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-lg);
-    background: #fff;
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-line);
   }
 
   .market-table tbody th,

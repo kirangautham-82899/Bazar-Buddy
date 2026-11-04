@@ -82,12 +82,13 @@
 /* Orders */
 .admin-order-list {
   display: grid;
-  gap: 12px;
+  border-top: 1px solid var(--color-line);
 }
 
 @media (min-width: 900px) {
   .admin-order-list {
     grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--space-10);
   }
 }
 
@@ -96,11 +97,9 @@
   flex-direction: column;
   gap: 12px;
   height: 100%;
-  padding: 16px;
-  border: 1px solid var(--color-line);
-  border-left: 4px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  background: #fff;
+  padding: var(--space-5) 0 var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+  border-left: 3px solid var(--color-line);
 }
 
 .admin-order.status-placed { border-left-color: var(--color-accent); }
@@ -189,10 +188,7 @@
 }
 
 .admin-products {
-  overflow: hidden;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  background: #fff;
+  border-top: 1px solid var(--color-line);
 }
 
 .admin-product {
@@ -388,16 +384,16 @@
 
   .admin-main {
     width: 100%;
-    max-width: 1200px;
-    padding: var(--space-8);
+    max-width: none;
+    padding: var(--space-10) clamp(24px, 3.5vw, 64px) var(--space-16);
   }
 }
 
 @media (min-width: 1024px) {
   .admin-main {
     width: 100%;
-    max-width: 1200px;
-    padding: var(--space-8);
+    max-width: none;
+    padding: var(--space-10) clamp(24px, 3.5vw, 64px) var(--space-16);
   }
 
   .admin-main .page-title {
@@ -407,8 +403,6 @@
 
 /* Empty lists sit on a quiet card, like the shop's. */
 .admin-main .empty-state {
-  padding: var(--space-10) var(--space-4);
-  border: 1px dashed var(--color-line);
-  border-radius: var(--radius-lg);
-  background: #fff;
+  padding: var(--space-10) 0;
+  border-top: 1px solid var(--color-line);
 }

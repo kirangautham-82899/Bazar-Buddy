@@ -14,9 +14,9 @@
 .home-hero {
   display: grid;
   gap: var(--space-4);
-  padding: var(--space-6) var(--space-5);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
+  /* A full-bleed pastel band, edge to edge, instead of a boxed card. */
+  margin: calc(-1 * var(--space-5)) calc(-1 * var(--space-4)) 0;
+  padding: var(--space-8) var(--space-4) var(--space-6);
   background: var(--gradient-pastel);
 }
 
@@ -70,10 +70,7 @@
   align-items: center;
   gap: var(--space-3);
   min-width: 0;
-  padding: var(--space-3);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  padding: var(--space-2) 0;
 }
 
 .home-facts strong,
@@ -152,22 +149,19 @@
   gap: var(--space-4);
   width: 100%;
   height: 100%;
-  padding: var(--space-4);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  padding: var(--space-4) 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  background: none;
   color: var(--color-ink);
   font: inherit;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.home-tool:hover {
-  border-color: #c9dfb8;
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+.home-tool:hover strong {
+  color: var(--color-brand-dark);
 }
 
 .home-tool-icon {
@@ -218,16 +212,14 @@
 
 /* Empty catalog: a quiet note between the categories and the tools. */
 .shop-home .catalog-empty {
-  padding: var(--space-8) var(--space-4);
-  border: 1px dashed var(--color-line);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
 }
 
 /* ---------- Phones: a compact hero with the facts as one swipeable row ---------- */
 @media (max-width: 639px) {
   .home-hero {
-    padding: var(--space-5) var(--space-4) var(--space-4);
     overflow: hidden;
   }
 
@@ -265,7 +257,7 @@
   .home-facts li {
     flex: 0 0 auto;
     scroll-snap-align: start;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2) var(--space-4) var(--space-2) 0;
   }
 
   .home-facts strong,
@@ -292,14 +284,15 @@
 
 @media (min-width: 1024px) {
   .shop-home {
-    gap: var(--space-10);
+    gap: var(--space-16);
   }
 
   .home-hero {
-    grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+    grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
     align-items: center;
-    gap: var(--space-10);
-    padding: var(--space-10);
+    gap: var(--space-16);
+    margin: calc(-1 * var(--space-10)) calc(-1 * var(--gutter)) 0;
+    padding: var(--space-16) var(--gutter);
   }
 
   .home-lead {
@@ -310,10 +303,6 @@
   .home-facts {
     grid-template-columns: 1fr;
     gap: 0;
-    padding: var(--space-2) var(--space-5);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.8);
   }
 
   .home-facts li {
@@ -328,21 +317,22 @@
   }
 
   .home-category {
-    padding: var(--space-4) var(--space-2);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
-    background: var(--color-surface);
-    font-size: 0.85rem;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    font-size: 0.88rem;
   }
 
-  .home-category:hover {
-    border-color: #c9dfb8;
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+  .home-category .product-icon {
+    width: 76px;
+    height: 76px;
+    border-radius: 22px;
+    transition: transform 0.15s ease;
+  }
+
+  .home-category:hover .product-icon {
+    transform: translateY(-3px);
   }
 
   .home-tools {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--space-10);
   }
 }

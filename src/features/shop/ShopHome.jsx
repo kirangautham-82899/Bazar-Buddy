@@ -6,7 +6,7 @@ import { HiSparkles } from 'react-icons/hi2';
 import { t } from '../../content/strings';
 import { useCatalog } from '../../context/CatalogContext';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
-import { useIsDesktop } from '../../hooks/useMediaQuery';
+import { useDesktopColumns, useIsDesktop } from '../../hooks/useMediaQuery';
 import { useMyOrders } from '../../hooks/useMyOrders';
 import CATEGORIES from '../../data/categories';
 import { EXPRESS_MINUTES, FREE_DELIVERY_ABOVE } from '../../config/app';
@@ -19,8 +19,8 @@ import CatalogState from './CatalogState';
 import ProductList from './ProductList';
 import './home.css';
 
-// Rows show one line of products: 6 in a grid on desktop, 10 to swipe on phones.
-const ROW_LIMIT = { desktop: 6, mobile: 10 };
+// Rows show one line of products: as many as fit across the window on desktop, 10 to swipe on phones.
+const MOBILE_ROW_LIMIT = 10;
 // Category rows on the home page; the tiles above lead to every category.
 const HOME_CATEGORY_ROWS = 3;
 
@@ -52,7 +52,8 @@ const TOOLS = [
 ];
 
 const ProductRow = ({ id, title, items, link, isDesktop }) => {
-  const limit = isDesktop ? ROW_LIMIT.desktop : ROW_LIMIT.mobile;
+  const columns = useDesktopColumns();
+  const limit = isDesktop ? columns : MOBILE_ROW_LIMIT;
   return (
     <section className="shop-row" aria-labelledby={id}>
       <div className="shop-row-head">
@@ -63,7 +64,7 @@ const ProductRow = ({ id, title, items, link, isDesktop }) => {
           </Link>
         )}
       </div>
-      <ProductList products={items.slice(0, limit)} layout={isDesktop ? 'grid' : 'row'} />
+      <ProductList products={items.slice(0, limit)} layout={isDesktop ? 'grid' : 'row'} columns={isDesktop ? columns : undefined} />
     </section>
   );
 };

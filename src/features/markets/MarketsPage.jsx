@@ -10,7 +10,7 @@ import { currentPosition, fetchMandiPrices, fetchNearbyMarkets, findPlace } from
 import { directionsUrl, formatDistance, isKnownFor, marketsWithin } from '../../utils/markets';
 import { openStatus } from '../../utils/openingHours';
 import PageHead from '../../components/common/PageHead';
-import { Skeleton, Stagger, staggerItem } from '../../components/motion';
+import { Skeleton } from '../../components/motion';
 import LivePrices from './LivePrices';
 import MarketHours from './MarketHours';
 import './markets.css';
@@ -29,43 +29,54 @@ const KIND_LABEL = {
 // Directory mandis only have city-level positions, so their distance is approximate.
 const DIRECTORY = mandis.map((m) => ({ ...m, kind: 'mandi', precise: false }));
 
-const MarketCard = ({ market, item, now }) => {
+// One row per market. On phones each row stacks into a card, with the column name before each value.
+const MarketRow = ({ market, item, now }) => {
   const kind = t(KIND_LABEL[market.kind]);
   return (
-    <motion.li variants={staggerItem} className="market-card">
-      <div className="market-card-head">
-        <span className={`market-icon kind-${market.kind}`} aria-hidden="true"><FaStore /></span>
-        <div className="market-title">
-          <h3>{market.name || kind}</h3>
-          <p className="muted small">
-            {market.name ? `${kind} · ` : ''}
-            <strong className="market-distance">{market.precise ? '' : '~'}{formatDistance(market.distanceKm)}</strong>
-          </p>
+    <tr>
+      <th scope="row" className="mt-name">
+        <div className="mt-name-inner">
+          <span className={`market-icon kind-${market.kind}`} aria-hidden="true"><FaStore /></span>
+          <span>
+            <strong>{market.name || kind}</strong>
+            <small className="muted">
+              {market.name ? kind : ''}
+              {market.name && (market.area || market.city) ? ' · ' : ''}
+              {market.area || (market.city ? `${market.city}, ${market.state}` : '')}
+            </small>
+          </span>
         </div>
-      </div>
-      {(market.area || market.city) && <p className="market-area small muted">{market.area || `${market.city}, ${market.state}`}</p>}
-      <MarketHours market={market} now={now} />
-      {market.known?.length > 0 && (
-        <div className="market-known">
-          <span className="small muted">{t('knownFor')}</span>
-          <ul>
+      </th>
+      <td className="mt-distance" data-label={t('colDistance')}>
+        <strong className="market-distance">{market.precise ? '' : '~'}{formatDistance(market.distanceKm)}</strong>
+      </td>
+      <td className="mt-hours" data-label={t('colTimings')}>
+        <MarketHours market={market} now={now} />
+      </td>
+      <td className={`mt-known ${market.known?.length ? '' : 'is-empty'}`} data-label={t('knownFor')}>
+        {market.known?.length > 0 ? (
+          <ul className="market-known">
             {market.known.map((k) => (
               <li key={k} className={item && k.toLowerCase() === item.toLowerCase() ? 'match' : ''}>{k}</li>
             ))}
           </ul>
-        </div>
-      )}
-      <div className="market-actions">
-        <a className="btn btn-sm btn-outline" href={directionsUrl(market)} target="_blank" rel="noopener noreferrer">
-          <FaDirections aria-hidden="true" /> {t('directions')}
-        </a>
-        {market.phone && (
-          <a className="btn btn-sm btn-ghost" href={`tel:${market.phone.replace(/[^\d+]/g, '')}`}>
-            <FaPhoneAlt aria-hidden="true" /> {t('call')}
-          </a>
+        ) : (
+          <span className="muted">–</span>
         )}
-      </div>
-    </motion.li>
+      </td>
+      <td className="mt-actions">
+        <div className="market-actions">
+          <a className="btn btn-sm btn-outline" href={directionsUrl(market)} target="_blank" rel="noopener noreferrer">
+            <FaDirections aria-hidden="true" /> {t('directions')}
+          </a>
+          {market.phone && (
+            <a className="btn btn-sm btn-ghost" href={`tel:${market.phone.replace(/[^\d+]/g, '')}`}>
+              <FaPhoneAlt aria-hidden="true" /> {t('call')}
+            </a>
+          )}
+        </div>
+      </td>
+    </tr>
   );
 };
 
@@ -277,11 +288,24 @@ const MarketsPage = () => {
             {nearby.status === 'loading' ? (
               <Skeleton lines={4} />
             ) : results.length ? (
-              <Stagger as="ul" className="market-grid" stagger={0.03}>
-                {results.map((market) => (
-                  <MarketCard key={market.id} market={market} item={item && isKnownFor(market, item) ? item : ''} now={now} />
-                ))}
-              </Stagger>
+              <motion.div className="market-table-wrap" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+                <table className="market-table" aria-labelledby="near-title">
+                  <thead>
+                    <tr>
+                      <th scope="col">{t('colMarket')}</th>
+                      <th scope="col">{t('colDistance')}</th>
+                      <th scope="col">{t('colTimings')}</th>
+                      <th scope="col">{t('knownFor')}</th>
+                      <th scope="col"><span className="visually-hidden">{t('colContact')}</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.map((market) => (
+                      <MarketRow key={market.id} market={market} item={item && isKnownFor(market, item) ? item : ''} now={now} />
+                    ))}
+                  </tbody>
+                </table>
+              </motion.div>
             ) : (
               <div className="empty-state">
                 <p>{t(openOnly ? 'noOpenMarketsNearby' : 'noMarketsNearby', { km: radiusKm })}</p>

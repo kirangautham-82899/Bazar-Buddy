@@ -190,10 +190,14 @@ describe('shop (guest)', () => {
     expect(screen.queryByText('Far Away Market')).not.toBeInTheDocument(); // ~26 km, outside the 5 km default
     expect(screen.getByText(/centre of the PIN code area/)).toBeInTheDocument();
     // Timings and contact for mapped shops; directory mandis have none listed.
-    const hopcoms = screen.getByText('HOPCOMS').closest('li');
+    // Results are a table, nearest first.
+    const table = screen.getByRole('table', { name: 'Markets near Bangalore City, Bangalore' });
+    expect(within(table).getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['Market', 'Distance', 'Timings', 'Known for', 'Directions and phone']);
+    expect(within(table).getAllByRole('rowheader')[0]).toHaveTextContent('HOPCOMS');
+    const hopcoms = screen.getByText('HOPCOMS').closest('tr');
     expect(hopcoms.querySelector('.market-status')).toHaveTextContent('Open 24 hours');
     expect(within(hopcoms).getByRole('link', { name: 'Call' })).toHaveAttribute('href', 'tel:+918022223333');
-    expect(within(screen.getByText('K.R. Market').closest('li')).getByText('Timings not listed')).toBeInTheDocument();
+    expect(within(screen.getByText('K.R. Market').closest('tr')).getByText('Timings not listed')).toBeInTheDocument();
     // Open now keeps only markets known to be open.
     fireEvent.click(screen.getByRole('button', { name: 'Open now' }));
     expect(await screen.findByText('1 open now within 5 km')).toBeInTheDocument();

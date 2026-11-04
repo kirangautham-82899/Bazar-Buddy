@@ -112,31 +112,90 @@
   margin: 0;
 }
 
-.market-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-4);
-}
-
-.market-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-5);
+/* Results table: one row per market. Phones stack each row into a card. */
+.market-table-wrap {
   border: 1px solid var(--color-line);
   border-radius: var(--radius-lg);
   background: #fff;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  overflow: hidden;
 }
 
-.market-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+.market-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
 }
 
-.market-card-head {
+.market-table thead th {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-bg);
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.market-table tbody th,
+.market-table td {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.market-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.market-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.market-table tbody tr:hover {
+  background: #fbfaf5;
+}
+
+.mt-name {
+  min-width: 220px;
+  font-weight: inherit;
+}
+
+.mt-name-inner {
   display: flex;
   gap: var(--space-3);
+}
+
+.mt-name strong,
+.mt-name small {
+  display: block;
+}
+
+.mt-name strong {
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.mt-name small {
+  margin-top: 2px;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.mt-distance {
+  white-space: nowrap;
+}
+
+.mt-hours {
+  min-width: 170px;
+}
+
+.mt-actions .market-actions {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
 }
 
 .market-icon {
@@ -144,20 +203,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   border-radius: 13px;
   background: var(--color-brand-soft);
   color: var(--color-brand);
-}
-
-.market-title h3 {
-  margin: 0 0 2px;
-  font-size: 1rem;
-}
-
-.market-title p {
-  margin: 0;
 }
 
 .market-distance {
@@ -179,12 +229,8 @@
   margin: var(--space-4) 0 0;
 }
 
-.market-area,
 .market-hours {
   margin: 0;
-}
-
-.market-hours {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -192,14 +238,11 @@
 
 .market-known {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.market-known ul {
-  display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .market-known li {
@@ -219,7 +262,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-top: auto;
 }
 
 /* Timings */
@@ -335,4 +377,82 @@
   margin: 0;
   padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--color-line);
+}
+
+/* Phones: each row becomes a card; cells show their column name. */
+@media (max-width: 767px) {
+  .market-table-wrap {
+    border: 0;
+    border-radius: 0;
+    background: none;
+    overflow: visible;
+  }
+
+  .market-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .market-table,
+  .market-table tbody,
+  .market-table tr,
+  .market-table tbody th,
+  .market-table td {
+    display: block;
+  }
+
+  .market-table tbody {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .market-table tbody tr {
+    padding: var(--space-4);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: #fff;
+  }
+
+  .market-table tbody th,
+  .market-table td,
+  .market-table tbody tr:last-child > * {
+    padding: 0;
+    border: 0;
+  }
+
+  .market-table tbody th {
+    min-width: 0;
+    margin-bottom: var(--space-3);
+  }
+
+  .market-table td[data-label] {
+    display: grid;
+    grid-template-columns: 6.5em minmax(0, 1fr);
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+    border-top: 1px dashed var(--color-line);
+  }
+
+  .market-table td[data-label]::before {
+    content: attr(data-label);
+    color: var(--color-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .mt-known.is-empty {
+    display: none !important;
+  }
+
+  .mt-actions {
+    margin-top: var(--space-3);
+  }
+
+  .mt-actions .market-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
 }

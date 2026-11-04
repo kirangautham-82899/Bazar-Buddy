@@ -6,10 +6,10 @@ import { t } from '../content/strings';
 import {
   DEFAULT_CART,
   applyQuantityChange,
-  changeCartQuantity,
   clearGuestCart,
   mergeIntoCart,
   readGuestCart,
+  saveCartItems,
   subscribeCart,
   updateCartOptions,
   writeGuestCart,
@@ -26,6 +26,14 @@ export const CartProvider = ({ children }) => {
   const toast = useToast();
   const [cart, setCart] = useState(readGuestCart);
   const mergedFor = useRef(null);
+  // The newest lines, updated on every tap, so quick taps build on each other
+  // instead of on a render that hasn't happened yet.
+  const latestItems = useRef(cart.items);
+
+  const showCart = useCallback((next) => {
+    latestItems.current = next.items || [];
+    setCart(next);
+  }, []);
 
   const reportError = useCallback(
     (err) => {
@@ -38,7 +46,7 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     if (!user) {
       mergedFor.current = null;
-      setCart(readGuestCart());
+      showCart(readGuestCart());
       return undefined;
     }
     const guest = readGuestCart();
@@ -46,8 +54,8 @@ export const CartProvider = ({ children }) => {
       mergedFor.current = user.uid;
       mergeIntoCart(user.uid, guest.items).then(clearGuestCart).catch(reportError);
     }
-    return subscribeCart(user.uid, setCart, reportError);
-  }, [user, reportError]);
+    return subscribeCart(user.uid, showCart, reportError);
+  }, [user, reportError, showCart]);
 
   // Lines joined with live catalog data; `available` is false for hidden or sold-out items.
   const items = useMemo(
@@ -67,13 +75,15 @@ export const CartProvider = ({ children }) => {
   const changeQuantity = useCallback(
     (productId, delta) => {
       const maxQuantity = findProduct(productId)?.stock ?? 0;
-      if (user) return changeCartQuantity(user.uid, productId, delta, maxQuantity).catch(reportError);
+      const items = applyQuantityChange(latestItems.current, productId, delta, maxQuantity);
+      latestItems.current = items;
+      // Shown at once; signed-in carts then save in the background.
       setCart((current) => {
-        const next = { ...current, items: applyQuantityChange(current.items, productId, delta, maxQuantity) };
-        writeGuestCart(next);
+        const next = { ...current, items };
+        if (!user) writeGuestCart(next);
         return next;
       });
-      return Promise.resolve();
+      return user ? saveCartItems(user.uid, items).catch(reportError) : Promise.resolve();
     },
     [user, findProduct, reportError]
   );

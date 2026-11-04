@@ -9,8 +9,8 @@ import { findPlace } from './place.js';
 import { MAX_RADIUS_KM, fetchNearbyMarkets } from './nearbyMarkets.js';
 import { fetchMandiPrices } from './mandiPrices.js';
 
-// Fast and inexpensive, with a free tier; GEMINI_MODEL can switch it.
-export const DEFAULT_MODEL = 'gemini-3.6-flash';
+// The fastest current model, so vendors get answers quickly; GEMINI_MODEL can switch it.
+export const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const MAX_TOOL_ROUNDS = 6;
 const MAX_TURNS = 16;

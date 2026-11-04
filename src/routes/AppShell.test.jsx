@@ -5,6 +5,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import App from '../App';
 import starterCatalog from '../data/starterCatalog';
+import { saveCartItems } from '../services/cartService';
 
 const state = vi.hoisted(() => ({ user: null, isAdmin: false, orders: [], products: [] }));
 
@@ -45,7 +46,7 @@ vi.mock('../services/cartService', async (importOriginal) => ({
     cb({ items: [], speed: 'saver', payment: 'upi' });
     return () => {};
   },
-  changeCartQuantity: vi.fn(() => Promise.resolve()),
+  saveCartItems: vi.fn(() => Promise.resolve()),
   mergeIntoCart: vi.fn(() => Promise.resolve()),
   updateCartOptions: vi.fn(() => Promise.resolve()),
 }));
@@ -126,6 +127,22 @@ describe('shop (guest)', () => {
     fireEvent.click(within(tomatoCard).getByRole('button', { name: 'Add Tomatoes' }));
     expect(await screen.findByText('1 item')).toBeInTheDocument();
     expect(JSON.parse(window.localStorage.getItem('bazarBuddy.cart')).items).toEqual([{ id: 'tomato', quantity: 1 }]);
+  });
+
+  it('steps a quantity up and back down to Add', async () => {
+    renderAt('/shop');
+    await screen.findByRole('heading', { name: 'Shop by category' }, WAIT);
+    const card = () => screen.getAllByRole('article').find((a) => within(a).queryByText('Tomatoes'));
+    fireEvent.click(within(card()).getByRole('button', { name: 'Add Tomatoes' }));
+    fireEvent.click(await within(card()).findByRole('button', { name: 'Increase quantity of Tomatoes' }));
+    await within(card()).findByText('2');
+    fireEvent.click(within(card()).getByRole('button', { name: 'Decrease quantity of Tomatoes' }));
+    await within(card()).findByText('1');
+    fireEvent.click(within(card()).getByRole('button', { name: 'Decrease quantity of Tomatoes' }));
+    expect(await within(card()).findByRole('button', { name: 'Add Tomatoes' })).toBeInTheDocument();
+    expect(JSON.parse(window.localStorage.getItem('bazarBuddy.cart')).items).toEqual([]);
+    fireEvent.click(within(card()).getByRole('button', { name: 'Add Tomatoes' }));
+    await within(card()).findByText('1');
   });
 
   it('opens product details from a card', async () => {
@@ -236,6 +253,21 @@ describe('shop (guest)', () => {
 describe('signed in', () => {
   beforeEach(() => {
     state.user = { uid: 'vendor-1', email: 'ravi@example.com', displayName: 'Ravi Kumar' };
+  });
+
+  it('updates the cart at once on each tap and saves it in the background', async () => {
+    renderAt('/shop');
+    await screen.findByRole('heading', { name: 'Shop by category' }, WAIT);
+    const card = () => screen.getAllByRole('article').find((a) => within(a).queryByText('Tomatoes'));
+    fireEvent.click(within(card()).getByRole('button', { name: 'Add Tomatoes' }));
+    const plus = await within(card()).findByRole('button', { name: 'Increase quantity of Tomatoes' });
+    fireEvent.click(plus);
+    fireEvent.click(plus); // quick taps build on each other
+    await within(card()).findByText('3');
+    expect(saveCartItems).toHaveBeenLastCalledWith('vendor-1', [{ id: 'tomato', quantity: 3 }]);
+    fireEvent.click(within(card()).getByRole('button', { name: 'Decrease quantity of Tomatoes' }));
+    await within(card()).findByText('2');
+    expect(saveCartItems).toHaveBeenLastCalledWith('vendor-1', [{ id: 'tomato', quantity: 2 }]);
   });
 
   it('offers products from past orders under Buy again', async () => {

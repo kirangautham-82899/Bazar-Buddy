@@ -63,8 +63,9 @@ const mutateLines = (uid, mutate) =>
     tx.set(cartRef(uid), { ...current, items: mutate(current.items), updatedAt: serverTimestamp() });
   });
 
-export const changeCartQuantity = (uid, productId, delta, maxQuantity) =>
-  mutateLines(uid, (items) => applyQuantityChange(items, productId, delta, maxQuantity));
+// A plain write (not a transaction) so Firestore shows it at once, even offline,
+// and syncs it in the background.
+export const saveCartItems = (uid, items) => setDoc(cartRef(uid), { items, updatedAt: serverTimestamp() }, { merge: true });
 
 export const mergeIntoCart = (uid, lines) => mutateLines(uid, (items) => mergeCartLines(items, lines));
 

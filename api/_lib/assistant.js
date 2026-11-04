@@ -187,7 +187,10 @@ const callGemini = async (body, { apiKey, model, fetchImpl }) => {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const reason = data?.error?.details?.find((d) => d?.reason)?.reason || data?.error?.status || '';
-    throw new GeminiError(res.status, reason);
+    const err = new GeminiError(res.status, reason);
+    // Google's own explanation (e.g. which model wasn't found); it never echoes the chat.
+    err.detail = `${model}: ${String(data?.error?.message || '').slice(0, 200)}`;
+    throw err;
   }
   return data;
 };

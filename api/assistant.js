@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       sendJson(res, 429, { error: 'busy' });
     } else {
       // Status only: conversation text and locations are never logged.
-      console.error(`Assistant failed: ${err.name}${err.status ? ` ${err.status}` : ''}`);
+      console.error(`Assistant failed: ${err.name}${err.status ? ` ${err.status}` : ''}${err.detail ? ` (${err.detail})` : ''}`);
       sendJson(res, 502, { error: 'unavailable' });
     }
   }

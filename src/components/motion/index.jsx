@@ -132,7 +132,7 @@ export const SuccessCheck = ({ size = 88 }) => (
   </motion.svg>
 );
 
-const CONFETTI_COLORS = ['#2fb36a', '#e8553d', '#f4b12e', '#157a43', '#ff8a5b'];
+const CONFETTI_COLORS = ['#7cb867', '#c2523b', '#eebf55', '#3d6b33', '#f0a07a'];
 
 // A short burst of CSS shapes; nothing renders when motion is reduced.
 export const Confetti = ({ count = 26 }) => {

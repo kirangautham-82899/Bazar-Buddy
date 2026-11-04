@@ -40,4 +40,4 @@
 
 .tone-green { --tone: var(--color-brand); --tone-soft: var(--color-brand-soft); }
 .tone-tomato { --tone: var(--color-accent); --tone-soft: var(--color-accent-soft); }
-.tone-turmeric { --tone: #c98a0b; --tone-soft: var(--color-turmeric-soft); }
+.tone-turmeric { --tone: #b07b1c; --tone-soft: var(--color-turmeric-soft); }

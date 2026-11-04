@@ -1,28 +1,39 @@
-/* Design tokens. Palette taken from a vegetable mandi: leaf green (brand),
-   tomato red (accent), turmeric yellow (highlight) on a warm cream background. */
+/* Design tokens. A pastel vegetable stall: leaf green (brand), tomato (accent),
+   corn/turmeric, carrot and brinjal, on a warm cream background. Every text
+   colour here reads at 4.5:1 or better on its own pastel and on white. */
 :root {
-  --color-brand: #1f8a4c;
-  --color-brand-dark: #146c3a;
-  --color-brand-soft: #e2f3e6;
-  --color-accent: #e8553d;
-  --color-accent-soft: #fdeae5;
-  --color-turmeric: #f4b12e;
-  --color-turmeric-soft: #fff4d6;
-  --color-ink: #1b2a1f;
-  --color-muted: #5f6d63;
-  --color-line: #e7e1d3;
+  --color-brand: #4a7c3f;
+  --color-brand-dark: #355e2e;
+  --color-brand-soft: #e5f0dc;
+  --color-accent: #c2523b;
+  --color-accent-soft: #fbe6df;
+  --color-turmeric: #eebf55;
+  --color-turmeric-soft: #fcf2d4;
+  --color-carrot: #f0a07a;
+  --color-carrot-soft: #fde9dc;
+  --color-brinjal: #6a4f9c;
+  --color-brinjal-soft: #ece6f6;
+  --color-ink: #26332a;
+  --color-muted: #66716a;
+  --color-line: #ebe4d4;
   --color-surface: #ffffff;
-  --color-bg: #faf7ef;
-  --color-success: #16a34a;
-  --color-success-soft: #e3f6ea;
-  --color-warning: #b7791f;
-  --color-warning-soft: #fff4dd;
-  --color-danger: #dc3c3c;
-  --color-danger-soft: #fde8e8;
+  --color-bg: #fbf8f1;
+  --color-success: #4a7c3f;
+  --color-success-soft: #e5f0dc;
+  --color-warning: #a8741c;
+  --color-warning-soft: #fcf2d4;
+  --color-danger: #c0453a;
+  --color-danger-soft: #fbe5e2;
 
-  --gradient-brand: linear-gradient(135deg, #2fb36a 0%, #157a43 100%);
-  --gradient-warm: linear-gradient(135deg, #ef5a3c 0%, #f4b12e 100%);
-  --gradient-soft: linear-gradient(135deg, #effaf1 0%, #fff8e6 100%);
+  --gradient-brand: linear-gradient(135deg, #5a8f4a 0%, #3d6b33 100%);
+  --gradient-warm: linear-gradient(135deg, #e9806a 0%, #eebf55 100%);
+  --gradient-soft: linear-gradient(135deg, #eef6e7 0%, #fdf6e3 100%);
+  /* Mint, butter, peach and lavender washed together, for hero panels. */
+  --gradient-pastel:
+    radial-gradient(90% 120% at 100% 0%, rgba(240, 160, 122, 0.22) 0%, transparent 55%),
+    radial-gradient(70% 90% at 0% 100%, rgba(238, 191, 85, 0.2) 0%, transparent 60%),
+    radial-gradient(60% 80% at 75% 100%, rgba(106, 79, 156, 0.1) 0%, transparent 60%),
+    linear-gradient(160deg, #eef6e7 0%, #fbf8f1 70%);
 
   /* Spacing scale: every gap, margin and padding uses one of these steps. */
   --space-1: 4px;
@@ -39,10 +50,10 @@
   --radius-md: 14px;
   --radius-lg: 22px;
   --radius-xl: 32px;
-  --shadow-sm: 0 1px 2px rgba(27, 42, 31, 0.04), 0 2px 8px rgba(27, 42, 31, 0.05);
-  --shadow-md: 0 10px 30px -12px rgba(27, 42, 31, 0.18);
-  --shadow-lg: 0 24px 60px -20px rgba(27, 42, 31, 0.35);
-  --shadow-brand: 0 12px 28px -10px rgba(31, 138, 76, 0.55);
+  --shadow-sm: 0 1px 2px rgba(38, 51, 42, 0.04), 0 2px 8px rgba(38, 51, 42, 0.05);
+  --shadow-md: 0 10px 30px -12px rgba(38, 51, 42, 0.18);
+  --shadow-lg: 0 24px 60px -20px rgba(38, 51, 42, 0.35);
+  --shadow-brand: 0 12px 28px -10px rgba(74, 124, 63, 0.55);
 
   --top-nav-height: 64px;
   --bottom-nav-height: 70px;
@@ -110,7 +121,7 @@ a {
 }
 
 ::selection {
-  background: #cdebd6;
+  background: #d6e8c8;
 }
 
 :focus-visible {
@@ -143,7 +154,7 @@ a {
   gap: 8px;
   padding: 6px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(31, 138, 76, 0.25);
+  border: 1px solid rgba(74, 124, 63, 0.25);
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(8px);
   color: var(--color-brand-dark);
@@ -174,7 +185,7 @@ a {
 .btn:hover {
   transform: translateY(-1px);
   filter: saturate(1.15);
-  box-shadow: 0 16px 32px -10px rgba(31, 138, 76, 0.6);
+  box-shadow: 0 16px 32px -10px rgba(74, 124, 63, 0.6);
 }
 
 .btn:active {
@@ -206,7 +217,7 @@ a {
 }
 
 .btn-secondary:hover {
-  background: #cdebd6;
+  background: #d6e8c8;
   box-shadow: none;
 }
 
@@ -239,7 +250,7 @@ a {
 }
 
 .btn-danger:hover {
-  background: #fbd3d3;
+  background: #f6d2cc;
   box-shadow: none;
 }
 
@@ -295,7 +306,7 @@ a {
 }
 
 .icon-btn-danger:hover {
-  background: #fbd3d3;
+  background: #f6d2cc;
   color: var(--color-danger);
 }
 
@@ -448,7 +459,7 @@ a {
 .input:focus {
   border-color: var(--color-brand);
   outline: none;
-  box-shadow: 0 0 0 4px rgba(31, 138, 76, 0.12);
+  box-shadow: 0 0 0 4px rgba(74, 124, 63, 0.12);
 }
 
 .input[aria-invalid='true'] {
@@ -517,7 +528,7 @@ a {
 }
 
 .choice:hover {
-  border-color: #a8dbb8;
+  border-color: #bcd6a8;
 }
 
 .choice:active {
@@ -526,8 +537,8 @@ a {
 
 .choice:has(input:checked) {
   border-color: var(--color-brand);
-  background: #f3fbf5;
-  box-shadow: 0 0 0 3px rgba(31, 138, 76, 0.1);
+  background: #f4f8ee;
+  box-shadow: 0 0 0 3px rgba(74, 124, 63, 0.1);
 }
 
 .choice input {
@@ -555,7 +566,7 @@ a {
   grid-auto-columns: 1fr;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(27, 42, 31, 0.06);
+  background: rgba(38, 51, 42, 0.06);
 }
 
 .segmented-btn {

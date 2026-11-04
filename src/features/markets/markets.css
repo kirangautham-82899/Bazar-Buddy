@@ -156,7 +156,7 @@
 }
 
 .market-table tbody tr:hover {
-  background: #fbfaf5;
+  background: #fcfaf4;
 }
 
 .mt-name {
@@ -217,7 +217,7 @@
 .market-icon.kind-greengrocer,
 .market-icon.kind-grocery {
   background: var(--color-turmeric-soft);
-  color: #8a5a00;
+  color: #85621a;
 }
 
 .market-icon.kind-mandi {
@@ -326,7 +326,7 @@
   padding: var(--space-4);
   border-radius: var(--radius-md);
   background: var(--color-turmeric-soft);
-  color: #6b4a00;
+  color: #6e5114;
 }
 
 .markets-note svg {

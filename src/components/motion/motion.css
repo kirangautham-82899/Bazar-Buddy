@@ -40,7 +40,7 @@
   height: 480px;
   top: -160px;
   left: -120px;
-  background: #9be3b0;
+  background: #b9dba4;
   animation: drift-1 18s ease-in-out infinite alternate;
 }
 
@@ -49,7 +49,7 @@
   height: 420px;
   top: 10%;
   right: -140px;
-  background: #ffd27a;
+  background: #f5d68a;
   animation: drift-2 22s ease-in-out infinite alternate;
 }
 
@@ -58,13 +58,13 @@
   height: 360px;
   bottom: -160px;
   left: 30%;
-  background: #ffb199;
+  background: #f8c4b4;
   opacity: 0.4;
   animation: drift-3 20s ease-in-out infinite alternate;
 }
 
 .aurora-dark {
-  background: radial-gradient(120% 120% at 0% 0%, #123d26 0%, #1b2a1f 55%, #0a1d13 100%);
+  background: radial-gradient(120% 120% at 0% 0%, #2a3d26 0%, #26332a 55%, #1a2619 100%);
 }
 
 .aurora-dark .aurora-blob {
@@ -76,7 +76,7 @@
   height: 420px;
   top: -120px;
   left: -100px;
-  background: #2fb36a;
+  background: #7cb867;
   animation: drift-1 16s ease-in-out infinite alternate;
 }
 
@@ -85,7 +85,7 @@
   height: 380px;
   bottom: -120px;
   right: -100px;
-  background: #e8553d;
+  background: #c2523b;
   animation: drift-2 20s ease-in-out infinite alternate;
 }
 
@@ -94,7 +94,7 @@
   height: 260px;
   top: 40%;
   left: 40%;
-  background: #f59e0b;
+  background: #e9a94a;
   opacity: 0.35;
   animation: drift-3 18s ease-in-out infinite alternate;
 }
@@ -102,8 +102,8 @@
 .aurora-grid {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(27, 42, 31, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(27, 42, 31, 0.05) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(38, 51, 42, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(38, 51, 42, 0.05) 1px, transparent 1px);
   background-size: 44px 44px;
   mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
   -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
@@ -170,7 +170,7 @@
   display: block;
   height: 14px;
   border-radius: 8px;
-  background: linear-gradient(90deg, #ece6d6 0%, #f6f2e7 40%, #ece6d6 80%);
+  background: linear-gradient(90deg, #eee8da 0%, #f8f4ea 40%, #eee8da 80%);
   background-size: 200% 100%;
   animation: shimmer 1.3s linear infinite;
 }

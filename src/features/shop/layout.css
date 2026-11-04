@@ -94,7 +94,7 @@
   gap: var(--space-3);
   width: 100%;
   padding: var(--space-3);
-  border: 1px solid #b9e3c4;
+  border: 1px solid #c9dfb8;
   border-radius: 14px;
   background: var(--gradient-soft);
   color: var(--color-ink);
@@ -168,7 +168,7 @@
   padding: var(--space-3);
   border-radius: var(--radius-md);
   background: var(--color-turmeric-soft);
-  color: #6b4a00;
+  color: #6e5114;
   text-decoration: none;
 }
 
@@ -281,7 +281,7 @@
 }
 
 .dh-ai svg {
-  color: #5b3fc4;
+  color: var(--color-brinjal);
   font-size: 1.1rem;
 }
 
@@ -498,7 +498,7 @@
   position: fixed;
   inset: 0;
   z-index: 1500;
-  background: rgba(27, 42, 31, 0.45);
+  background: rgba(38, 51, 42, 0.45);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }

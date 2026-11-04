@@ -26,7 +26,7 @@
   padding: 12px 16px;
   border-radius: 16px;
   color: #fff;
-  background: rgba(27, 42, 31, 0.94);
+  background: rgba(38, 51, 42, 0.94);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-lg);
   cursor: pointer;
@@ -39,15 +39,15 @@
 }
 
 .toast-success .toast-icon {
-  color: #4ade80;
+  color: #a7d48f;
 }
 
 .toast-error .toast-icon {
-  color: #f87171;
+  color: #f19a8c;
 }
 
 .toast-info .toast-icon {
-  color: #ffd27a;
+  color: #f5d68a;
 }
 
 .loader-tile {

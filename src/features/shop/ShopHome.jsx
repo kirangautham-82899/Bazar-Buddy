@@ -37,10 +37,10 @@ const buyAgain = (orders, findProduct) => {
 const greetingKey = (hour = new Date().getHours()) => (hour < 12 ? 'goodMorning' : hour < 17 ? 'goodAfternoon' : 'goodEvening');
 
 const FACTS = [
-  { icon: FaBolt, title: 'factExpressTitle', body: () => t('factExpressBody', { minutes: EXPRESS_MINUTES }) },
-  { icon: FaTruck, title: 'factFreeTitle', body: () => t('factFreeBody', { amount: FREE_DELIVERY_ABOVE }) },
-  { icon: FaWallet, title: 'factPayTitle', body: () => t('factPayBody') },
-  { icon: FaHeadset, title: 'factSupportTitle', body: () => t('supportHours') },
+  { icon: FaBolt, tone: 'yellow', title: 'factExpressTitle', body: () => t('factExpressBody', { minutes: EXPRESS_MINUTES }) },
+  { icon: FaTruck, tone: 'green', title: 'factFreeTitle', body: () => t('factFreeBody', { amount: FREE_DELIVERY_ABOVE }) },
+  { icon: FaWallet, tone: 'peach', title: 'factPayTitle', body: () => t('factPayBody') },
+  { icon: FaHeadset, tone: 'violet', title: 'factSupportTitle', body: () => t('supportHours') },
 ];
 
 const TOOLS = [
@@ -123,9 +123,9 @@ const ShopHome = () => {
           </div>
         </motion.div>
         <ul className="home-facts" aria-label={t('homeFacts')}>
-          {FACTS.map(({ icon: Icon, title, body }) => (
+          {FACTS.map(({ icon: Icon, tone, title, body }) => (
             <li key={title}>
-              <span className="home-fact-icon" aria-hidden="true"><Icon /></span>
+              <span className={`home-fact-icon tone-${tone}`} aria-hidden="true"><Icon /></span>
               <span>
                 <strong>{t(title)}</strong>
                 <small>{body()}</small>

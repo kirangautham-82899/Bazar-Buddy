@@ -26,13 +26,13 @@
   font-size: 2.2rem;
 }
 
-.tone-green { --tone-bg: #e4f7ea; --tone-fg: #1f9d55; }
-.tone-amber { --tone-bg: #fff3d6; --tone-fg: #c27c0e; }
-.tone-wheat { --tone-bg: #f8eedc; --tone-fg: #9a6b1f; }
-.tone-red { --tone-bg: #ffe4e4; --tone-fg: #d64545; }
-.tone-sky { --tone-bg: #e2f1ff; --tone-fg: #2b7bd6; }
-.tone-olive { --tone-bg: #eef3d9; --tone-fg: #6f8a1f; }
-.tone-brand { --tone-bg: #e2f3e6; --tone-fg: var(--color-brand); }
+.tone-green { --tone-bg: #e5f0dc; --tone-fg: #4a7c3f; }
+.tone-amber { --tone-bg: #fcf2d4; --tone-fg: #b07b1c; }
+.tone-wheat { --tone-bg: #f7eedb; --tone-fg: #93692a; }
+.tone-red { --tone-bg: #fbe3e0; --tone-fg: #c2523b; }
+.tone-sky { --tone-bg: #e1eef8; --tone-fg: #4f7fae; }
+.tone-olive { --tone-bg: #eef2d6; --tone-fg: #6d7f2a; }
+.tone-brand { --tone-bg: #e5f0dc; --tone-fg: var(--color-brand); }
 
 .product-icon-xl {
   width: 76px;

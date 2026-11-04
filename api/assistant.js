@@ -1,7 +1,6 @@
 // POST /api/assistant  { messages: [{ role, content }], location?: { lat, lng, label } }
-//   -> { reply }   (503 { error: 'not_configured' } until ANTHROPIC_API_KEY is set)
-import Anthropic from '@anthropic-ai/sdk';
-import { askAssistant } from './_lib/assistant.js';
+//   -> { reply }   (503 { error: 'not_configured' } until GEMINI_API_KEY is set)
+import { GeminiError, askAssistant } from './_lib/assistant.js';
 import { assertSameOrigin, clientKey, createRateLimiter } from './_lib/guard.js';
 import { readJson, sendJson } from './_lib/http.js';
 
@@ -17,25 +16,26 @@ export default async function handler(req, res) {
     return;
   }
   const env = {
-    anthropicKey: process.env.ANTHROPIC_API_KEY,
+    geminiKey: process.env.GEMINI_API_KEY,
+    geminiModel: process.env.GEMINI_MODEL,
     googleKey: process.env.GOOGLE_PLACES_API_KEY,
     dataGovKey: process.env.DATA_GOV_IN_API_KEY,
   };
   try {
     assertSameOrigin(req);
-    if (!env.anthropicKey) {
+    if (!env.geminiKey) {
       sendJson(res, 503, { error: 'not_configured' });
       return;
     }
     limitVisitor(clientKey(req));
     sendJson(res, 200, await askAssistant(await readJson(req), { env }));
   } catch (err) {
-    if (err.status && !(err instanceof Anthropic.APIError)) {
+    if (err.status && !(err instanceof GeminiError)) {
       sendJson(res, err.status, { error: err.message });
-    } else if (err instanceof Anthropic.AuthenticationError) {
-      console.error('Assistant: invalid ANTHROPIC_API_KEY');
+    } else if (err instanceof GeminiError && err.badKey) {
+      console.error('Assistant: GEMINI_API_KEY was rejected');
       sendJson(res, 503, { error: 'not_configured' });
-    } else if (err instanceof Anthropic.RateLimitError) {
+    } else if (err instanceof GeminiError && err.status === 429) {
       sendJson(res, 429, { error: 'busy' });
     } else {
       // Status only: conversation text and locations are never logged.

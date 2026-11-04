@@ -1,18 +1,22 @@
 // @vitest-environment node
-import { askAssistant, buildTools, cleanHistory, nearbyForAssistant, replyText } from './assistant.js';
+import { GeminiError, askAssistant, buildTools, cleanHistory, nearbyForAssistant, replyText } from './assistant.js';
 
 const jsonResponse = (body, ok = true, status = 200) => ({ ok, status, json: async () => body });
 
-// A fake Anthropic client: records the request and returns a canned final message.
-const fakeClient = (final) => {
-  const calls = [];
-  return {
-    calls,
-    beta: { messages: { toolRunner: async (params) => (calls.push(params), final) } },
-  };
+// A fake Gemini endpoint: records each request body and plays back canned replies.
+const fakeGemini = (...replies) => {
+  const bodies = [];
+  const fetchImpl = vi.fn(async (url, init) => {
+    bodies.push({ url, headers: init.headers, ...JSON.parse(init.body) });
+    const next = replies.shift();
+    return next instanceof Error ? Promise.reject(next) : jsonResponse(next.body ?? next, next.ok ?? true, next.status ?? 200);
+  });
+  return { bodies, fetchImpl };
 };
 
-const env = { anthropicKey: 'test', googleKey: '', dataGovKey: '' };
+const say = (text) => ({ candidates: [{ content: { role: 'model', parts: [{ text }] }, finishReason: 'STOP' }] });
+
+const env = { geminiKey: 'test', googleKey: '', dataGovKey: '' };
 
 describe('cleanHistory', () => {
   it('keeps plain user/assistant turns, ending with the user', () => {
@@ -35,24 +39,48 @@ describe('cleanHistory', () => {
 });
 
 describe('askAssistant', () => {
-  it('asks Claude with the market tools, India time and the shared location', async () => {
-    const client = fakeClient({ stop_reason: 'end_turn', content: [{ type: 'thinking', thinking: '' }, { type: 'text', text: 'Try [Valiya Angadi](https://maps.example)' }] });
-    const result = await askAssistant({ messages: [{ role: 'user', content: 'Open markets near me?' }], location: { lat: 10.78, lng: 76.65, label: 'Palakkad' } }, { env, client });
+  it('asks Gemini with the market tools, India time and the shared location', async () => {
+    const { bodies, fetchImpl } = fakeGemini(say('Try [Valiya Angadi](https://maps.example)'));
+    const result = await askAssistant(
+      { messages: [{ role: 'user', content: 'Open markets near me?' }], location: { lat: 10.78, lng: 76.65, label: 'Palakkad' } },
+      { env, deps: { fetchImpl } }
+    );
     expect(result).toEqual({ reply: 'Try [Valiya Angadi](https://maps.example)' });
-    const [params] = client.calls;
-    expect(params.model).toBe('claude-opus-5-5');
-    expect(params.fallbacks).toBe('default');
-    expect(params.betas).toContain('server-side-fallback-2026-07-01');
-    expect(params.tools.map((t) => t.name)).toEqual(['find_place', 'find_nearby_markets', 'get_mandi_prices']);
-    const last = params.messages.at(-1);
-    expect(last.role).toBe('system');
-    expect(last.content).toContain('lat 10.780, lng 76.650 (Palakkad)');
-    expect(last.content).toMatch(/Current time in India/);
-    expect(params.system).not.toMatch(/Current time/); // keeps the cached prefix stable
+    const [body] = bodies;
+    expect(body.url).toMatch(/\/models\/gemini-2\.5-flash:generateContent$/);
+    expect(body.headers['x-goog-api-key']).toBe('test'); // key in a header, never the URL
+    expect(body.tools[0].functionDeclarations.map((t) => t.name)).toEqual(['find_place', 'find_nearby_markets', 'get_mandi_prices']);
+    const [stable, context] = body.systemInstruction.parts;
+    expect(stable.text).not.toMatch(/Current time/); // keeps the cacheable prefix stable
+    expect(context.text).toContain('lat 10.780, lng 76.650 (Palakkad)');
+    expect(context.text).toMatch(/Current time in India/);
+    expect(body.contents).toEqual([{ role: 'user', parts: [{ text: 'Open markets near me?' }] }]);
   });
 
-  it('answers a refusal politely', () => {
-    expect(replyText({ stop_reason: 'refusal', content: [] })).toMatch(/can't help/);
+  it('runs the tools Gemini asks for and sends back the results', async () => {
+    const call = { role: 'model', parts: [{ functionCall: { name: 'get_mandi_prices', args: { state: 'Kerala' } }, thoughtSignature: 'sig' }] };
+    const { bodies, fetchImpl } = fakeGemini({ candidates: [{ content: call }] }, say('Prices are not connected yet.'));
+    const result = await askAssistant({ messages: [{ role: 'user', content: 'Tomato price?' }] }, { env, deps: { fetchImpl } });
+    expect(result.reply).toBe('Prices are not connected yet.');
+    const second = bodies[1].contents;
+    expect(second[1]).toEqual(call); // the model turn goes back with its signature
+    expect(second[2]).toEqual({
+      role: 'user',
+      parts: [{ functionResponse: { name: 'get_mandi_prices', response: { note: 'Live mandi prices are not connected yet.' } } }],
+    });
+  });
+
+  it('reports a rejected key so the endpoint can say it is not set up', async () => {
+    const { fetchImpl } = fakeGemini({ ok: false, status: 400, body: { error: { status: 'INVALID_ARGUMENT', details: [{ reason: 'API_KEY_INVALID' }] } } });
+    const err = await askAssistant({ messages: [{ role: 'user', content: 'hi' }] }, { env, deps: { fetchImpl } }).catch((e) => e);
+    expect(err).toBeInstanceOf(GeminiError);
+    expect(err.badKey).toBe(true);
+  });
+
+  it('answers a blocked request politely and skips thoughts', () => {
+    expect(replyText({ promptFeedback: { blockReason: 'SAFETY' } })).toMatch(/can't help/);
+    expect(replyText({ candidates: [{ finishReason: 'SAFETY' }] })).toMatch(/can't help/);
+    expect(replyText({ candidates: [{ content: { parts: [{ text: 'thinking...', thought: true }, { text: 'Answer' }] } }] })).toBe('Answer');
   });
 });
 

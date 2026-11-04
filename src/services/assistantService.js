@@ -1,4 +1,4 @@
-// Calls our /api/assistant function (Claude with market and price tools).
+// Calls our /api/assistant function (Gemini with market and price tools).
 export const askAssistant = async ({ messages, location }) => {
   const res = await fetch('/api/assistant', {
     method: 'POST',

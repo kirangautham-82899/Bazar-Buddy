@@ -1,8 +1,6 @@
-// Bazar Buddy's chat assistant: Claude with tools over our own data (places,
+// Bazar Buddy's chat assistant: Gemini with tools over our own data (places,
 // nearby markets with timings, mandi prices). Tools only read public data, so
 // whatever the chat asks, the worst a tool call can do is look something up.
-import Anthropic from '@anthropic-ai/sdk';
-import { betaTool } from '@anthropic-ai/sdk/helpers/beta/json-schema';
 import mandis from '../../src/data/mandis.js';
 import { directionsUrl, formatDistance, marketsWithin } from '../../src/utils/markets.js';
 import { formatTime, openStatus } from '../../src/utils/openingHours.js';
@@ -11,12 +9,15 @@ import { findPlace } from './place.js';
 import { MAX_RADIUS_KM, fetchNearbyMarkets } from './nearbyMarkets.js';
 import { fetchMandiPrices } from './mandiPrices.js';
 
-const MODEL = 'claude-opus-5-5';
+// Fast and inexpensive, with a free tier; GEMINI_MODEL can switch it.
+export const DEFAULT_MODEL = 'gemini-2.5-flash';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const MAX_TOOL_ROUNDS = 6;
 const MAX_TURNS = 16;
 const MAX_MESSAGE_CHARS = 2000;
 const MAX_MARKETS = 15;
 
-// Kept identical across requests so it is served from the prompt cache.
+// Kept identical across requests, ahead of anything that changes, so Gemini can cache it.
 const SYSTEM = `You are Bazar Buddy's assistant. Bazar Buddy is a wholesale vegetable and grocery app for street vendors across India: they order stock for delivery, and they also buy at local mandis and markets.
 
 Help them find where to go and the quickest way to get things done: nearby markets and what they sell, which are open now, directions, today's mandi prices, and shortcuts inside the app.
@@ -95,22 +96,21 @@ const guarded = (run) => async (input) => {
 };
 
 export const buildTools = (env, deps = {}) => [
-  betaTool({
+  {
     name: 'find_place',
     description: 'Look up an Indian PIN code or a typed area/address (e.g. "678001" or "Chickpet, Bengaluru") and get its exact coordinates, district and state.',
-    inputSchema: {
+    parameters: {
       type: 'object',
       properties: { query: { type: 'string', description: 'A 6-digit PIN code, or an area and city.' } },
       required: ['query'],
-      additionalProperties: false,
     },
     run: guarded(({ query }) => findPlace({ q: query }, deps.fetchImpl)),
-  }),
-  betaTool({
+  },
+  {
     name: 'find_nearby_markets',
     description:
       'List vegetable markets, mandis, greengrocers and grocery stores within a radius of a point, nearest first, with distance, open/closed status for the current time in India, weekly hours, phone and a directions link.',
-    inputSchema: {
+    parameters: {
       type: 'object',
       properties: {
         lat: { type: 'number' },
@@ -119,14 +119,13 @@ export const buildTools = (env, deps = {}) => [
         open_now_only: { type: 'boolean', description: 'Only markets known to be open right now.' },
       },
       required: ['lat', 'lng'],
-      additionalProperties: false,
     },
     run: guarded((input) => nearbyForAssistant(input, { googleKey: env.googleKey, fetchImpl: deps.fetchImpl })),
-  }),
-  betaTool({
+  },
+  {
     name: 'get_mandi_prices',
     description: "Today's wholesale prices (₹ per kg) reported to Agmarknet by mandis in a district (falls back to the whole state), optionally for one commodity.",
-    inputSchema: {
+    parameters: {
       type: 'object',
       properties: {
         state: { type: 'string', description: 'Indian state, e.g. "Kerala".' },
@@ -134,13 +133,12 @@ export const buildTools = (env, deps = {}) => [
         commodity: { type: 'string', description: 'Agmarknet commodity name, e.g. "Tomato", "Onion", "Ginger(Green)".' },
       },
       required: ['state'],
-      additionalProperties: false,
     },
     run: guarded(async (input) => {
       const result = await fetchMandiPrices(input, { apiKey: env.dataGovKey, fetchImpl: deps.fetchImpl, limit: 30 });
       return result.configured ? result : { note: 'Live mandi prices are not connected yet.' };
     }),
-  }),
+  },
 ];
 
 // Plain text turns from the chat window, checked and trimmed.
@@ -155,7 +153,6 @@ export const cleanHistory = (messages) => {
   return turns.filter((m) => m.content);
 };
 
-// Volatile context goes in a trailing system message, after the cached prefix.
 // The location is rounded to ~110 m: enough to find nearby markets, not a doorstep.
 const contextNote = (location, now) => {
   const time = now.toLocaleString('en-IN', { weekday: 'long', hour: 'numeric', minute: '2-digit', hour12: true });
@@ -166,30 +163,78 @@ const contextNote = (location, now) => {
   return `Current time in India: ${time}. ${where}`;
 };
 
-export const replyText = (message) => {
-  if (message.stop_reason === 'refusal') return "Sorry, I can't help with that. Ask me about markets, prices or your orders.";
-  return message.content
-    .filter((b) => b.type === 'text')
-    .map((b) => b.text)
-    .join('\n')
+export class GeminiError extends Error {
+  constructor(status, reason) {
+    super(`Gemini ${status}${reason ? ` ${reason}` : ''}`);
+    this.name = 'GeminiError';
+    this.status = status;
+    this.reason = reason;
+  }
+
+  // A missing, wrong or restricted key: the assistant is not set up.
+  get badKey() {
+    return this.status === 401 || this.status === 403 || this.reason === 'API_KEY_INVALID';
+  }
+}
+
+const callGemini = async (body, { apiKey, model, fetchImpl }) => {
+  const res = await fetchImpl(`${GEMINI_URL}/${encodeURIComponent(model)}:generateContent`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(25000),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const reason = data?.error?.details?.find((d) => d?.reason)?.reason || data?.error?.status || '';
+    throw new GeminiError(res.status, reason);
+  }
+  return data;
+};
+
+const BLOCKED = new Set(['SAFETY', 'PROHIBITED_CONTENT', 'BLOCKLIST', 'SPII']);
+const NO_ANSWER = 'Sorry, I could not find an answer. Please try asking another way.';
+
+export const replyText = (data) => {
+  const candidate = data?.candidates?.[0];
+  if (data?.promptFeedback?.blockReason || BLOCKED.has(candidate?.finishReason)) {
+    return "Sorry, I can't help with that. Ask me about markets, prices or your orders.";
+  }
+  return (candidate?.content?.parts || [])
+    .filter((p) => p.text && !p.thought)
+    .map((p) => p.text)
+    .join('')
     .trim();
 };
 
-export const askAssistant = async ({ messages, location }, { env, client = new Anthropic({ apiKey: env.anthropicKey }), deps } = {}) => {
+export const askAssistant = async ({ messages, location }, { env, deps = {} } = {}) => {
   const history = cleanHistory(messages);
-  const final = await client.beta.messages.toolRunner({
-    model: MODEL,
-    max_tokens: 4000,
-    max_iterations: 6,
-    // Chat: quick, short answers. Thinking stays on (it can't be turned off on this model).
-    output_config: { effort: 'low' },
-    // If the model declines a request on policy grounds, the server retries on its default fallback.
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
-    cache_control: { type: 'ephemeral' },
-    system: SYSTEM,
-    tools: buildTools(env, deps),
-    messages: [...history, { role: 'system', content: contextNote(location, indiaNow()) }],
-  });
-  return { reply: replyText(final) || 'Sorry, I could not find an answer. Please try asking another way.' };
+  const tools = buildTools(env, deps);
+  const gemini = { apiKey: env.geminiKey, model: env.geminiModel || DEFAULT_MODEL, fetchImpl: deps.fetchImpl ?? fetch };
+  const contents = history.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+  const request = {
+    // The stable instructions come first; the time and location change every request.
+    systemInstruction: { parts: [{ text: SYSTEM }, { text: contextNote(location, indiaNow()) }] },
+    contents,
+    tools: [{ functionDeclarations: tools.map(({ name, description, parameters }) => ({ name, description, parameters })) }],
+    generationConfig: { maxOutputTokens: 4000 },
+  };
+
+  for (let round = 0; round <= MAX_TOOL_ROUNDS; round += 1) {
+    const data = await callGemini(request, gemini);
+    const content = data?.candidates?.[0]?.content;
+    const calls = (content?.parts || []).filter((p) => p.functionCall);
+    if (!calls.length || round === MAX_TOOL_ROUNDS) return { reply: replyText(data) || NO_ANSWER };
+    // The model's turn goes back unchanged (it carries thought signatures), then the tool results.
+    contents.push(content);
+    const results = await Promise.all(
+      calls.map(async ({ functionCall: { name, args } }) => {
+        const tool = tools.find((t) => t.name === name);
+        const output = tool ? JSON.parse(await tool.run(args || {})) : { error: `Unknown tool ${name}` };
+        return { functionResponse: { name, response: output } };
+      })
+    );
+    contents.push({ role: 'user', parts: results });
+  }
+  return { reply: NO_ANSWER };
 };

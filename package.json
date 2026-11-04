@@ -4,7 +4,6 @@
   "private": true,
   "description": "Hyperlocal raw-material marketplace for street vendors",
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.4.0",
     "firebase": "^12.19.0",
     "framer-motion": "^12.23.9",
     "qrcode.react": "^4.2.0",

@@ -12,7 +12,8 @@ const apiRoutes = (env) => ({
   configureServer(server) {
     process.env.DATA_GOV_IN_API_KEY ??= env.DATA_GOV_IN_API_KEY;
     process.env.GOOGLE_PLACES_API_KEY ??= env.GOOGLE_PLACES_API_KEY;
-    process.env.ANTHROPIC_API_KEY ??= env.ANTHROPIC_API_KEY;
+    process.env.GEMINI_API_KEY ??= env.GEMINI_API_KEY;
+    process.env.GEMINI_MODEL ??= env.GEMINI_MODEL;
     server.middlewares.use('/api/place', (req, res) => placeHandler(req, res));
     server.middlewares.use('/api/nearby-markets', (req, res) => nearbyMarketsHandler(req, res));
     server.middlewares.use('/api/mandi-prices', (req, res) => mandiPricesHandler(req, res));

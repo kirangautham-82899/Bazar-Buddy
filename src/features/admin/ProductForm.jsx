@@ -84,7 +84,7 @@ const ProductForm = ({ product, onDone }) => {
       {field('mrp', 'mrp', <input id="product-mrp" className="input" type="number" min="0" step="0.5" inputMode="decimal" value={form.mrp} onChange={set('mrp')} aria-invalid={Boolean(errors.mrp)} />)}
       {field('stock', 'stock', <input id="product-stock" className="input" type="number" min="0" step="1" inputMode="numeric" value={form.stock} onChange={set('stock')} aria-invalid={Boolean(errors.stock)} />)}
       {field('sortOrder', 'sortOrder', <input id="product-sortOrder" className="input" type="number" inputMode="numeric" value={form.sortOrder} onChange={set('sortOrder')} />)}
-      {field('keywords', 'keywords', <input id="product-keywords" className="input" value={form.keywords} onChange={set('keywords')} placeholder="pyaz, kanda" />)}
+      {field('keywords', 'keywords', <input id="product-keywords" className="input" value={form.keywords} onChange={set('keywords')} placeholder="red onion, onion" />)}
       {field('description', 'description', <textarea id="product-description" className="input" rows={2} maxLength={300} value={form.description} onChange={set('description')} />)}
 
       <fieldset className="icon-picker">

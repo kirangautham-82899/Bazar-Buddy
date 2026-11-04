@@ -1,4 +1,4 @@
-// Product search tuned for vendors typing (or speaking) in English or Hinglish:
+// Product search tuned for vendors typing (or speaking):
 // matches names, keywords and categories, tolerates small typos, and ranks exact
 // word matches above prefixes, substrings and fuzzy hits.
 

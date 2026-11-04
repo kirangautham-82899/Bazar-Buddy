@@ -1,4 +1,4 @@
-// Major wholesale markets (mandis / APMC yards) across every state and union
+// Major wholesale markets (APMC yards) across every state and union
 // territory. Coordinates are city-level (good enough to rank "nearest"), and
 // `known` lists produce each market is well known for. Live daily prices come
 // separately from Agmarknet via /api/mandi-prices.
@@ -6,32 +6,32 @@ const m = (id, name, city, district, state, lat, lng, known) => ({ id, name, cit
 
 const mandis = [
   // North
-  m('azadpur', 'Azadpur Mandi', 'Delhi', 'North West Delhi', 'Delhi', 28.7076, 77.1764, ['Tomato', 'Onion', 'Potato', 'Apple', 'Banana', 'Green Chilli']),
-  m('okhla', 'Okhla Sabzi Mandi', 'Delhi', 'South East Delhi', 'Delhi', 28.5355, 77.282, ['Tomato', 'Onion', 'Potato', 'Cauliflower']),
-  m('ghazipur', 'Ghazipur Mandi', 'Delhi', 'East Delhi', 'Delhi', 28.625, 77.324, ['Banana', 'Apple', 'Tomato']),
-  m('sahibabad', 'Sahibabad Mandi', 'Ghaziabad', 'Ghaziabad', 'Uttar Pradesh', 28.68, 77.36, ['Tomato', 'Potato', 'Onion']),
-  m('khandsa', 'Khandsa Mandi', 'Gurugram', 'Gurugram', 'Haryana', 28.443, 77.019, ['Onion', 'Potato', 'Tomato']),
+  m('azadpur', 'Azadpur Market', 'Delhi', 'North West Delhi', 'Delhi', 28.7076, 77.1764, ['Tomato', 'Onion', 'Potato', 'Apple', 'Banana', 'Green Chilli']),
+  m('okhla', 'Okhla Vegetable Market', 'Delhi', 'South East Delhi', 'Delhi', 28.5355, 77.282, ['Tomato', 'Onion', 'Potato', 'Cauliflower']),
+  m('ghazipur', 'Ghazipur Market', 'Delhi', 'East Delhi', 'Delhi', 28.625, 77.324, ['Banana', 'Apple', 'Tomato']),
+  m('sahibabad', 'Sahibabad Market', 'Ghaziabad', 'Ghaziabad', 'Uttar Pradesh', 28.68, 77.36, ['Tomato', 'Potato', 'Onion']),
+  m('khandsa', 'Khandsa Market', 'Gurugram', 'Gurugram', 'Haryana', 28.443, 77.019, ['Onion', 'Potato', 'Tomato']),
   m('karnal', 'Karnal Grain Market', 'Karnal', 'Karnal', 'Haryana', 29.6857, 76.9905, ['Rice', 'Wheat']),
-  m('ludhiana', 'Bahadurke Road Mandi', 'Ludhiana', 'Ludhiana', 'Punjab', 30.901, 75.8573, ['Potato', 'Wheat', 'Cauliflower']),
-  m('amritsar', 'Vallah Mandi', 'Amritsar', 'Amritsar', 'Punjab', 31.634, 74.8723, ['Potato', 'Onion', 'Rice']),
-  m('jalandhar', 'Maqsudan Mandi', 'Jalandhar', 'Jalandhar', 'Punjab', 31.326, 75.5762, ['Potato', 'Cabbage']),
-  m('chandigarh', 'Sector 26 Mandi', 'Chandigarh', 'Chandigarh', 'Chandigarh', 30.729, 76.804, ['Tomato', 'Onion', 'Apple']),
-  m('solan', 'Solan Mandi', 'Solan', 'Solan', 'Himachal Pradesh', 30.9045, 77.0967, ['Tomato', 'Capsicum', 'Ginger']),
+  m('ludhiana', 'Bahadurke Road Market', 'Ludhiana', 'Ludhiana', 'Punjab', 30.901, 75.8573, ['Potato', 'Wheat', 'Cauliflower']),
+  m('amritsar', 'Vallah Market', 'Amritsar', 'Amritsar', 'Punjab', 31.634, 74.8723, ['Potato', 'Onion', 'Rice']),
+  m('jalandhar', 'Maqsudan Market', 'Jalandhar', 'Jalandhar', 'Punjab', 31.326, 75.5762, ['Potato', 'Cabbage']),
+  m('chandigarh', 'Sector 26 Market', 'Chandigarh', 'Chandigarh', 'Chandigarh', 30.729, 76.804, ['Tomato', 'Onion', 'Apple']),
+  m('solan', 'Solan Market', 'Solan', 'Solan', 'Himachal Pradesh', 30.9045, 77.0967, ['Tomato', 'Capsicum', 'Ginger']),
   m('dhalli', 'Dhalli Fruit Market', 'Shimla', 'Shimla', 'Himachal Pradesh', 31.1048, 77.1734, ['Apple', 'Pear']),
-  m('parimpora', 'Parimpora Fruit Mandi', 'Srinagar', 'Srinagar', 'Jammu and Kashmir', 34.11, 74.78, ['Apple', 'Walnut']),
-  m('narwal', 'Narwal Mandi', 'Jammu', 'Jammu', 'Jammu and Kashmir', 32.73, 74.857, ['Rice', 'Onion', 'Potato']),
+  m('parimpora', 'Parimpora Fruit Market', 'Srinagar', 'Srinagar', 'Jammu and Kashmir', 34.11, 74.78, ['Apple', 'Walnut']),
+  m('narwal', 'Narwal Market', 'Jammu', 'Jammu', 'Jammu and Kashmir', 32.73, 74.857, ['Rice', 'Onion', 'Potato']),
   m('leh', 'Leh Vegetable Market', 'Leh', 'Leh', 'Ladakh', 34.1526, 77.5771, ['Apricot', 'Potato', 'Cabbage']),
-  m('niranjanpur', 'Niranjanpur Mandi', 'Dehradun', 'Dehradun', 'Uttarakhand', 30.3165, 78.0322, ['Tomato', 'Potato', 'Rice']),
-  m('haldwani', 'Haldwani Mandi', 'Haldwani', 'Nainital', 'Uttarakhand', 29.2183, 79.513, ['Potato', 'Tomato', 'Ginger']),
-  m('dubagga', 'Dubagga Mandi', 'Lucknow', 'Lucknow', 'Uttar Pradesh', 26.8467, 80.9462, ['Mango', 'Banana', 'Potato']),
-  m('sikandra', 'Sikandra Mandi', 'Agra', 'Agra', 'Uttar Pradesh', 27.1767, 78.0081, ['Potato', 'Onion']),
-  m('kanpur', 'Naveen Galla Mandi', 'Kanpur', 'Kanpur Nagar', 'Uttar Pradesh', 26.4499, 80.3319, ['Wheat', 'Rice', 'Potato']),
-  m('pahariya', 'Pahariya Mandi', 'Varanasi', 'Varanasi', 'Uttar Pradesh', 25.3176, 82.9739, ['Green Chilli', 'Brinjal', 'Tomato']),
+  m('niranjanpur', 'Niranjanpur Market', 'Dehradun', 'Dehradun', 'Uttarakhand', 30.3165, 78.0322, ['Tomato', 'Potato', 'Rice']),
+  m('haldwani', 'Haldwani Market', 'Haldwani', 'Nainital', 'Uttarakhand', 29.2183, 79.513, ['Potato', 'Tomato', 'Ginger']),
+  m('dubagga', 'Dubagga Market', 'Lucknow', 'Lucknow', 'Uttar Pradesh', 26.8467, 80.9462, ['Mango', 'Banana', 'Potato']),
+  m('sikandra', 'Sikandra Market', 'Agra', 'Agra', 'Uttar Pradesh', 27.1767, 78.0081, ['Potato', 'Onion']),
+  m('kanpur', 'Naveen Grain Market', 'Kanpur', 'Kanpur Nagar', 'Uttar Pradesh', 26.4499, 80.3319, ['Wheat', 'Rice', 'Potato']),
+  m('pahariya', 'Pahariya Market', 'Varanasi', 'Varanasi', 'Uttar Pradesh', 25.3176, 82.9739, ['Green Chilli', 'Brinjal', 'Tomato']),
 
   // West
-  m('muhana', 'Muhana Mandi', 'Jaipur', 'Jaipur', 'Rajasthan', 26.8, 75.77, ['Tomato', 'Onion', 'Green Chilli', 'Cauliflower']),
-  m('jodhpur', 'Jodhpur Fruit & Vegetable Mandi', 'Jodhpur', 'Jodhpur', 'Rajasthan', 26.2389, 73.0243, ['Onion', 'Cumin', 'Red Chilli']),
-  m('kota', 'Bhamashah Mandi', 'Kota', 'Kota', 'Rajasthan', 25.2138, 75.8648, ['Coriander', 'Wheat', 'Garlic']),
+  m('muhana', 'Muhana Market', 'Jaipur', 'Jaipur', 'Rajasthan', 26.8, 75.77, ['Tomato', 'Onion', 'Green Chilli', 'Cauliflower']),
+  m('jodhpur', 'Jodhpur Fruit & Vegetable Market', 'Jodhpur', 'Jodhpur', 'Rajasthan', 26.2389, 73.0243, ['Onion', 'Cumin', 'Red Chilli']),
+  m('kota', 'Bhamashah Market', 'Kota', 'Kota', 'Rajasthan', 25.2138, 75.8648, ['Coriander', 'Wheat', 'Garlic']),
   m('jamalpur', 'Jamalpur Market', 'Ahmedabad', 'Ahmedabad', 'Gujarat', 23.0225, 72.5714, ['Tomato', 'Onion', 'Potato', 'Brinjal']),
   m('surat', 'Sardar Market', 'Surat', 'Surat', 'Gujarat', 21.1702, 72.8311, ['Onion', 'Tomato', 'Banana']),
   m('rajkot', 'Rajkot Marketing Yard', 'Rajkot', 'Rajkot', 'Gujarat', 22.3039, 70.8022, ['Groundnut', 'Cotton', 'Garlic']),
@@ -43,22 +43,22 @@ const mandis = [
   m('nashik', 'Nashik APMC', 'Nashik', 'Nashik', 'Maharashtra', 19.9975, 73.7898, ['Tomato', 'Onion', 'Grapes']),
   m('kalamna', 'Kalamna Market', 'Nagpur', 'Nagpur', 'Maharashtra', 21.1458, 79.0882, ['Orange', 'Onion', 'Potato']),
   m('kolhapur', 'Shahu Market Yard', 'Kolhapur', 'Kolhapur', 'Maharashtra', 16.705, 74.2433, ['Jaggery', 'Onion', 'Potato']),
-  m('aurangabad', 'Jadhavwadi Mandi', 'Chhatrapati Sambhajinagar', 'Aurangabad', 'Maharashtra', 19.8762, 75.3433, ['Onion', 'Tomato']),
+  m('aurangabad', 'Jadhavwadi Market', 'Chhatrapati Sambhajinagar', 'Aurangabad', 'Maharashtra', 19.8762, 75.3433, ['Onion', 'Tomato']),
   m('solapur', 'Solapur APMC', 'Solapur', 'Solapur', 'Maharashtra', 17.6599, 75.9064, ['Onion', 'Pomegranate']),
   m('mapusa', 'Mapusa Market', 'Mapusa', 'North Goa', 'Goa', 15.5937, 73.8142, ['Onion', 'Potato', 'Coconut']),
   m('silvassa', 'Silvassa Market', 'Silvassa', 'Dadra and Nagar Haveli', 'Dadra and Nagar Haveli and Daman and Diu', 20.27, 73.008, ['Tomato', 'Onion']),
 
   // Central
-  m('choithram', 'Choithram Mandi', 'Indore', 'Indore', 'Madhya Pradesh', 22.7196, 75.8577, ['Potato', 'Onion', 'Garlic', 'Tomato']),
-  m('karond', 'Karond Mandi', 'Bhopal', 'Bhopal', 'Madhya Pradesh', 23.2599, 77.4126, ['Wheat', 'Onion', 'Tomato']),
-  m('neemuch', 'Neemuch Mandi', 'Neemuch', 'Neemuch', 'Madhya Pradesh', 24.47, 74.87, ['Garlic', 'Coriander']),
-  m('jabalpur', 'Jabalpur Krishi Upaj Mandi', 'Jabalpur', 'Jabalpur', 'Madhya Pradesh', 23.1815, 79.9864, ['Green Peas', 'Tomato']),
+  m('choithram', 'Choithram Market', 'Indore', 'Indore', 'Madhya Pradesh', 22.7196, 75.8577, ['Potato', 'Onion', 'Garlic', 'Tomato']),
+  m('karond', 'Karond Market', 'Bhopal', 'Bhopal', 'Madhya Pradesh', 23.2599, 77.4126, ['Wheat', 'Onion', 'Tomato']),
+  m('neemuch', 'Neemuch Market', 'Neemuch', 'Neemuch', 'Madhya Pradesh', 24.47, 74.87, ['Garlic', 'Coriander']),
+  m('jabalpur', 'Jabalpur Agricultural Produce Market', 'Jabalpur', 'Jabalpur', 'Madhya Pradesh', 23.1815, 79.9864, ['Green Peas', 'Tomato']),
   m('raipur', 'Shastri Market', 'Raipur', 'Raipur', 'Chhattisgarh', 21.2514, 81.6296, ['Tomato', 'Rice', 'Brinjal']),
 
   // East and North-East
-  m('patna', 'Bazar Samiti', 'Patna', 'Patna', 'Bihar', 25.5941, 85.1376, ['Potato', 'Onion', 'Banana']),
-  m('muzaffarpur', 'Muzaffarpur Mandi', 'Muzaffarpur', 'Muzaffarpur', 'Bihar', 26.1209, 85.3647, ['Litchi', 'Banana']),
-  m('pandra', 'Pandra Bazar Samiti', 'Ranchi', 'Ranchi', 'Jharkhand', 23.3441, 85.3096, ['Tomato', 'Green Chilli', 'Potato']),
+  m('patna', 'Market Committee', 'Patna', 'Patna', 'Bihar', 25.5941, 85.1376, ['Potato', 'Onion', 'Banana']),
+  m('muzaffarpur', 'Muzaffarpur Market', 'Muzaffarpur', 'Muzaffarpur', 'Bihar', 26.1209, 85.3647, ['Litchi', 'Banana']),
+  m('pandra', 'Pandra Market Committee', 'Ranchi', 'Ranchi', 'Jharkhand', 23.3441, 85.3096, ['Tomato', 'Green Chilli', 'Potato']),
   m('koley', 'Koley Market', 'Kolkata', 'Kolkata', 'West Bengal', 22.5726, 88.3639, ['Potato', 'Onion', 'Brinjal', 'Green Chilli']),
   m('siliguri', 'Siliguri Regulated Market', 'Siliguri', 'Darjeeling', 'West Bengal', 26.7271, 88.3953, ['Ginger', 'Potato', 'Pineapple']),
   m('bardhaman', 'Bardhaman Market', 'Bardhaman', 'Purba Bardhaman', 'West Bengal', 23.2324, 87.8615, ['Potato', 'Rice']),
@@ -80,8 +80,8 @@ const mandis = [
   m('enumamula', 'Enumamula Market Yard', 'Warangal', 'Hanamkonda', 'Telangana', 17.9689, 79.5941, ['Red Chilli', 'Cotton']),
   m('madanapalle', 'Madanapalle Tomato Market', 'Madanapalle', 'Annamayya', 'Andhra Pradesh', 13.55, 78.5, ['Tomato']),
   m('kurnool', 'Kurnool Market Yard', 'Kurnool', 'Kurnool', 'Andhra Pradesh', 15.8281, 78.0373, ['Onion', 'Groundnut']),
-  m('guntur', 'Guntur Mirchi Yard', 'Guntur', 'Guntur', 'Andhra Pradesh', 16.3067, 80.4365, ['Red Chilli', 'Turmeric']),
-  m('vijayawada', 'Vijayawada Rythu Bazar', 'Vijayawada', 'NTR', 'Andhra Pradesh', 16.5062, 80.648, ['Tomato', 'Banana', 'Onion']),
+  m('guntur', 'Guntur Chilli Yard', 'Guntur', 'Guntur', 'Andhra Pradesh', 16.3067, 80.4365, ['Red Chilli', 'Turmeric']),
+  m('vijayawada', 'Vijayawada Farmers Market', 'Vijayawada', 'NTR', 'Andhra Pradesh', 16.5062, 80.648, ['Tomato', 'Banana', 'Onion']),
   m('kr-market', 'K.R. Market', 'Bengaluru', 'Bengaluru Urban', 'Karnataka', 12.965, 77.577, ['Tomato', 'Onion', 'Green Chilli', 'Banana']),
   m('yeshwanthpur', 'Yeshwanthpur APMC', 'Bengaluru', 'Bengaluru Urban', 'Karnataka', 13.028, 77.54, ['Onion', 'Potato', 'Rice']),
   m('kolar', 'Kolar APMC', 'Kolar', 'Kolar', 'Karnataka', 13.136, 78.129, ['Tomato']),
@@ -116,7 +116,7 @@ export const MARKET_ITEMS = [
   { label: 'Wheat', api: 'Wheat' },
 ];
 
-// Shop products that have a matching mandi commodity, for "See mandi prices".
+// Shop products that have a matching market commodity, for "See wholesale prices".
 export const PRODUCT_MARKET_ITEM = {
   tomato: 'Tomato',
   onion: 'Onion',

@@ -6,7 +6,7 @@ const ids = (list) => list.map((p) => p.id);
 describe('normalize', () => {
   it('lowercases and strips punctuation', () => {
     expect(normalize('  Tomatoes!! ')).toBe('tomatoes');
-    expect(normalize('Chaat-pack (5 kg)')).toBe('chaat pack 5 kg');
+    expect(normalize('Snack-pack (5 kg)')).toBe('snack pack 5 kg');
   });
 });
 
@@ -23,10 +23,10 @@ describe('searchProducts', () => {
     expect(searchProducts(starterCatalog, '   ')).toHaveLength(starterCatalog.length);
   });
 
-  it('matches English names and Hinglish keywords', () => {
+  it('matches names and other English keywords', () => {
     expect(ids(searchProducts(starterCatalog, 'tomato'))[0]).toBe('tomato');
-    expect(ids(searchProducts(starterCatalog, 'pyaz'))[0]).toBe('onion');
-    expect(ids(searchProducts(starterCatalog, 'aloo'))[0]).toBe('potato');
+    expect(ids(searchProducts(starterCatalog, 'spud'))[0]).toBe('potato');
+    expect(ids(searchProducts(starterCatalog, 'cilantro'))[0]).toBe('coriander');
   });
 
   it('tolerates small typos', () => {

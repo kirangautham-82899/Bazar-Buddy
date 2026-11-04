@@ -1,4 +1,4 @@
-// Real vegetable markets, mandis and greengrocers around a point: Google Places
+// Real vegetable markets, wholesale markets and greengrocers around a point: Google Places
 // (see googlePlaces.js) when a key is set, otherwise OpenStreetMap data from two
 // services at once, merged: Overpass (complete, but its public servers are often
 // overloaded) and Nominatim (fewer results, but dependable).

@@ -3,6 +3,8 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import strings, { t } from './strings';
+import starterCatalog from '../data/starterCatalog';
+import markets from '../data/mandis';
 
 const SRC = path.resolve(__dirname, '..');
 const sourceFiles = (dir) =>
@@ -35,5 +37,19 @@ describe('strings', () => {
 
   it('contains no Hindi text', () => {
     expect(Object.values(strings).join(' ')).not.toMatch(/[ऀ-ॿ]/);
+  });
+});
+
+// Everything shoppers read is plain English: no "mandi" and no Hindi words.
+const NOT_ENGLISH = /(mandis?|sabzi|sabji|kirana|pyaa?z|aloo|tamatar|mirchi?|tadka|chaat|chai|paneer|toor|daal?|atta|besan|haldi|nimbu|namak|doodh|sarson|kela|gajar|samiti|galla|krishi|chakki|rotis?|parathas?)/i;
+
+describe('plain English', () => {
+  it('uses no mandi or Hindi words in the interface, products or market names', () => {
+    const texts = [
+      ...Object.values(strings),
+      ...starterCatalog.flatMap((p) => [p.name, p.description, ...(p.keywords || [])]),
+      ...markets.map((m) => m.name),
+    ];
+    expect(texts.filter((text) => NOT_ENGLISH.test(text))).toEqual([]);
   });
 });

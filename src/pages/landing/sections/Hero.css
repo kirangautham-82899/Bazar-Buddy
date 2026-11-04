@@ -60,7 +60,7 @@
   letter-spacing: -0.035em;
 }
 
-/* Last three words carry the brand gradient ("fair mandi prices"). */
+/* Last three words carry the brand gradient ("fair wholesale prices"). */
 .hero-title .word-mask:nth-last-of-type(-n + 3) .word {
   background: linear-gradient(120deg, var(--color-brand) 10%, #c2523b 90%);
   -webkit-background-clip: text;

@@ -1,4 +1,4 @@
-// Vegetable markets, mandis and grocery stores around a point from Google
+// Vegetable markets, wholesale markets and grocery stores around a point from Google
 // Places (New). Two searches, merged: markets and grocery stores by type, and
 // "vegetable market" by text, both ranked by distance. Opening hours and phone
 // numbers are Enterprise-tier fields, so these calls bill at that rate.

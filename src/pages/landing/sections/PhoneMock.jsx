@@ -7,7 +7,7 @@ import { searchProducts } from '../../../utils/search';
 import { formatRupees } from '../../../utils/format';
 import ProductIcon from '../../../components/common/ProductIcon';
 
-const QUERIES = ['pyaz', 'tomato', 'aloo', 'mirch'];
+const QUERIES = ['onion', 'tomato', 'potato', 'chilli'];
 
 // Types each query letter by letter, pauses, deletes it, then moves on.
 const useTypewriter = (words, { typeMs = 110, holdMs = 1600 } = {}) => {

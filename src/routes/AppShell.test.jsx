@@ -147,9 +147,9 @@ describe('shop (guest)', () => {
 
   it('opens product details from a card', async () => {
     renderAt('/shop');
-    fireEvent.click(await screen.findByRole('button', { name: 'View details of Paneer' }, WAIT));
-    expect(await screen.findByRole('dialog', { name: 'Paneer' })).toBeInTheDocument();
-    expect(screen.getByText('Soft fresh paneer, made daily.')).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole('button', { name: 'View details of Cottage cheese' }, WAIT));
+    expect(await screen.findByRole('dialog', { name: 'Cottage cheese' })).toBeInTheDocument();
+    expect(screen.getByText('Soft fresh cottage cheese, made daily.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Add to cart' })).toBeInTheDocument();
   });
 
@@ -186,10 +186,10 @@ describe('shop (guest)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Find markets' }));
     expect(await screen.findByRole('heading', { name: 'Markets near Bangalore City, Bangalore' })).toBeInTheDocument();
     expect(await screen.findByText('HOPCOMS')).toBeInTheDocument();
-    expect(screen.getByText('K.R. Market')).toBeInTheDocument(); // directory mandi, ~0.4 km away
+    expect(screen.getByText('K.R. Market')).toBeInTheDocument(); // built-in wholesale market, ~0.4 km away
     expect(screen.queryByText('Far Away Market')).not.toBeInTheDocument(); // ~26 km, outside the 5 km default
     expect(screen.getByText(/centre of the PIN code area/)).toBeInTheDocument();
-    // Timings and contact for mapped shops; directory mandis have none listed.
+    // Timings and contact for mapped shops; built-in wholesale markets have none listed.
     // Results are a table, nearest first.
     const table = screen.getByRole('table', { name: 'Markets near Bangalore City, Bangalore' });
     expect(within(table).getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['Market', 'Distance', 'Timings', 'Known for', 'Directions and phone']);
@@ -202,7 +202,7 @@ describe('shop (guest)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Open now' }));
     expect(await screen.findByText('1 open now within 5 km')).toBeInTheDocument();
     expect(screen.queryByText('K.R. Market')).not.toBeInTheDocument();
-    expect(await screen.findByText(/Live daily mandi prices will appear here/)).toBeInTheDocument();
+    expect(await screen.findByText(/Live daily wholesale prices will appear here/)).toBeInTheDocument();
   });
 
   it('answers questions in the chat assistant with in-app links', async () => {

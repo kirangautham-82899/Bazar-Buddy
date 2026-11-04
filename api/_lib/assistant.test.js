@@ -49,7 +49,7 @@ describe('askAssistant', () => {
     const [body] = bodies;
     expect(body.url).toMatch(/\/models\/gemini-3\.5-flash-lite:generateContent$/);
     expect(body.headers['x-goog-api-key']).toBe('test'); // key in a header, never the URL
-    expect(body.tools[0].functionDeclarations.map((t) => t.name)).toEqual(['find_place', 'find_nearby_markets', 'get_mandi_prices']);
+    expect(body.tools[0].functionDeclarations.map((t) => t.name)).toEqual(['find_place', 'find_nearby_markets', 'get_wholesale_prices']);
     const [stable, context] = body.systemInstruction.parts;
     expect(stable.text).not.toMatch(/Current time/); // keeps the cacheable prefix stable
     expect(context.text).toContain('lat 10.780, lng 76.650 (Palakkad)');
@@ -58,7 +58,7 @@ describe('askAssistant', () => {
   });
 
   it('runs the tools Gemini asks for and sends back the results', async () => {
-    const call = { role: 'model', parts: [{ functionCall: { name: 'get_mandi_prices', args: { state: 'Kerala' } }, thoughtSignature: 'sig' }] };
+    const call = { role: 'model', parts: [{ functionCall: { name: 'get_wholesale_prices', args: { state: 'Kerala' } }, thoughtSignature: 'sig' }] };
     const { bodies, fetchImpl } = fakeGemini({ candidates: [{ content: call }] }, say('Prices are not connected yet.'));
     const result = await askAssistant({ messages: [{ role: 'user', content: 'Tomato price?' }] }, { env, deps: { fetchImpl } });
     expect(result.reply).toBe('Prices are not connected yet.');
@@ -66,7 +66,7 @@ describe('askAssistant', () => {
     expect(second[1]).toEqual(call); // the model turn goes back with its signature
     expect(second[2]).toEqual({
       role: 'user',
-      parts: [{ functionResponse: { name: 'get_mandi_prices', response: { note: 'Live mandi prices are not connected yet.' } } }],
+      parts: [{ functionResponse: { name: 'get_wholesale_prices', response: { note: 'Live wholesale prices are not connected yet.' } } }],
     });
   });
 
@@ -109,6 +109,6 @@ describe('assistant tools', () => {
 
   it('says when prices are not connected', async () => {
     const pricesTool = buildTools(env)[2];
-    expect(JSON.parse(await pricesTool.run({ state: 'Kerala' }))).toEqual({ note: 'Live mandi prices are not connected yet.' });
+    expect(JSON.parse(await pricesTool.run({ state: 'Kerala' }))).toEqual({ note: 'Live wholesale prices are not connected yet.' });
   });
 });

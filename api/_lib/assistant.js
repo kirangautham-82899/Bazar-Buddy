@@ -1,5 +1,5 @@
 // Bazar Buddy's chat assistant: Gemini with tools over our own data (places,
-// nearby markets with timings, mandi prices). Tools only read public data, so
+// nearby markets with timings, wholesale prices). Tools only read public data, so
 // whatever the chat asks, the worst a tool call can do is look something up.
 import mandis from '../../src/data/mandis.js';
 import { directionsUrl, formatDistance, marketsWithin } from '../../src/utils/markets.js';
@@ -18,16 +18,16 @@ const MAX_MESSAGE_CHARS = 2000;
 const MAX_MARKETS = 15;
 
 // Kept identical across requests, ahead of anything that changes, so Gemini can cache it.
-const SYSTEM = `You are Bazar Buddy's assistant. Bazar Buddy is a wholesale vegetable and grocery app for street vendors across India: they order stock for delivery, and they also buy at local mandis and markets.
+const SYSTEM = `You are Bazar Buddy's assistant. Bazar Buddy is a wholesale vegetable and grocery app for street vendors across India: they order stock for delivery, and they also buy at local wholesale and vegetable markets.
 
-Help them find where to go and the quickest way to get things done: nearby markets and what they sell, which are open now, directions, today's mandi prices, and shortcuts inside the app.
+Help them find where to go and the quickest way to get things done: nearby markets and what they sell, which are open now, directions, today's wholesale prices, and shortcuts inside the app.
 
 How to answer:
-- Short and practical, in simple English. Most vendors read on a phone between customers: lead with the answer, then at most a few bullet points.
+- Short and practical, in simple English. Use only English words: say "wholesale market", never "mandi", and use English names for produce (onion, not pyaz). Most vendors read on a phone between customers: lead with the answer, then at most a few bullet points.
 - Never invent markets, distances, timings, phone numbers or prices. Use the tools. When a tool says a timing or price is not listed, say so plainly and suggest calling ahead or checking on the Markets page.
 - To find markets you need a point. Use the shopper's shared location when one is given; otherwise ask for their PIN code or area and look it up with find_place. Start with a 5 km radius and widen only if nothing is found.
 - When you mention a market, give its distance, whether it is open now (or when it opens), and its directions link as a markdown link: [Directions](url).
-- Prices from Agmarknet are wholesale mandi prices per kg reported by the government; they are not Bazar Buddy's own prices.
+- Prices from Agmarknet are wholesale market prices per kg reported by the government; they are not Bazar Buddy's own prices.
 - For anything about ordering, link to the app page instead of explaining at length.
 
 App shortcuts (use exactly these paths as markdown links):
@@ -62,7 +62,7 @@ export const nearbyForAssistant = async ({ lat, lng, radius_km: radiusKm = 5, op
   try {
     mapped = (await fetchNearbyMarkets({ ...point, radiusKm: radius }, { googleKey, fetchImpl })).markets.map((m) => ({ ...m, precise: true }));
   } catch {
-    note = 'The local market map is unavailable right now; only major mandis are listed.';
+    note = 'The local market map is unavailable right now; only major wholesale markets are listed.';
   }
   let found = marketsWithin(point, [...mapped, ...DIRECTORY], radius);
   if (openOnly) found = found.filter((m) => openStatus(m.schedule, now)?.open);
@@ -109,7 +109,7 @@ export const buildTools = (env, deps = {}) => [
   {
     name: 'find_nearby_markets',
     description:
-      'List vegetable markets, mandis, greengrocers and grocery stores within a radius of a point, nearest first, with distance, open/closed status for the current time in India, weekly hours, phone and a directions link.',
+      'List vegetable markets, wholesale markets, greengrocers and grocery stores within a radius of a point, nearest first, with distance, open/closed status for the current time in India, weekly hours, phone and a directions link.',
     parameters: {
       type: 'object',
       properties: {
@@ -123,8 +123,8 @@ export const buildTools = (env, deps = {}) => [
     run: guarded((input) => nearbyForAssistant(input, { googleKey: env.googleKey, fetchImpl: deps.fetchImpl })),
   },
   {
-    name: 'get_mandi_prices',
-    description: "Today's wholesale prices (₹ per kg) reported to Agmarknet by mandis in a district (falls back to the whole state), optionally for one commodity.",
+    name: 'get_wholesale_prices',
+    description: "Today's wholesale prices (₹ per kg) reported to Agmarknet by wholesale markets in a district (falls back to the whole state), optionally for one commodity.",
     parameters: {
       type: 'object',
       properties: {
@@ -136,7 +136,7 @@ export const buildTools = (env, deps = {}) => [
     },
     run: guarded(async (input) => {
       const result = await fetchMandiPrices(input, { apiKey: env.dataGovKey, fetchImpl: deps.fetchImpl, limit: 30 });
-      return result.configured ? result : { note: 'Live mandi prices are not connected yet.' };
+      return result.configured ? result : { note: 'Live wholesale prices are not connected yet.' };
     }),
   },
 ];

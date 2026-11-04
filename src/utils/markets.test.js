@@ -9,7 +9,7 @@ const ALL_STATES_AND_UTS = [
   'Ladakh', 'Lakshadweep', 'Puducherry',
 ];
 
-describe('mandi directory', () => {
+describe('built-in wholesale market list', () => {
   it('covers every state and union territory', () => {
     const states = new Set(mandis.map((m) => m.state));
     expect(ALL_STATES_AND_UTS.filter((s) => !states.has(s))).toEqual([]);
@@ -47,7 +47,7 @@ describe('marketsWithin', () => {
     expect(marketsWithin(bengaluru, shops, 1).map((m) => m.id)).toEqual(['near']);
   });
 
-  it('never pulls in mandis from other cities', () => {
+  it('never pulls in markets from other cities', () => {
     const found = marketsWithin(bengaluru, mandis, 20);
     expect(found.length).toBeGreaterThan(0);
     expect(found.every((m) => m.state === 'Karnataka' && m.distanceKm <= 20)).toBe(true);
@@ -72,7 +72,7 @@ describe('directionsUrl', () => {
     expect(directionsUrl({ precise: true, lat: 1, lng: 2, placeId: 'ChIJ1' })).toBe('https://www.google.com/maps/dir/?api=1&destination=1,2&destination_place_id=ChIJ1');
   });
 
-  it('searches directory mandis by name', () => {
+  it('searches built-in markets by name', () => {
     const url = new URL(directionsUrl({ name: 'K.R. Market', city: 'Bengaluru', state: 'Karnataka' }));
     expect(url.searchParams.get('query')).toBe('K.R. Market, Bengaluru, Karnataka');
   });

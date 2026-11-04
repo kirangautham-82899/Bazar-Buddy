@@ -171,11 +171,13 @@ describe('shop (guest)', () => {
     window.__desktop = true;
     renderAt('/shop');
     expect(await screen.findByRole('link', { name: /^Cart:/ }, WAIT)).toBeInTheDocument();
-    // Side navbar: main sections and every category.
+    // Header: main sections and every category; the home page opens with the hero.
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toHaveTextContent('Markets');
     expect(screen.getByRole('navigation', { name: 'Categories' })).toHaveTextContent('Vegetables');
-    expect(screen.queryByRole('heading', { name: 'Shop by category' })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: /Wholesale stock for your stall/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Vegetables\s*8 items/ })).toHaveAttribute('href', '/shop/category/vegetables');
     expect(document.querySelector('.bottom-nav')).toBeNull();
+    expect(document.querySelector('.desk-sidebar')).toBeNull();
   });
 
   it('finds only markets near a PIN code', async () => {
@@ -211,12 +213,12 @@ describe('shop (guest)', () => {
     expect(await screen.findByRole('button', { name: 'Ask Bazar Buddy' })).toBeInTheDocument();
   });
 
-  it('opens the assistant from the side navbar on desktop', async () => {
+  it('opens the assistant from the header on desktop', async () => {
     window.__desktop = true;
     renderAt('/shop');
     expect(await screen.findByRole('link', { name: /^Cart:/ }, WAIT)).toBeInTheDocument();
     expect(document.querySelector('.assistant-fab')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: /Ask Bazar Buddy/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask Bazar Buddy' }));
     expect(await screen.findByRole('dialog', { name: 'Bazar Buddy assistant' })).toBeInTheDocument();
   });
 

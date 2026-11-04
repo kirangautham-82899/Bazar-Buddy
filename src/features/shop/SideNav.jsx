@@ -21,8 +21,8 @@ const MAIN_LINKS = [
   { to: '/account', icon: FaUser, label: 'navAccount' },
 ];
 
-// Brand, delivery address, main sections, the AI assistant and every category. Used as the fixed
-// sidebar on desktop and inside the slide-out drawer on phones.
+// Brand, delivery address, main sections, the AI assistant and every category, shown
+// inside the slide-out drawer on phones.
 const SideNav = ({ onNavigate, idPrefix = 'side' }) => {
   const { isAdmin } = useAuth();
   const { count } = useCart();

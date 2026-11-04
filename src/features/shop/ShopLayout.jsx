@@ -5,15 +5,15 @@ import { Skeleton } from '../../components/motion';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
 import { prefetchWhenIdle, loadCartPage, loadCategoryPage, loadMarketsPage, loadSearchPage } from '../../routes/lazy';
 import ShopHeader from './ShopHeader';
-import DesktopTopBar from './DesktopTopBar';
-import SideNav from './SideNav';
+import DesktopHeader from './DesktopHeader';
+import DesktopFooter from './DesktopFooter';
 import BottomNav from './BottomNav';
 import CartBar from './CartBar';
 import AssistantChat from '../assistant/AssistantChat';
 import './shop.css';
 import './layout.css';
 
-// Desktop: fixed side navbar on the left, top bar with search and cart on the right.
+// Desktop: two-row header (search and cart; sections and categories), full-width pages, footer.
 // Phones: header with a menu button (side drawer), floating cart bar and bottom tab bar.
 // Both: the floating chat assistant.
 const ShopLayout = () => {
@@ -47,13 +47,9 @@ const ShopLayout = () => {
   if (isDesktop) {
     return (
       <div className="shop shop-desktop">
-        <aside className="desk-sidebar">
-          <SideNav />
-        </aside>
-        <div className="desk-content">
-          <DesktopTopBar />
-          {page}
-        </div>
+        <DesktopHeader />
+        {page}
+        <DesktopFooter />
         <AssistantChat />
       </div>
     );

@@ -1,21 +1,23 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaChevronRight, FaTruck } from 'react-icons/fa';
+import { FaArrowRight, FaBolt, FaBoxOpen, FaChartLine, FaChevronRight, FaHeadset, FaMapMarkedAlt, FaTruck, FaWallet } from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi2';
 import { t } from '../../content/strings';
 import { useCatalog } from '../../context/CatalogContext';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
 import { useMyOrders } from '../../hooks/useMyOrders';
 import CATEGORIES from '../../data/categories';
-import { FREE_DELIVERY_ABOVE } from '../../config/app';
+import { EXPRESS_MINUTES, FREE_DELIVERY_ABOVE } from '../../config/app';
 import { discountPct } from '../../utils/pricing';
 import ProductIcon from '../../components/common/ProductIcon';
-import PageHead from '../../components/common/PageHead';
 import { useAuth } from '../../context/AuthContext';
 import { Stagger, staggerItem } from '../../components/motion';
+import { openAssistant } from '../assistant/openAssistant';
 import CatalogState from './CatalogState';
 import ProductList from './ProductList';
+import './home.css';
 
 // Rows show one line of products: 6 in a grid on desktop, 10 to swipe on phones.
 const ROW_LIMIT = { desktop: 6, mobile: 10 };
@@ -34,6 +36,20 @@ const buyAgain = (orders, findProduct) => {
 // Good morning / afternoon / evening, by the vendor's local time.
 const greetingKey = (hour = new Date().getHours()) => (hour < 12 ? 'goodMorning' : hour < 17 ? 'goodAfternoon' : 'goodEvening');
 
+const FACTS = [
+  { icon: FaBolt, title: 'factExpressTitle', body: () => t('factExpressBody', { minutes: EXPRESS_MINUTES }) },
+  { icon: FaTruck, title: 'factFreeTitle', body: () => t('factFreeBody', { amount: FREE_DELIVERY_ABOVE }) },
+  { icon: FaWallet, title: 'factPayTitle', body: () => t('factPayBody') },
+  { icon: FaHeadset, title: 'factSupportTitle', body: () => t('supportHours') },
+];
+
+const TOOLS = [
+  { to: '/markets', icon: FaMapMarkedAlt, title: 'toolMarketsTitle', body: 'toolMarketsBody', tone: 'green' },
+  { to: '/markets', icon: FaChartLine, title: 'toolPricesTitle', body: 'toolPricesBody', tone: 'yellow' },
+  { assistant: true, icon: HiSparkles, title: 'assistantAsk', body: 'toolAssistantBody', tone: 'violet' },
+  { to: '/orders', icon: FaBoxOpen, title: 'toolOrdersTitle', body: 'toolOrdersBody', tone: 'red' },
+];
+
 const ProductRow = ({ id, title, items, link, isDesktop }) => {
   const limit = isDesktop ? ROW_LIMIT.desktop : ROW_LIMIT.mobile;
   return (
@@ -51,6 +67,25 @@ const ProductRow = ({ id, title, items, link, isDesktop }) => {
   );
 };
 
+const Tool = ({ tool }) => {
+  const Icon = tool.icon;
+  const inner = (
+    <>
+      <span className={`home-tool-icon tone-${tool.tone}`} aria-hidden="true"><Icon /></span>
+      <span className="home-tool-text">
+        <strong>{t(tool.title)}</strong>
+        <span>{t(tool.body)}</span>
+      </span>
+      <FaArrowRight className="home-tool-arrow" aria-hidden="true" />
+    </>
+  );
+  return tool.assistant ? (
+    <button type="button" className="home-tool" onClick={openAssistant}>{inner}</button>
+  ) : (
+    <Link to={tool.to} className="home-tool">{inner}</Link>
+  );
+};
+
 const ShopHome = () => {
   const { products, findProduct } = useCatalog();
   const orders = useMyOrders();
@@ -65,58 +100,82 @@ const ShopHome = () => {
   );
   const again = useMemo(() => buyAgain(orders, findProduct), [orders, findProduct]);
   const categoryRows = useMemo(
-    () =>
-      CATEGORIES.map((category) => ({ category, items: products.filter((p) => p.category === category.id) })).filter(
-        (row) => row.items.length
-      ),
+    () => CATEGORIES.map((category) => ({ category, items: products.filter((p) => p.category === category.id) })),
     [products]
   );
 
   return (
     <div className="page shop-home">
-      <PageHead
-        title={firstName ? t('greetingName', { greeting: t(greetingKey()), name: firstName }) : t(greetingKey())}
-        subtitle={t('homeSubtitle')}
-      />
-      <motion.p className="promo-strip" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}>
-        <FaTruck aria-hidden="true" /> {t('freeDeliveryBanner', { amount: FREE_DELIVERY_ABOVE })}
-      </motion.p>
+      <section className="home-hero" aria-labelledby="home-title">
+        <motion.div className="home-hero-main" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+          <p className="home-greeting">
+            {firstName ? t('greetingName', { greeting: t(greetingKey()), name: firstName }) : t(greetingKey())}
+          </p>
+          <h1 id="home-title" className="home-title">{t('homeTitle', { minutes: EXPRESS_MINUTES })}</h1>
+          <p className="home-lead">{t('homeBody')}</p>
+          <div className="home-actions">
+            <Link to="/shop/category/vegetables" className="btn">
+              {t('homeShop')} <FaArrowRight aria-hidden="true" />
+            </Link>
+            <Link to="/markets" className="btn btn-outline">
+              <FaMapMarkedAlt aria-hidden="true" /> {t('homeMarkets')}
+            </Link>
+          </div>
+        </motion.div>
+        <ul className="home-facts" aria-label={t('homeFacts')}>
+          {FACTS.map(({ icon: Icon, title, body }) => (
+            <li key={title}>
+              <span className="home-fact-icon" aria-hidden="true"><Icon /></span>
+              <span>
+                <strong>{t(title)}</strong>
+                <small>{body()}</small>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="home-block" aria-labelledby="shop-categories">
+        <h2 id="shop-categories" className="shop-section-title">{t('shopByCategory')}</h2>
+        <Stagger as="ul" className="home-categories" stagger={0.04}>
+          {categoryRows.map(({ category, items }) => (
+            <motion.li key={category.id} variants={staggerItem}>
+              <Link to={`/shop/category/${category.id}`} className="home-category">
+                <ProductIcon icon={category.icon} category={category.id} size="lg" />
+                <span className="home-category-name">{t(category.labelKey)}</span>
+                {items.length > 0 && <small>{t('categoryCount', { n: items.length })}</small>}
+              </Link>
+            </motion.li>
+          ))}
+        </Stagger>
+      </section>
 
       <CatalogState />
 
-      {categoryRows.length > 0 && (
-        <>
-          {/* Desktop has category links in the top bar, so the tiles are phone-only. */}
-          {!isDesktop && (
-            <section aria-labelledby="shop-categories">
-              <h2 id="shop-categories" className="shop-section-title">{t('shopByCategory')}</h2>
-              <Stagger as="ul" className="category-tiles" stagger={0.04}>
-                {CATEGORIES.map((category) => (
-                  <motion.li key={category.id} variants={staggerItem} whileTap={{ scale: 0.95 }}>
-                    <Link to={`/shop/category/${category.id}`}>
-                      <ProductIcon icon={category.icon} category={category.id} size="lg" />
-                      <span>{t(category.labelKey)}</span>
-                    </Link>
-                  </motion.li>
-                ))}
-              </Stagger>
-            </section>
-          )}
+      {again.length > 0 && <ProductRow id="row-buy-again" title={t('buyAgainTitle')} items={again} isDesktop={isDesktop} />}
+      {deals.length > 0 && <ProductRow id="row-deals" title={t('dealsTitle')} items={deals} isDesktop={isDesktop} />}
 
-          {again.length > 0 && <ProductRow id="row-buy-again" title={t('buyAgainTitle')} items={again} isDesktop={isDesktop} />}
-          {deals.length > 0 && <ProductRow id="row-deals" title={t('dealsTitle')} items={deals} isDesktop={isDesktop} />}
-          {categoryRows.map(({ category, items }) => (
-            <ProductRow
-              key={category.id}
-              id={`row-${category.id}`}
-              title={t(category.labelKey)}
-              items={items}
-              link={`/shop/category/${category.id}`}
-              isDesktop={isDesktop}
-            />
+      <section className="home-block" aria-labelledby="home-tools">
+        <h2 id="home-tools" className="shop-section-title">{t('toolsTitle')}</h2>
+        <ul className="home-tools">
+          {TOOLS.map((tool) => (
+            <li key={tool.title}><Tool tool={tool} /></li>
           ))}
-        </>
-      )}
+        </ul>
+      </section>
+
+      {categoryRows
+        .filter(({ items }) => items.length)
+        .map(({ category, items }) => (
+          <ProductRow
+            key={category.id}
+            id={`row-${category.id}`}
+            title={t(category.labelKey)}
+            items={items}
+            link={`/shop/category/${category.id}`}
+            isDesktop={isDesktop}
+          />
+        ))}
     </div>
   );
 };

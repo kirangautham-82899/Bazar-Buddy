@@ -178,6 +178,7 @@ export class GeminiError extends Error {
 }
 
 const callGemini = async (body, { apiKey, model, fetchImpl }) => {
+  const started = Date.now();
   const res = await fetchImpl(`${GEMINI_URL}/${encodeURIComponent(model)}:generateContent`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
@@ -192,6 +193,9 @@ const callGemini = async (body, { apiKey, model, fetchImpl }) => {
     err.detail = `${model}: ${String(data?.error?.message || '').slice(0, 200)}`;
     throw err;
   }
+  // Timing and token counts only, to watch speed; never the conversation.
+  const u = data?.usageMetadata || {};
+  console.info(`Gemini ${model} ${Date.now() - started}ms in=${u.promptTokenCount ?? '?'} thoughts=${u.thoughtsTokenCount ?? 0} out=${u.candidatesTokenCount ?? '?'}`);
   return data;
 };
 

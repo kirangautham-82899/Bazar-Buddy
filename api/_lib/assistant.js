@@ -10,7 +10,7 @@ import { MAX_RADIUS_KM, fetchNearbyMarkets } from './nearbyMarkets.js';
 import { fetchMandiPrices } from './mandiPrices.js';
 
 // Fast and inexpensive, with a free tier; GEMINI_MODEL can switch it.
-export const DEFAULT_MODEL = 'gemini-2.5-flash';
+export const DEFAULT_MODEL = 'gemini-3.6-flash';
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const MAX_TOOL_ROUNDS = 6;
 const MAX_TURNS = 16;

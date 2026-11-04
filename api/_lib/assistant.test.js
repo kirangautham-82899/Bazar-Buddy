@@ -47,7 +47,7 @@ describe('askAssistant', () => {
     );
     expect(result).toEqual({ reply: 'Try [Valiya Angadi](https://maps.example)' });
     const [body] = bodies;
-    expect(body.url).toMatch(/\/models\/gemini-2\.5-flash:generateContent$/);
+    expect(body.url).toMatch(/\/models\/gemini-3\.6-flash:generateContent$/);
     expect(body.headers['x-goog-api-key']).toBe('test'); // key in a header, never the URL
     expect(body.tools[0].functionDeclarations.map((t) => t.name)).toEqual(['find_place', 'find_nearby_markets', 'get_mandi_prices']);
     const [stable, context] = body.systemInstruction.parts;

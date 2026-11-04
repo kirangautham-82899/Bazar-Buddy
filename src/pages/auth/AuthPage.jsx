@@ -93,10 +93,10 @@ const BrandPanel = () => {
 
   return (
     <aside className="auth-panel">
-      <Aurora variant="dark" />
+      <Aurora variant="light" />
       <div className="auth-panel-content">
         <Link to="/" className="auth-panel-brand">
-          <BrandMark light />
+          <BrandMark />
         </Link>
 
         <div className="auth-orbit" aria-hidden="true">

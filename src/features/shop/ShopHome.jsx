@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaBolt, FaBoxOpen, FaChartLine, FaChevronRight, FaHeadset, FaMapMarkedAlt, FaTruck, FaWallet } from 'react-icons/fa';
+import { FaArrowRight, FaBolt, FaChartLine, FaChevronRight, FaHeadset, FaMapMarkedAlt, FaTruck, FaWallet } from 'react-icons/fa';
 import { HiSparkles } from 'react-icons/hi2';
 import { t } from '../../content/strings';
 import { useCatalog } from '../../context/CatalogContext';
@@ -21,6 +21,8 @@ import './home.css';
 
 // Rows show one line of products: 6 in a grid on desktop, 10 to swipe on phones.
 const ROW_LIMIT = { desktop: 6, mobile: 10 };
+// Category rows on the home page; the tiles above lead to every category.
+const HOME_CATEGORY_ROWS = 3;
 
 // Products from past orders that are in stock again, most recent first.
 const buyAgain = (orders, findProduct) => {
@@ -47,7 +49,6 @@ const TOOLS = [
   { to: '/markets', icon: FaMapMarkedAlt, title: 'toolMarketsTitle', body: 'toolMarketsBody', tone: 'green' },
   { to: '/markets', icon: FaChartLine, title: 'toolPricesTitle', body: 'toolPricesBody', tone: 'yellow' },
   { assistant: true, icon: HiSparkles, title: 'assistantAsk', body: 'toolAssistantBody', tone: 'violet' },
-  { to: '/orders', icon: FaBoxOpen, title: 'toolOrdersTitle', body: 'toolOrdersBody', tone: 'red' },
 ];
 
 const ProductRow = ({ id, title, items, link, isDesktop }) => {
@@ -155,17 +156,9 @@ const ShopHome = () => {
       {again.length > 0 && <ProductRow id="row-buy-again" title={t('buyAgainTitle')} items={again} isDesktop={isDesktop} />}
       {deals.length > 0 && <ProductRow id="row-deals" title={t('dealsTitle')} items={deals} isDesktop={isDesktop} />}
 
-      <section className="home-block" aria-labelledby="home-tools">
-        <h2 id="home-tools" className="shop-section-title">{t('toolsTitle')}</h2>
-        <ul className="home-tools">
-          {TOOLS.map((tool) => (
-            <li key={tool.title}><Tool tool={tool} /></li>
-          ))}
-        </ul>
-      </section>
-
       {categoryRows
         .filter(({ items }) => items.length)
+        .slice(0, HOME_CATEGORY_ROWS)
         .map(({ category, items }) => (
           <ProductRow
             key={category.id}
@@ -176,6 +169,15 @@ const ShopHome = () => {
             isDesktop={isDesktop}
           />
         ))}
+
+      <section className="home-block" aria-labelledby="home-tools">
+        <h2 id="home-tools" className="shop-section-title">{t('toolsTitle')}</h2>
+        <ul className="home-tools">
+          {TOOLS.map((tool) => (
+            <li key={tool.title}><Tool tool={tool} /></li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 };

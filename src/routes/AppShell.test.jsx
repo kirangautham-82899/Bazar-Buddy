@@ -1,7 +1,7 @@
 // Renders the real app with Firebase replaced by in-memory fakes: browsing as a
 // guest, the cart, orders and the admin gate.
 import React from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import App from '../App';
 import starterCatalog from '../data/starterCatalog';
@@ -146,7 +146,7 @@ describe('shop (guest)', () => {
   });
 
   it('opens product details from a card', async () => {
-    renderAt('/shop');
+    renderAt('/shop/category/dairy');
     fireEvent.click(await screen.findByRole('button', { name: 'View details of Cottage cheese' }, WAIT));
     expect(await screen.findByRole('dialog', { name: 'Cottage cheese' })).toBeInTheDocument();
     expect(screen.getByText('Soft fresh cottage cheese, made daily.')).toBeInTheDocument();
@@ -171,9 +171,14 @@ describe('shop (guest)', () => {
     window.__desktop = true;
     renderAt('/shop');
     expect(await screen.findByRole('link', { name: /^Cart:/ }, WAIT)).toBeInTheDocument();
-    // Header: main sections and every category; the home page opens with the hero.
+    // Header: main sections, plus every category behind a Categories menu.
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toHaveTextContent('Markets');
-    expect(screen.getByRole('navigation', { name: 'Categories' })).toHaveTextContent('Vegetables');
+    const menu = screen.getByRole('button', { name: 'Categories' });
+    expect(menu).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(menu);
+    expect(await screen.findByRole('navigation', { name: 'Categories' })).toHaveTextContent('Combo packs');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('navigation', { name: 'Categories' })).not.toBeInTheDocument());
     expect(screen.getByRole('heading', { level: 1, name: /Wholesale stock for your stall/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Vegetables\s*8 items/ })).toHaveAttribute('href', '/shop/category/vegetables');
     expect(document.querySelector('.bottom-nav')).toBeNull();

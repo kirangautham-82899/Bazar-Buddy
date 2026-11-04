@@ -266,8 +266,17 @@
   gap: var(--space-4);
 }
 
-.shop-desktop .cart-page {
-  max-width: 1100px;
+/* Delivery speeds side by side on desktop. */
+.shop-desktop .cart-page .choice-group:not(.choice-row) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.shop-desktop .cart-page .choice-group:not(.choice-row) legend {
+  grid-column: 1 / -1;
+}
+
+.shop-desktop .cart-page .choice-group:not(.choice-row) .choice {
+  align-items: flex-start;
 }
 
 .shop-desktop .cart-columns {
@@ -279,7 +288,7 @@
 
 .shop-desktop .cart-summary {
   position: sticky;
-  top: calc(76px + var(--space-6));
+  top: calc(var(--desk-header-h) + var(--space-6));
 }
 
 .shop-desktop .checkout-bar {

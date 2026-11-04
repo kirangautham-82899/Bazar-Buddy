@@ -183,9 +183,11 @@
   opacity: 0.85;
 }
 
-/* ---------- Desktop: two-row header, full-width pages, footer ---------- */
+/* ---------- Desktop: header, page frame, footer ---------- */
 .shop-desktop {
-  --desk-width: 1320px;
+  --desk-width: 1280px;
+  /* Header height (72 px top row + 1 px rule + 44 px links), for sticky panels. */
+  --desk-header-h: 117px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -209,15 +211,15 @@
   position: sticky;
   top: 0;
   z-index: 800;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(14px) saturate(1.3);
   -webkit-backdrop-filter: blur(14px) saturate(1.3);
   border-bottom: 1px solid var(--color-line);
 }
 
 .dh-top .dh-inner {
-  gap: var(--space-5);
-  min-height: 72px;
+  gap: var(--space-6);
+  height: 72px;
 }
 
 .dh-brand {
@@ -227,9 +229,7 @@
 
 .dh-delivery {
   flex-shrink: 0;
-  max-width: 200px;
-  padding-left: var(--space-5);
-  border-left: 1px solid var(--color-line);
+  max-width: 210px;
 }
 
 .dh-delivery .shop-eta {
@@ -261,10 +261,10 @@
   align-items: center;
   gap: var(--space-2);
   flex-shrink: 0;
-  min-height: 44px;
+  min-height: 40px;
   padding: 0 var(--space-3);
   border: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: none;
   color: var(--color-ink);
   font: inherit;
@@ -280,11 +280,6 @@
   background: var(--color-bg);
 }
 
-.dh-ai svg {
-  color: var(--color-brinjal);
-  font-size: 1.1rem;
-}
-
 .dh-account svg {
   color: var(--color-brand);
   font-size: 1.3rem;
@@ -295,8 +290,8 @@
   align-items: center;
   gap: var(--space-3);
   flex-shrink: 0;
-  min-width: 140px;
-  min-height: 46px;
+  min-width: 132px;
+  height: 46px;
   padding: 0 var(--space-4);
   border-radius: 12px;
   background: var(--color-brand);
@@ -326,13 +321,14 @@
   font-size: 0.85rem;
 }
 
+/* Bottom row: categories menu, sections, assistant. */
 .dh-bottom {
   border-top: 1px solid var(--color-line);
 }
 
 .dh-bottom .dh-inner {
   gap: var(--space-2);
-  min-height: 48px;
+  height: 44px;
 }
 
 .dh-nav {
@@ -341,30 +337,22 @@
   gap: var(--space-1);
 }
 
-.dh-categories {
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.dh-categories::-webkit-scrollbar {
-  display: none;
-}
-
 .dh-link {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  flex-shrink: 0;
-  height: 48px;
+  height: 44px;
   padding: 0 var(--space-3);
+  border: 0;
+  background: none;
   color: var(--color-muted);
+  font: inherit;
   font-size: 0.86rem;
   font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
+  cursor: pointer;
   transition: color 0.15s ease;
 }
 
@@ -384,42 +372,107 @@
   background: var(--color-brand);
 }
 
-.dh-category .product-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 7px;
+.dh-ai {
+  margin-left: auto;
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border-radius: 999px;
+  background: var(--color-brinjal-soft);
+  color: var(--color-brinjal);
+  font-size: 0.82rem;
 }
 
-.dh-divider {
-  flex-shrink: 0;
-  width: 1px;
-  height: 22px;
-  margin: 0 var(--space-2);
-  background: var(--color-line);
+.dh-ai:hover {
+  background: #e2d9f1;
 }
 
-.shop-desktop .page,
-.shop-desktop .category-page {
+/* Categories dropdown */
+.dh-menu {
+  position: relative;
+  margin-right: var(--space-2);
+  padding-right: var(--space-3);
+  border-right: 1px solid var(--color-line);
+}
+
+.dh-menu-btn {
+  color: var(--color-ink);
+}
+
+.dh-menu-chevron {
+  font-size: 0.65rem;
+  transition: transform 0.15s ease;
+}
+
+.dh-menu-btn[aria-expanded='true'] .dh-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.dh-menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(190px, 1fr));
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: #fff;
+  box-shadow: var(--shadow-lg);
+}
+
+.dh-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 10px;
+  color: var(--color-ink);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dh-menu-item:hover,
+.dh-menu-item.active {
+  background: var(--color-bg);
+}
+
+/* Page frame: every desktop page sits in the same column with the same gutters. */
+.shop-desktop .page {
   max-width: var(--desk-width);
   margin: 0 auto;
   padding: var(--space-8);
 }
 
-.shop-desktop .category-page {
-  padding-top: 0;
-  padding-bottom: 0;
+.shop-desktop .page-head {
+  margin-bottom: var(--space-8);
+}
+
+.shop-desktop .page-title {
+  font-size: 1.85rem;
+  letter-spacing: -0.01em;
+}
+
+/* Page widths: lists and forms read best narrow; shopping pages use the full column. */
+.shop-desktop .page.orders-page {
+  max-width: 880px;
+}
+
+.shop-desktop .page.cart-page {
+  max-width: 1120px;
+}
+
+.shop-desktop .page.account-page {
+  max-width: 1080px;
 }
 
 /* Narrower desktops: keep the essentials on one line. */
-@media (max-width: 1279px) {
+@media (max-width: 1199px) {
   .dh-delivery,
-  .dh-ai span,
-  .dh-category .product-icon {
+  .dh-ai span {
     display: none;
-  }
-
-  .dh-ai {
-    padding: 0 var(--space-2);
   }
 }
 

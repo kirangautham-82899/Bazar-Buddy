@@ -129,7 +129,7 @@ const AccountPage = () => {
         ))}
       </section>
 
-      <button type="button" className="btn btn-danger btn-block" onClick={signOutAndForget}>
+      <button type="button" className="btn btn-danger btn-block account-logout" onClick={signOutAndForget}>
         <FaSignOutAlt aria-hidden="true" /> {t('logout')}
       </button>
 

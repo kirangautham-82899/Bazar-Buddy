@@ -32,7 +32,7 @@
   margin: 0;
   max-width: 18ch;
   font-size: clamp(1.45rem, 1.1rem + 1.6vw, 2.35rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -284,15 +284,16 @@
 
 @media (min-width: 1024px) {
   .shop-home {
-    gap: var(--space-16);
+    gap: var(--space-10);
   }
 
   .home-hero {
     grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
     align-items: center;
-    gap: var(--space-16);
-    margin: calc(-1 * var(--space-10)) calc(-1 * var(--gutter)) 0;
-    padding: var(--space-16) var(--gutter);
+    gap: var(--space-12);
+    margin: calc(-1 * var(--space-6)) calc(-1 * var(--gutter)) 0;
+    padding: var(--space-12) var(--gutter);
+    border-bottom: 1px solid var(--color-line);
   }
 
   .home-lead {
@@ -316,23 +317,65 @@
     border-top: 1px solid var(--color-line);
   }
 
+  /* Category tiles: icon beside name and count, in a thin-bordered row. */
+  .home-categories {
+    gap: var(--space-3);
+  }
+
   .home-category {
-    font-size: 0.88rem;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: var(--space-3);
+    row-gap: 0;
+    padding: var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: border-color 0.15s ease;
+  }
+
+  .home-category:hover {
+    border-color: #cfcfcf;
   }
 
   .home-category .product-icon {
-    width: 76px;
-    height: 76px;
-    border-radius: 22px;
-    transition: transform 0.15s ease;
+    grid-row: 1 / 3;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
   }
 
-  .home-category:hover .product-icon {
-    transform: translateY(-3px);
+  .home-category-name {
+    align-self: end;
+    overflow: hidden;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .home-category small {
+    align-self: start;
+    line-height: 1.3;
   }
 
   .home-tools {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: var(--space-10);
+    gap: var(--space-3);
+  }
+
+  .home-tool {
+    padding: var(--space-4);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+
+  .home-tool:hover {
+    border-color: #cfcfcf;
   }
 }

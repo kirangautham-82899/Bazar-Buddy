@@ -164,6 +164,8 @@ describe('shop (guest)', () => {
     renderAt('/shop');
     expect(await screen.findByRole('navigation', { name: 'Quick links' }, WAIT)).toHaveTextContent('Markets');
     expect(screen.getByRole('button', { name: 'Menu' })).toBeInTheDocument();
+    // Logging in from the phone header comes back to the same page.
+    expect(screen.getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/auth?next=%2Fshop');
     expect(screen.getByRole('heading', { name: 'Shop by category' })).toBeInTheDocument();
   });
 

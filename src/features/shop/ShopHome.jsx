@@ -46,8 +46,8 @@ const FACTS = [
 ];
 
 const TOOLS = [
-  { to: '/markets', icon: FaMapMarkedAlt, title: 'toolMarketsTitle', body: 'toolMarketsBody', tone: 'green' },
-  { to: '/markets', icon: FaChartLine, title: 'toolPricesTitle', body: 'toolPricesBody', tone: 'yellow' },
+  { to: 'markets', icon: FaMapMarkedAlt, title: 'toolMarketsTitle', body: 'toolMarketsBody', tone: 'green' },
+  { to: 'markets', icon: FaChartLine, title: 'toolPricesTitle', body: 'toolPricesBody', tone: 'yellow' },
   { assistant: true, icon: HiSparkles, title: 'assistantAsk', body: 'toolAssistantBody', tone: 'violet' },
 ];
 
@@ -69,7 +69,7 @@ const ProductRow = ({ id, title, items, link, isDesktop }) => {
   );
 };
 
-const Tool = ({ tool }) => {
+const Tool = ({ tool, marketsLink }) => {
   const Icon = tool.icon;
   const inner = (
     <>
@@ -84,7 +84,7 @@ const Tool = ({ tool }) => {
   return tool.assistant ? (
     <button type="button" className="home-tool" onClick={openAssistant}>{inner}</button>
   ) : (
-    <Link to={tool.to} className="home-tool">{inner}</Link>
+    <Link to={tool.to === 'markets' ? marketsLink : tool.to} className="home-tool">{inner}</Link>
   );
 };
 
@@ -94,6 +94,9 @@ const ShopHome = () => {
   const isDesktop = useIsDesktop();
   const { profile } = useAuth();
   const firstName = profile?.name?.split(' ')[0];
+  // With a saved address, market links search its PIN straight away (and so show its prices).
+  const pin = profile?.address?.pincode;
+  const marketsLink = pin ? `/markets?q=${pin}` : '/markets';
   useDocumentMeta({ title: `${t('navHome')} – ${t('appName')}` });
 
   const deals = useMemo(
@@ -119,7 +122,7 @@ const ShopHome = () => {
             <Link to="/shop/category/vegetables" className="btn">
               {t('homeShop')} <FaArrowRight aria-hidden="true" />
             </Link>
-            <Link to="/markets" className="btn btn-outline">
+            <Link to={marketsLink} className="btn btn-outline">
               <FaMapMarkedAlt aria-hidden="true" /> {t('homeMarkets')}
             </Link>
           </div>
@@ -175,7 +178,7 @@ const ShopHome = () => {
         <h2 id="home-tools" className="shop-section-title">{t('toolsTitle')}</h2>
         <ul className="home-tools">
           {TOOLS.map((tool) => (
-            <li key={tool.title}><Tool tool={tool} /></li>
+            <li key={tool.title}><Tool tool={tool} marketsLink={marketsLink} /></li>
           ))}
         </ul>
       </section>

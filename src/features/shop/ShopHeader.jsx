@@ -26,7 +26,7 @@ const ShopHeader = () => {
             <FaUserCircle aria-hidden="true" />
           </Link>
         ) : (
-          <Link to="/auth" className="btn btn-sm">{t('navLogin')}</Link>
+          <Link to={`/auth?next=${encodeURIComponent(pathname)}`} className="btn btn-sm">{t('navLogin')}</Link>
         )}
       </div>
       {showSearch && <SearchBox asLink />}

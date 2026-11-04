@@ -4,20 +4,17 @@
 
 /* Sections are separated by a rule and whitespace, not boxed. */
 .cart-block {
-  padding: var(--space-5) 0;
-  border-top: 1px solid var(--color-line);
-}
-
-.cart-main > .cart-block:first-child {
-  padding-top: 0;
-  border-top: 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 }
 
 .cart-block h2,
 .cart-block legend {
   margin: 0 0 10px;
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .cart-block .choice-group {
@@ -161,7 +158,7 @@
   padding-top: 10px;
   border-top: 1px dashed var(--color-line);
   font-size: 1.08rem !important;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .bill-savings {
@@ -302,16 +299,6 @@
 
 /* Desktop: the bill is a quiet column beside the order, divided by a rule. */
 .shop-desktop .cart-columns {
-  grid-template-columns: minmax(0, 1fr) 380px;
-  gap: var(--space-16);
-}
-
-.shop-desktop .cart-summary {
-  padding-left: var(--space-10);
-  border-left: 1px solid var(--color-line);
-}
-
-.shop-desktop .cart-summary > .cart-block {
-  padding-top: 0;
-  border-top: 0;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: var(--space-6);
 }

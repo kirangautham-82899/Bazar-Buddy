@@ -82,7 +82,7 @@
 /* Orders */
 .admin-order-list {
   display: grid;
-  border-top: 1px solid var(--color-line);
+  gap: var(--space-3);
 }
 
 @media (min-width: 900px) {
@@ -97,9 +97,11 @@
   flex-direction: column;
   gap: 12px;
   height: 100%;
-  padding: var(--space-5) 0 var(--space-5) var(--space-4);
-  border-bottom: 1px solid var(--color-line);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
   border-left: 3px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 }
 
 .admin-order.status-placed { border-left-color: var(--color-accent); }
@@ -188,7 +190,10 @@
 }
 
 .admin-products {
-  border-top: 1px solid var(--color-line);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
 }
 
 .admin-product {

@@ -55,7 +55,7 @@
 .hero-title {
   margin: 16px 0 18px;
   font-size: clamp(2.4rem, 7.2vw, 4.5rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.04;
   letter-spacing: -0.035em;
 }
@@ -257,7 +257,7 @@
   border: 1.5px solid var(--color-brand);
   color: var(--color-brand);
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .phone-order {

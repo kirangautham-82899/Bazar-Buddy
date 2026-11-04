@@ -41,7 +41,7 @@ describe('strings', () => {
 });
 
 // Everything shoppers read is plain English: no "mandi" and no Hindi words.
-const NOT_ENGLISH = /(mandis?|sabzi|sabji|kirana|pyaa?z|aloo|tamatar|mirchi?|tadka|chaat|chai|paneer|toor|daal?|atta|besan|haldi|nimbu|namak|doodh|sarson|kela|gajar|samiti|galla|krishi|chakki|rotis?|parathas?)/i;
+const NOT_ENGLISH = /\b(mandis?|sabzi|sabji|kirana|pyaa?z|aloo|tamatar|mirchi?|tadka|chaat|chai|paneer|toor|daal?|atta|besan|haldi|nimbu|namak|doodh|sarson|kela|gajar|samiti|galla|krishi|chakki|rotis?|parathas?)\b/i;
 
 describe('plain English', () => {
   it('uses no mandi or Hindi words in the interface, products or market names', () => {

@@ -673,3 +673,22 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Fade-in for content that swaps in (pages, Add/stepper, messages). No fill mode,
+   so the element is fully visible even if the animation never runs. */
+.fade-in {
+  animation: fade-in 0.2s var(--ease-out);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    animation: none;
+  }
+}

@@ -1,6 +1,5 @@
 import React, { Suspense, useEffect } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Skeleton } from '../../components/motion';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
 import { prefetchWhenIdle, loadCartPage, loadCategoryPage, loadMarketsPage, loadSearchPage } from '../../routes/lazy';
@@ -30,17 +29,11 @@ const ShopLayout = () => {
 
   const page = (
     <main className="shop-main" id="main-content">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Suspense fallback={<div className="page"><Skeleton lines={5} /></div>}>{outlet}</Suspense>
-        </motion.div>
-      </AnimatePresence>
+      {/* The new page shows at once with a CSS fade-in. (Waiting for the old page to
+          animate out could leave a blank screen when the hand-off was missed.) */}
+      <div key={location.pathname} className="fade-in">
+        <Suspense fallback={<div className="page"><Skeleton lines={5} /></div>}>{outlet}</Suspense>
+      </div>
     </main>
   );
 

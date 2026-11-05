@@ -187,6 +187,20 @@ describe('shop (guest)', () => {
     expect(document.querySelector('.desk-sidebar')).toBeNull();
   });
 
+  it('shows each page when tapping through the header', async () => {
+    window.__desktop = true;
+    renderAt('/shop');
+    await screen.findByRole('heading', { level: 1, name: /Wholesale stock for your stall/ }, WAIT);
+    fireEvent.click(screen.getByRole('button', { name: 'Categories' }));
+    fireEvent.click(within(await screen.findByRole('navigation', { name: 'Categories' })).getByRole('link', { name: 'Vegetables' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Vegetables' }, WAIT)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Wholesale stock for your stall/ })).not.toBeInTheDocument();
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Main navigation' })).getByRole('link', { name: 'Markets' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Local markets' }, WAIT)).toBeInTheDocument();
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Main navigation' })).getByRole('link', { name: 'Home' }));
+    expect(await screen.findByRole('heading', { level: 1, name: /Wholesale stock for your stall/ }, WAIT)).toBeInTheDocument();
+  });
+
   it('finds only markets near a PIN code', async () => {
     renderAt('/markets?item=Tomato');
     fireEvent.change(await screen.findByLabelText('PIN code or area', {}, WAIT), { target: { value: '560002' } });

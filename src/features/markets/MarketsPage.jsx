@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FaCrosshairs, FaDirections, FaMapMarkerAlt, FaPhoneAlt, FaSearchLocation, FaStore } from 'react-icons/fa';
 import { t } from '../../content/strings';
 import { useAuth } from '../../context/AuthContext';
@@ -254,25 +254,23 @@ const MarketsPage = () => {
         </div>
       </section>
 
-      <AnimatePresence mode="wait">
-        {busy && (
-          <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            {status === 'locating' && <p className="muted" role="status">{t('locating')}</p>}
-            <Skeleton lines={4} />
-          </motion.div>
-        )}
-        {status === 'error' && (
-          <motion.p key="error" className="markets-error" role="alert" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            {error}
-          </motion.p>
-        )}
-        {status === 'idle' && (
-          <motion.div key="idle" className="empty-state markets-idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <span className="empty-icon"><FaSearchLocation aria-hidden="true" /></span>
-            <p>{t('marketsIdle')}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {busy && (
+        <div key="loading" className="fade-in">
+          {status === 'locating' && <p className="muted" role="status">{t('locating')}</p>}
+          <Skeleton lines={4} />
+        </div>
+      )}
+      {status === 'error' && (
+        <p key="error" className="markets-error fade-in" role="alert">
+          {error}
+        </p>
+      )}
+      {status === 'idle' && (
+        <div key="idle" className="empty-state markets-idle fade-in">
+          <span className="empty-icon"><FaSearchLocation aria-hidden="true" /></span>
+          <p>{t('marketsIdle')}</p>
+        </div>
+      )}
 
       {showResults && (
         <div className="markets-results">

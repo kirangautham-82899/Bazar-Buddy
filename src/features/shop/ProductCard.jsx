@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { t } from '../../content/strings';
 import { useCart } from '../../context/CartContext';
 import ProductIcon from '../../components/common/ProductIcon';
@@ -39,28 +39,22 @@ const ProductCard = ({ product }) => {
         {soldOut ? (
           <span className="product-soldout">{t('outOfStock')}</span>
         ) : (
-          <AnimatePresence mode="wait" initial={false}>
-            {quantity > 0 ? (
-              <motion.div key="stepper" initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.85 }} transition={{ duration: 0.15 }}>
-                <QuantityStepper product={product} quantity={quantity} size="sm" />
-              </motion.div>
-            ) : (
-              <motion.button
-                key="add"
-                type="button"
-                className="add-btn"
-                onClick={() => changeQuantity(product.id, 1)}
-                aria-label={`${t('add')} ${product.name}`}
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ duration: 0.15 }}
-              >
-                {t('add')}
-              </motion.button>
-            )}
-          </AnimatePresence>
+          quantity > 0 ? (
+            <div key="stepper" className="fade-in">
+              <QuantityStepper product={product} quantity={quantity} size="sm" />
+            </div>
+          ) : (
+            <motion.button
+              key="add"
+              type="button"
+              className="add-btn fade-in"
+              onClick={() => changeQuantity(product.id, 1)}
+              aria-label={`${t('add')} ${product.name}`}
+              whileTap={{ scale: 0.92 }}
+            >
+              {t('add')}
+            </motion.button>
+          )
         )}
       </div>
       <ProductDetails product={product} open={detailsOpen} onClose={() => setDetailsOpen(false)} />

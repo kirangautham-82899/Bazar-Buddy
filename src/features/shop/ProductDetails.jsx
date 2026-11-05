@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { t } from '../../content/strings';
 import { useCart } from '../../context/CartContext';
 import { findCategory } from '../../data/categories';
@@ -64,26 +64,21 @@ const ProductDetails = ({ product, open, onClose }) => {
 
         {product.stock > 0 && (
           <div className="product-details-action">
-            <AnimatePresence mode="wait" initial={false}>
-              {quantity > 0 ? (
-                <motion.div key="stepper" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
-                  <QuantityStepper product={product} quantity={quantity} size="lg" />
-                </motion.div>
-              ) : (
-                <motion.button
-                  key="add"
-                  type="button"
-                  className="btn btn-lg btn-block"
-                  onClick={() => changeQuantity(product.id, 1)}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  {t('addToCart')}
-                </motion.button>
-              )}
-            </AnimatePresence>
+            {quantity > 0 ? (
+              <div key="stepper" className="fade-in">
+                <QuantityStepper product={product} quantity={quantity} size="lg" />
+              </div>
+            ) : (
+              <motion.button
+                key="add"
+                type="button"
+                className="btn btn-lg btn-block fade-in"
+                onClick={() => changeQuantity(product.id, 1)}
+                whileTap={{ scale: 0.97 }}
+              >
+                {t('addToCart')}
+              </motion.button>
+            )}
           </div>
         )}
       </div>

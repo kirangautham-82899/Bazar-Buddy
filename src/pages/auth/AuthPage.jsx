@@ -113,17 +113,9 @@ const BrandPanel = () => {
 
         <h2 className="auth-panel-title">{t('authPanelTitle')}</h2>
         <div className="auth-benefit" aria-live="polite">
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={BENEFITS[index]}
-              initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -14, filter: 'blur(6px)' }}
-              transition={{ duration: 0.45 }}
-            >
-              {t(BENEFITS[index])}
-            </motion.p>
-          </AnimatePresence>
+          <p key={BENEFITS[index]} className="fade-in">
+            {t(BENEFITS[index])}
+          </p>
         </div>
         <div className="auth-dots" aria-hidden="true">
           {BENEFITS.map((b, i) => (
@@ -236,18 +228,10 @@ const AuthPage = () => {
             <BrandMark />
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={isLogin ? 'login-head' : 'register-head'}
-              initial={{ opacity: 0, x: isLogin ? -16 : 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: isLogin ? 16 : -16 }}
-              transition={{ duration: 0.25 }}
-            >
-              <h1 className="auth-title">{isLogin ? t('welcomeBack') : t('createAccount')}</h1>
-              <p className="muted auth-subtitle">{isLogin ? t('loginSubtitle') : t('registerSubtitle')}</p>
-            </motion.div>
-          </AnimatePresence>
+          <div key={isLogin ? 'login-head' : 'register-head'} className="fade-in">
+            <h1 className="auth-title">{isLogin ? t('welcomeBack') : t('createAccount')}</h1>
+            <p className="muted auth-subtitle">{isLogin ? t('loginSubtitle') : t('registerSubtitle')}</p>
+          </div>
 
           <div className="segmented auth-tabs" role="tablist" aria-label={t('authModeLabel')}>
             {[

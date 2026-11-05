@@ -67,13 +67,28 @@ const buildUrl = (apiKey, { state, commodity }, limit) => {
   return `${RESOURCE}?${params}`;
 };
 
+// data.gov.in sometimes stalls or drops a request (it then also omits the header that
+// lets the browser read the reply), so each try has a time limit and a failed one is retried.
+const getRecords = async (url, { fetchImpl, timeoutMs, retries }) => {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      const res = await fetchImpl(url, { signal: AbortSignal.timeout(timeoutMs) });
+      if (res.ok) return await res.json();
+      if (res.status < 500 || attempt >= retries) throw new Error(`Agmarknet request failed (${res.status})`);
+    } catch (err) {
+      if (attempt >= retries || /request failed \(4/.test(err.message)) throw err;
+    }
+  }
+};
+
 // One request for the whole state, then the district's own markets if it reported
 // today; otherwise every market in the state.
-export const fetchMandiPrices = async ({ state, district, commodity }, { apiKey, fetchImpl = fetch, limit = 2000 } = {}) => {
+export const fetchMandiPrices = async (
+  { state, district, commodity },
+  { apiKey, fetchImpl = fetch, limit = 2000, timeoutMs = 15000, retries = 1 } = {}
+) => {
   if (!apiKey) return { configured: false, scope: null, records: [] };
-  const res = await fetchImpl(buildUrl(apiKey, { state, commodity }, limit));
-  if (!res.ok) throw new Error(`Agmarknet request failed (${res.status})`);
-  const json = await res.json();
+  const json = await getRecords(buildUrl(apiKey, { state, commodity }, limit), { fetchImpl, timeoutMs, retries });
   const records = (json.records || []).map(normalizeRecord).filter((r) => r.modalPerKg !== null);
   if (!records.length) return { configured: true, scope: null, records: [] };
   const local = district ? records.filter((r) => sameDistrict(r.district, district)) : [];

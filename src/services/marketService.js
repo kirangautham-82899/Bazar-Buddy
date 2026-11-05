@@ -27,8 +27,37 @@ export const fetchNearbyMarkets = ({ lat, lng }, radiusKm) =>
 // browser key the shopper's browser asks Agmarknet directly; otherwise our server tries.
 const BROWSER_PRICE_KEY = import.meta.env.REACT_APP_DATA_GOV_IN_API_KEY;
 
-export const fetchMandiPrices = ({ state, district, commodity }) => {
-  if (BROWSER_PRICE_KEY) return fetchFromAgmarknet({ state, district, commodity }, { apiKey: BROWSER_PRICE_KEY });
+// Agmarknet updates once a day, so a good answer is reused for 30 minutes on this device.
+const PRICE_CACHE_MS = 30 * 60 * 1000;
+const PRICE_CACHE_KEY = 'bazarBuddy.prices';
+
+const cachedPrices = (key) => {
+  try {
+    const hit = JSON.parse(window.sessionStorage.getItem(PRICE_CACHE_KEY) || '{}')[key];
+    return hit && Date.now() - hit.at < PRICE_CACHE_MS ? hit.data : null;
+  } catch {
+    return null;
+  }
+};
+
+const rememberPrices = (key, data) => {
+  try {
+    const all = JSON.parse(window.sessionStorage.getItem(PRICE_CACHE_KEY) || '{}');
+    window.sessionStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ ...all, [key]: { at: Date.now(), data } }));
+  } catch {
+    // Storage full or blocked: the next visit asks again.
+  }
+};
+
+export const fetchMandiPrices = async ({ state, district, commodity }) => {
+  if (BROWSER_PRICE_KEY) {
+    const key = [state, district, commodity].join('|');
+    const cached = cachedPrices(key);
+    if (cached) return cached;
+    const data = await fetchFromAgmarknet({ state, district, commodity }, { apiKey: BROWSER_PRICE_KEY });
+    if (data.records.length) rememberPrices(key, data);
+    return data;
+  }
   const params = new URLSearchParams({ state });
   if (district) params.set('district', district);
   if (commodity) params.set('commodity', commodity);

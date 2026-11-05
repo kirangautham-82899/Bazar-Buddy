@@ -135,8 +135,18 @@ export const buildTools = (env, deps = {}) => [
       required: ['state'],
     },
     run: guarded(async (input) => {
-      const result = await fetchMandiPrices(input, { apiKey: env.dataGovKey, fetchImpl: deps.fetchImpl, limit: 30 });
-      return result.configured ? result : { note: 'Live wholesale prices are not connected yet.' };
+      // The government feed often refuses servers, so on failure point to the Markets page,
+      // which loads the same prices from the shopper's own browser.
+      const pricesPage = `/markets?${new URLSearchParams({ q: input.district || input.state, ...(input.commodity ? { item: input.commodity } : {}) })}`;
+      try {
+        const result = await fetchMandiPrices(input, { apiKey: env.dataGovKey, fetchImpl: deps.fetchImpl, timeoutMs: 8000, retries: 0 });
+        if (!result.configured) return { note: 'Live wholesale prices are not connected yet.' };
+        return { ...result, records: result.records.slice(0, 30) };
+      } catch {
+        return {
+          note: `Live prices could not be fetched here. Do not say prices are unlisted; tell the shopper they load on the Markets page and give this link: [Today's prices](${pricesPage})`,
+        };
+      }
     }),
   },
 ];

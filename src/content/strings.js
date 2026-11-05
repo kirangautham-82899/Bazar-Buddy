@@ -257,6 +257,8 @@ const strings = {
   date: 'Date',
   priceSource: 'Source: Agmarknet, Government of India (data.gov.in). Wholesale prices per kg.',
   seeMandiPrices: 'See wholesale prices near you',
+  pricesUnavailable: 'Prices didn’t load. The government price service is busy right now.',
+  tryAgain: 'Try again',
 
   // Cart bar / cart
   cartItems: '{n} items',

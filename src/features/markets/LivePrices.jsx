@@ -9,6 +9,7 @@ const MAX_ROWS = 40;
 // Today's Agmarknet arrivals and prices for the area (and item, if chosen).
 const LivePrices = ({ area, commodity, itemLabel, fetchPrices }) => {
   const [state, setState] = useState({ status: 'loading', data: null });
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -19,7 +20,7 @@ const LivePrices = ({ area, commodity, itemLabel, fetchPrices }) => {
     return () => {
       active = false;
     };
-  }, [area.state, area.district, commodity, fetchPrices]);
+  }, [area.state, area.district, commodity, fetchPrices, attempt]);
 
   const rows = useMemo(
     () => (state.data?.records || []).slice().sort((a, b) => a.commodity.localeCompare(b.commodity) || a.modalPerKg - b.modalPerKg).slice(0, MAX_ROWS),
@@ -39,7 +40,14 @@ const LivePrices = ({ area, commodity, itemLabel, fetchPrices }) => {
 
       {state.status === 'loading' && <Skeleton lines={3} />}
 
-      {state.status === 'error' && <p className="markets-note">{t('errMarketsUnavailable')}</p>}
+      {state.status === 'error' && (
+        <div className="markets-note">
+          <span>{t('pricesUnavailable')}</span>
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => setAttempt((n) => n + 1)}>
+            {t('tryAgain')}
+          </button>
+        </div>
+      )}
 
       {state.status === 'done' && !state.data.configured && (
         <p className="markets-note">

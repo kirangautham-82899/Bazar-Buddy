@@ -77,6 +77,24 @@ describe('fetchMandiPrices', () => {
   });
 });
 
+describe('fetchMandiPrices retries', () => {
+  const record = { market: 'Palakkad Market', district: 'Palakad', state: 'Keralam', commodity: 'Tomato', modal_price: '3600' };
+
+  it('retries once when data.gov.in stalls or drops the request', async () => {
+    const fetchImpl = vi.fn().mockRejectedValueOnce(new TypeError('Failed to fetch')).mockResolvedValueOnce(jsonResponse({ records: [record] }));
+    const result = await fetchMandiPrices({ state: 'Kerala', district: 'Palakkad' }, { apiKey: 'k', fetchImpl });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(fetchImpl.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal); // every try has a time limit
+    expect(result.records).toHaveLength(1);
+  });
+
+  it('does not retry a rejected key', async () => {
+    const fetchImpl = vi.fn(async () => ({ ok: false, status: 403, json: async () => ({}) }));
+    await expect(fetchMandiPrices({ state: 'Kerala' }, { apiKey: 'bad', fetchImpl })).rejects.toThrow('403');
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('findPlace', () => {
   const hit = { lat: '12.9627285', lon: '77.5806486', address: { suburb: 'Chickpet', city: 'Bengaluru', state_district: 'Bengaluru Urban', state: 'Karnataka' } };
 

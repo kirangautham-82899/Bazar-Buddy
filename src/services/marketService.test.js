@@ -12,7 +12,7 @@ describe('fetchMandiPrices', () => {
   it('asks data.gov.in from the browser when a browser key is set', async () => {
     vi.stubEnv('REACT_APP_DATA_GOV_IN_API_KEY', 'browser-key');
     const fetch = vi.fn(async () =>
-      jsonResponse({ records: [{ market: 'Palakkad', district: 'Palakkad', state: 'Kerala', commodity: 'Tomato', modal_price: '2500' }] })
+      jsonResponse({ records: [{ market: 'Palakkad Market', district: 'Palakad', state: 'Keralam', commodity: 'Tomato', modal_price: '2500' }] })
     );
     vi.stubGlobal('fetch', fetch);
     const { fetchMandiPrices } = await import('./marketService');
@@ -22,8 +22,8 @@ describe('fetchMandiPrices', () => {
     const url = new URL(fetch.mock.calls[0][0]);
     expect(url.origin).toBe('https://api.data.gov.in');
     expect(url.searchParams.get('api-key')).toBe('browser-key');
-    expect(url.searchParams.get('filters[district]')).toBe('Palakkad');
-    expect(result).toMatchObject({ configured: true, scope: 'district', records: [{ market: 'Palakkad', modalPerKg: 25 }] });
+    expect(url.searchParams.get('filters[state.keyword]')).toBe('Keralam');
+    expect(result).toMatchObject({ configured: true, scope: 'district', records: [{ market: 'Palakkad Market', modalPerKg: 25 }] });
   });
 
   it('uses our own server without a browser key', async () => {

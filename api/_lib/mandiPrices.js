@@ -23,24 +23,59 @@ export const normalizeRecord = (r) => ({
   modalPerKg: perKg(toNumber(r.modal_price)),
 });
 
-const buildUrl = (apiKey, { state, district, commodity }, limit) => {
+// Agmarknet's own spellings for states whose usual names differ ("Keralam", not "Kerala").
+const STATE_NAMES = {
+  kerala: 'Keralam',
+  delhi: 'NCT of Delhi',
+  'national capital territory of delhi': 'NCT of Delhi',
+  chhattisgarh: 'Chattisgarh',
+  puducherry: 'Pondicherry',
+  'andaman and nicobar islands': 'Andaman and Nicobar',
+  orissa: 'Odisha',
+  'jammu & kashmir': 'Jammu and Kashmir',
+};
+
+export const agmarknetState = (state = '') => STATE_NAMES[state.trim().toLowerCase()] || state.trim();
+
+// District names are spelled differently too ("Palakad", "Thirssur", "Kozhikode(Calicut)"),
+// so compare letters only, ignore anything in brackets, and allow a small typo.
+const letters = (name = '') => name.toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z]/g, '');
+
+const editDistance = (a, b) => {
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i += 1) {
+    const curr = [i];
+    for (let j = 1; j <= b.length; j += 1) {
+      curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = curr;
+  }
+  return prev[b.length];
+};
+
+export const sameDistrict = (a, b) => {
+  const x = letters(a);
+  const y = letters(b);
+  if (!x || !y) return false;
+  return x === y || editDistance(x, y) <= Math.min(2, Math.floor(Math.min(x.length, y.length) / 4));
+};
+
+const buildUrl = (apiKey, { state, commodity }, limit) => {
   const params = new URLSearchParams({ 'api-key': apiKey, format: 'json', limit: String(limit) });
-  if (state) params.set('filters[state.keyword]', state);
-  if (district) params.set('filters[district]', district);
+  if (state) params.set('filters[state.keyword]', agmarknetState(state));
   if (commodity) params.set('filters[commodity]', commodity);
   return `${RESOURCE}?${params}`;
 };
 
-// District first; if that district reported nothing today, widen to the state.
-export const fetchMandiPrices = async ({ state, district, commodity }, { apiKey, fetchImpl = fetch, limit = 100 } = {}) => {
+// One request for the whole state, then the district's own markets if it reported
+// today; otherwise every market in the state.
+export const fetchMandiPrices = async ({ state, district, commodity }, { apiKey, fetchImpl = fetch, limit = 2000 } = {}) => {
   if (!apiKey) return { configured: false, scope: null, records: [] };
-  const scopes = district ? [['district', { state, district, commodity }], ['state', { state, commodity }]] : [['state', { state, commodity }]];
-  for (const [scope, filters] of scopes) {
-    const res = await fetchImpl(buildUrl(apiKey, filters, limit));
-    if (!res.ok) throw new Error(`Agmarknet request failed (${res.status})`);
-    const json = await res.json();
-    const records = (json.records || []).map(normalizeRecord).filter((r) => r.modalPerKg !== null);
-    if (records.length) return { configured: true, scope, records };
-  }
-  return { configured: true, scope: null, records: [] };
+  const res = await fetchImpl(buildUrl(apiKey, { state, commodity }, limit));
+  if (!res.ok) throw new Error(`Agmarknet request failed (${res.status})`);
+  const json = await res.json();
+  const records = (json.records || []).map(normalizeRecord).filter((r) => r.modalPerKg !== null);
+  if (!records.length) return { configured: true, scope: null, records: [] };
+  const local = district ? records.filter((r) => sameDistrict(r.district, district)) : [];
+  return local.length ? { configured: true, scope: 'district', records: local } : { configured: true, scope: 'state', records };
 };

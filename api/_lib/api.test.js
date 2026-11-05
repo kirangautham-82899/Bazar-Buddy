@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { lookupPincode } from './pincode.js';
-import { fetchMandiPrices, normalizeRecord } from './mandiPrices.js';
+import { agmarknetState, fetchMandiPrices, normalizeRecord, sameDistrict } from './mandiPrices.js';
 import { findPlace } from './place.js';
 import { buildQuery, fetchNearbyMarkets, normalizeElement } from './nearbyMarkets.js';
 import { normalizePlace } from './googlePlaces.js';
@@ -46,18 +46,34 @@ describe('fetchMandiPrices', () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
-  it('widens from district to state when the district has no reports', async () => {
-    const fetchImpl = vi
-      .fn()
-      .mockResolvedValueOnce(jsonResponse({ records: [] }))
-      .mockResolvedValueOnce(jsonResponse({ records: [record] }));
-    const result = await fetchMandiPrices({ state: 'Delhi', district: 'Central Delhi', commodity: 'Tomato' }, { apiKey: 'k', fetchImpl });
-    expect(result.scope).toBe('state');
-    expect(result.records).toHaveLength(1);
-    const [first, second] = fetchImpl.mock.calls.map(([url]) => new URL(url).searchParams);
-    expect(first.get('filters[district]')).toBe('Central Delhi');
-    expect(second.has('filters[district]')).toBe(false);
-    expect(second.get('filters[commodity]')).toBe('Tomato');
+  it('uses Agmarknet's spelling of state names', () => {
+    expect(agmarknetState('Kerala')).toBe('Keralam');
+    expect(agmarknetState('Delhi')).toBe('NCT of Delhi');
+    expect(agmarknetState('Karnataka')).toBe('Karnataka');
+  });
+
+  it('matches district names despite different spellings', () => {
+    expect(sameDistrict('Palakad', 'Palakkad')).toBe(true);
+    expect(sameDistrict('Thirssur', 'Thrissur')).toBe(true);
+    expect(sameDistrict('Kozhikode(Calicut)', 'Kozhikode')).toBe(true);
+    expect(sameDistrict('Kollam', 'Kottayam')).toBe(false);
+  });
+
+  it('picks the district from one state request, or widens to the state', async () => {
+    const palakkad = { ...record, state: 'Keralam', district: 'Palakad', market: 'Palakkad Market' };
+    const kollam = { ...record, state: 'Keralam', district: 'Kollam', market: 'Kollam Market' };
+    const fetchImpl = vi.fn(async () => jsonResponse({ records: [palakkad, kollam] }));
+
+    const local = await fetchMandiPrices({ state: 'Kerala', district: 'Palakkad', commodity: 'Tomato' }, { apiKey: 'k', fetchImpl });
+    expect(local).toMatchObject({ scope: 'district', records: [{ market: 'Palakkad Market' }] });
+    const params = new URL(fetchImpl.mock.calls[0][0]).searchParams;
+    expect(params.get('filters[state.keyword]')).toBe('Keralam');
+    expect(params.get('filters[commodity]')).toBe('Tomato');
+    expect(params.has('filters[district]')).toBe(false);
+
+    const wide = await fetchMandiPrices({ state: 'Kerala', district: 'Wayanad' }, { apiKey: 'k', fetchImpl });
+    expect(wide).toMatchObject({ scope: 'state' });
+    expect(wide.records).toHaveLength(2);
   });
 });
 

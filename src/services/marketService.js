@@ -1,4 +1,6 @@
-// Calls our own /api functions (see /api): places, nearby markets and live mandi prices.
+// Calls our own /api functions (see /api): places, nearby markets and live wholesale prices.
+import { fetchMandiPrices as fetchFromAgmarknet } from '../../api/_lib/mandiPrices.js';
+
 const getJson = async (url) => {
   const res = await fetch(url);
   const body = await res.json().catch(() => ({}));
@@ -21,7 +23,12 @@ export const findPlace = ({ q, lat, lng }) =>
 export const fetchNearbyMarkets = ({ lat, lng }, radiusKm) =>
   getJson(`/api/nearby-markets?${new URLSearchParams({ lat: lat.toFixed(3), lng: lng.toFixed(3), radius: String(radiusKm) })}`);
 
+// data.gov.in refuses connections from cloud servers (Vercel included), so with a
+// browser key the shopper's browser asks Agmarknet directly; otherwise our server tries.
+const BROWSER_PRICE_KEY = import.meta.env.REACT_APP_DATA_GOV_IN_API_KEY;
+
 export const fetchMandiPrices = ({ state, district, commodity }) => {
+  if (BROWSER_PRICE_KEY) return fetchFromAgmarknet({ state, district, commodity }, { apiKey: BROWSER_PRICE_KEY });
   const params = new URLSearchParams({ state });
   if (district) params.set('district', district);
   if (commodity) params.set('commodity', commodity);

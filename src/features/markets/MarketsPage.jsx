@@ -286,7 +286,7 @@ const MarketsPage = () => {
             {nearby.status === 'loading' ? (
               <Skeleton lines={4} />
             ) : results.length ? (
-              <motion.div className="market-table-wrap" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+              <motion.div className="market-table-wrap" initial={{ y: 8 }} animate={{ y: 0 }} transition={{ duration: 0.25 }}>
                 <table className="market-table" aria-labelledby="near-title">
                   <thead>
                     <tr>

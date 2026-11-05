@@ -130,7 +130,7 @@ const AdminOrders = () => {
         <motion.ul layout className="admin-order-list">
           <AnimatePresence initial={false}>
             {visible.map((order) => (
-              <motion.li key={order.id} layout initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 30 }}>
+              <motion.li key={order.id} layout initial={{ y: -10 }} animate={{ y: 0 }} exit={{ opacity: 0, x: 30 }}>
                 <AdminOrderRow order={order} />
               </motion.li>
             ))}

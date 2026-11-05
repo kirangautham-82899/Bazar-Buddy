@@ -104,7 +104,7 @@ const OrdersPage = () => {
         <motion.ul layout className="order-list">
           <AnimatePresence initial={false}>
             {orders.map((order) => (
-              <motion.li key={order.id} layout initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <motion.li key={order.id} layout initial={{ y: -10 }} animate={{ y: 0 }} exit={{ opacity: 0 }}>
                 <OrderCard order={order} />
               </motion.li>
             ))}

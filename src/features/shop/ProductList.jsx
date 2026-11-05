@@ -11,8 +11,8 @@ const ProductList = ({ products, layout = 'grid', columns }) => (
         <motion.li
           key={product.id}
           layout
-          initial={{ opacity: 0, scale: 0.92, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0, transition: { delay: Math.min(i * 0.03, 0.3) } }}
+          initial={{ scale: 0.96, y: 10 }}
+          animate={{ scale: 1, y: 0, transition: { delay: Math.min(i * 0.03, 0.3) } }}
           exit={{ opacity: 0, scale: 0.88, transition: { duration: 0.15 } }}
           transition={{ type: 'spring', stiffness: 350, damping: 30 }}
         >

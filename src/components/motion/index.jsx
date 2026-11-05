@@ -10,14 +10,15 @@ import './motion.css';
 
 const EASE_OUT = [0.22, 1, 0.36, 1];
 
-// Fades and lifts content in the first time it scrolls into view.
+// Lifts content in the first time it scrolls into view. Movement only, no fade, so
+// content stays visible even if the browser pauses animations.
 export const Reveal = ({ children, delay = 0, y = 24, as = 'div', className, ...rest }) => {
   const Tag = motion[as];
   return (
     <Tag
       className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y }}
+      whileInView={{ y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.7, ease: EASE_OUT, delay }}
       {...rest}
@@ -33,8 +34,8 @@ const staggerParent = (stagger, delay) => ({
 });
 
 export const staggerItem = {
-  hidden: { opacity: 0, y: 18, scale: 0.98 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: EASE_OUT } },
+  hidden: { y: 18, scale: 0.98 },
+  show: { y: 0, scale: 1, transition: { duration: 0.55, ease: EASE_OUT } },
 };
 
 // Children using `variants={staggerItem}` animate in one after another.
@@ -50,7 +51,8 @@ export const Stagger = ({ children, as = 'div', stagger = 0.08, delay = 0, inVie
   );
 };
 
-// Headline that rises in word by word from behind a mask.
+// Headline that rises in word by word. Never clipped or faded, so it stays readable
+// even if the browser pauses animations.
 export const WordReveal = ({ text, as = 'h1', className, delay = 0 }) => {
   const Tag = motion[as];
   const words = text.split(' ');
@@ -63,7 +65,7 @@ export const WordReveal = ({ text, as = 'h1', className, delay = 0 }) => {
             <motion.span
               className="word"
               variants={{
-                hidden: { y: '110%', rotate: 4 },
+                hidden: { y: '0.35em', rotate: 2 },
                 show: { y: '0%', rotate: 0, transition: { duration: 0.8, ease: EASE_OUT } },
               }}
             >

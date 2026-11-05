@@ -74,7 +74,7 @@ const AccountPage = () => {
 
   return (
     <div className="page account-page">
-      <motion.section className="account-hero" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.section className="account-hero" initial={{ y: 12 }} animate={{ y: 0 }}>
         <span className="account-avatar" aria-hidden="true">{(name || user.email || '?').charAt(0).toUpperCase()}</span>
         <div>
           <h1>{name || t('account')}</h1>

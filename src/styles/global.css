@@ -674,15 +674,15 @@ a {
   }
 }
 
-/* Fade-in for content that swaps in (pages, Add/stepper, messages). No fill mode,
-   so the element is fully visible even if the animation never runs. */
+/* Entry motion for content that swaps in (pages, Add/stepper, messages): a short
+   slide only, never a fade, so content is fully visible on every frame, even when the
+   browser pauses animations (background tabs, power saving). */
 .fade-in {
   animation: fade-in 0.2s var(--ease-out);
 }
 
 @keyframes fade-in {
   from {
-    opacity: 0;
     transform: translateY(6px);
   }
 }

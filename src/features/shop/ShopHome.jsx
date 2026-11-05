@@ -112,7 +112,7 @@ const ShopHome = () => {
   return (
     <div className="page shop-home">
       <section className="home-hero" aria-labelledby="home-title">
-        <motion.div className="home-hero-main" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+        <motion.div className="home-hero-main" initial={{ y: 10 }} animate={{ y: 0 }} transition={{ duration: 0.35 }}>
           <p className="home-greeting">
             {firstName ? t('greetingName', { greeting: t(greetingKey()), name: firstName }) : t(greetingKey())}
           </p>

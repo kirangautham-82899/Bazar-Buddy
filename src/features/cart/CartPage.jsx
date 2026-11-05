@@ -111,8 +111,8 @@ const CartPage = () => {
                     key={item.id}
                     layout
                     className={`cart-line ${item.available ? '' : 'unavailable'}`}
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
+                    initial={{ y: -6 }}
+                    animate={{ y: 0 }}
                     exit={{ opacity: 0, x: 40, height: 0, transition: { duration: 0.2 } }}
                   >
                     <ProductIcon icon={item.icon} category={item.category} size="md" />

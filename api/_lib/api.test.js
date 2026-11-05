@@ -46,7 +46,7 @@ describe('fetchMandiPrices', () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
-  it('uses Agmarknet's spelling of state names', () => {
+  it("uses Agmarknet's spelling of state names", () => {
     expect(agmarknetState('Kerala')).toBe('Keralam');
     expect(agmarknetState('Delhi')).toBe('NCT of Delhi');
     expect(agmarknetState('Karnataka')).toBe('Karnataka');
